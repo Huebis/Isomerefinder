@@ -22,8 +22,8 @@ def AddWasserstoff(isomerearray):
         isomerearray[t] = Chem.MolToSmiles(molekulobject)
     return isomerearray
 
-def AddWasserstoff2():
-    isomere = 'O1C2CC3(OC3C#C1)C2'
+def AddWasserstoff2(isomere):
+    isomere = 'o1cc2cc(CC2)c1=O'
 
     def AnzahlAtombindungen(char):
         if char == 'O':
@@ -32,6 +32,8 @@ def AddWasserstoff2():
             return 4
         if char == 'c':
             return 3
+        if char == 'o':
+            return 2
     def Bindungen(char):
         if char == '=':
             return 2
@@ -40,8 +42,10 @@ def AddWasserstoff2():
         return 1  #Wenn nicht ein = oder ein # kommen muss vorhin eine Zahl, ein Atom oder eine Klammer kommen, dies impliziert dann direkt, dass es automatisch ein einfach Bindung ist
 
 
+    überprüfungsvariabel = 0
+
     for a in range (len(isomere)):
-        if isomere[a] == 'C' or isomere[a] == 'c' or isomere[a] == 'O':
+        if isomere[a] == 'C' or isomere[a] == 'c' or isomere[a] == 'O' or isomere[a] == 'o':
             anzahlBindungen = AnzahlAtombindungen(isomere[a])
             print("Hallo")
             print("a:" + str(a))
@@ -50,8 +54,7 @@ def AddWasserstoff2():
             if a > 0:
                 bindungenohneWasserstoff += Bindungen(isomere[a-1])
 
-
-
+            print(bindungenohneWasserstoff)
             for b in range(1,len(isomere)-a,1):
                 if isomere[a+b].isdigit():
                     bindungenohneWasserstoff += 1
@@ -61,6 +64,7 @@ def AddWasserstoff2():
                     c = 0
                     if isomere[a+b] == '(':
                         bindungenohneWasserstoff += Bindungen(isomere[a + b+1])
+                        #print(bindungenohneWasserstoff)
                         c += 1
                         anzahlklammern = 1 # nach rechts offene Klammer ist +1, nach links offene -1
                         while(True):
@@ -75,7 +79,7 @@ def AddWasserstoff2():
                                         break
                                     else:
                                         bindungenohneWasserstoff += Bindungen(isomere[a + b + c + 2])
-                                        c += 3
+                                        c += 2
                                         anzahlklammern = 1  # nach rechts offene Klammer ist +1, nach links offene -1
 
 
@@ -87,6 +91,10 @@ def AddWasserstoff2():
                         break
 
             print(anzahlBindungen -bindungenohneWasserstoff)
+
+            überprüfungsvariabel += anzahlBindungen - bindungenohneWasserstoff
+    if überprüfungsvariabel != 6:
+        print(isomere)
 
 
 
