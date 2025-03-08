@@ -52,12 +52,15 @@ def AddWasserstoff2():
 
 
 
-
             for b in range(1,len(isomere)-a,1):
+                if isomere[a+b].isdigit():
+                    bindungenohneWasserstoff += 1
+
+
                 if not isomere[a+b].isdigit():
                     c = 0
                     if isomere[a+b] == '(':
-                        bindungenohneWasserstoff = Bindungen(isomere[a + b+1])
+                        bindungenohneWasserstoff += Bindungen(isomere[a + b+1])
                         c += 1
                         anzahlklammern = 1 # nach rechts offene Klammer ist +1, nach links offene -1
                         while(True):
@@ -71,7 +74,7 @@ def AddWasserstoff2():
                                         c += 1
                                         break
                                     else:
-                                        bindungenohneWasserstoff = Bindungen(isomere[a + b + c + 2])
+                                        bindungenohneWasserstoff += Bindungen(isomere[a + b + c + 2])
                                         c += 3
                                         anzahlklammern = 1  # nach rechts offene Klammer ist +1, nach links offene -1
 
