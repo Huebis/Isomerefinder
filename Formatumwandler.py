@@ -32,8 +32,6 @@ def AddWasserstoff2(isomere):
             return 4
         if char == 'c':
             return 3
-        if char == 'o':
-            return 2
     def Bindungen(char):
         if char == '=':
             return 2
@@ -42,12 +40,56 @@ def AddWasserstoff2(isomere):
         return 1  #Wenn nicht ein = oder ein # kommen muss vorhin eine Zahl, ein Atom oder eine Klammer kommen, dies impliziert dann direkt, dass es automatisch ein einfach Bindung ist
 
 
+
+
+    # ich habe ein Problem mit den Aromatischen c Atomen, da diese auch 4 verbindungen eingehen können, daher schaue ich zuerst nach Aromatischen o und ersetze dabei die daran sitzenden aromatischen C mit nicht Aromatischen C
+    for a in range (len(isomere)):
+        if isomere[a] == "o":
+            anzahlgefunder_c_ = 0
+            if a + 1 != len(isomere):
+                if isomere[a+1].isdigit():
+                    for b in range(len(isomere)):
+                        if isomere[b] == isomere[a+1] and b != a+1:
+                            count = 1
+                            while(True):
+                                if isomere[b-count] == "c":
+                                    isomere = isomere[:b-count] + "C" + isomere[b-count+1:]
+                                    anzahlgefunder_c_ += 1
+                                    break
+                                count += 1
+                            break
+                    if isomere[a+2] == "c":
+                        isomere = isomere[:a + 2] + "C" + isomere[a + 2 + 1:]
+                        anzahlgefunder_c_ += 1
+
+
+                if isomere[a+1] == "c":
+                    isomere = isomere[:a+1] + "C" + isomere[a+1 + 1:]
+                    anzahlgefunder_c_ += 1
+            if a != 0:
+                if isomere[a-1] == "c":
+                    isomere = isomere[:a-1] + "C" + isomere[a-1 + 1:]
+                    anzahlgefunder_c_ += 1
+
+                #if isomere[a - 1] == ")":
+
+
+
+
+    print(isomere)
+
+    if isomere[6].isdigit():
+        print("MAMAMAMAMAM")
+    #Suche ein aromatisches o, danach finde die anhängenden C
+
+
+
     überprüfungsvariabel = 0
 
     for a in range (len(isomere)):
-        if isomere[a] == 'C' or isomere[a] == 'c' or isomere[a] == 'O' or isomere[a] == 'o':
+        if isomere[a] == 'C' or isomere[a] == 'c' or isomere[a] == 'O':
             anzahlBindungen = AnzahlAtombindungen(isomere[a])
-            print("Hallo")
+            #print("Hallo")
             print("a:" + str(a))
 
             bindungenohneWasserstoff = 0
@@ -58,6 +100,7 @@ def AddWasserstoff2(isomere):
             for b in range(1,len(isomere)-a,1):
                 if isomere[a+b].isdigit():
                     bindungenohneWasserstoff += 1
+
 
 
                 if not isomere[a+b].isdigit():
@@ -95,6 +138,7 @@ def AddWasserstoff2(isomere):
             überprüfungsvariabel += anzahlBindungen - bindungenohneWasserstoff
     if überprüfungsvariabel != 6:
         print(isomere)
+        print("FEHLER")
 
 
 
