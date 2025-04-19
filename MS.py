@@ -9,10 +9,7 @@ def IsDoucorrekt(C,O,H):
     return True
 
 
-def Summenformelerkennung(ms_spektrum,minC):
-
-
-
+def Summenformelerkennung(molaremasse,minC):
     molaremasse = 122
 
     #Zeile 1 Anzahl C, danach Anzahl O und zum Schluss Anzahl H
@@ -26,7 +23,7 @@ def Summenformelerkennung(ms_spektrum,minC):
     while(True):
 
         if IsDoucorrekt(C,O,H):
-            möglicheSF.append([[C],[O],[H]])
+            möglicheSF.append([C,O,H])
 
         if O > 0:
             O -= 1
@@ -42,3 +39,44 @@ def Summenformelerkennung(ms_spektrum,minC):
 
 
     return möglicheSF
+
+
+def Summenformelranking(molaremasse, msspektrum, möglichesummenformeln):
+    oneaddpeak = 0
+    twoaddpeak = 0
+    for a in range(len(msspektrum)-1,-1,-1):
+        if msspektrum[a][0] == molaremasse:
+            peak = msspektrum[a][1]
+            if a < len(msspektrum) - 1:
+                oneaddpeak = msspektrum[a+1][1]
+                if a < len(msspektrum) - 2:
+                    twoaddpeak = msspektrum[a + 2][1]
+
+            break
+
+    accuracy0 = 4
+    Summenformel = [0,0,0]
+
+
+
+    for a in range(len(möglichesummenformeln)):
+        prozentualoneaddpeak = oneaddpeak*100/peak
+        prozentualtwoaddpeak = twoaddpeak * 100 / peak
+        C13wahrscheinlichkeit = möglichesummenformeln[a][0]*1.1
+        H2wahrscheinlichkeit = möglichesummenformeln[a][2]*0.016
+        O17wahrscheinlichkeit = möglichesummenformeln[a][1]*0.04
+        O18wahrscheinlichkeit = möglichesummenformeln[a][1]*0.2
+        accuracy = abs(1- (C13wahrscheinlichkeit+H2wahrscheinlichkeit+O17wahrscheinlichkeit)/prozentualoneaddpeak)
+
+        if prozentualtwoaddpeak != 0:
+            accuracy += abs(1-((C13wahrscheinlichkeit*(C13wahrscheinlichkeit-1.1) + H2wahrscheinlichkeit*(H2wahrscheinlichkeit-0.016) + O18wahrscheinlichkeit + O17wahrscheinlichkeit*(O17wahrscheinlichkeit-0.04)+C13wahrscheinlichkeit*H2wahrscheinlichkeit+C13wahrscheinlichkeit*O17wahrscheinlichkeit + H2wahrscheinlichkeit*O17wahrscheinlichkeit)/prozentualtwoaddpeak))
+
+        if accuracy0 > accuracy:
+            accuracy0 = accuracy
+            Summenformel[0] = möglichesummenformeln[a][0]
+            Summenformel[1] = möglichesummenformeln[a][1]
+            Summenformel[2] = möglichesummenformeln[a][2]
+
+    return Summenformel
+
+
