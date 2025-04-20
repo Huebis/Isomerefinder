@@ -142,5 +142,14 @@ def AddWasserstoff2(isomere):
 
 
 
+def AddWasserstoffextern(smimolekul):
+    molekul = Chem.MolFromSmiles(smimolekul)
+    molekulmitH = Chem.AddHs(molekul)
+
+    return Chem.MolToSmiles(molekulmitH)
+
+
+
+
 
 
