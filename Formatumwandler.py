@@ -150,6 +150,69 @@ def AddWasserstoffextern(smimolekul):
 
 
 
+def IsomereIDzuordung(atom, wasserstoffzahl):
+    if atom == "C" or atom == "c":
+        return wasserstoffzahl
+    if atom == "O" or atom == "o":
+        return wasserstoffzahl + 4
+
+
+def countWasserstoff(isomerearray,cdeptID,anzahlalkohole):
+
+    neuisomerearray = []
+    for isomere in isomerearray:
+        isomeremitH = AddWasserstoffextern(isomere)
+
+        isomereID = [0,0,0,0,0,0]
+
+
+        start = 0
+        adWasserstoff = 0
+        if isomeremitH[1] == "H":
+            start = 3
+            adWasserstoff += 1
+
+        pointertoAtom = -1
+        for a in range(start,len(isomeremitH)):
+            if isomeremitH[a] == "O"or isomeremitH[a] == "o" or isomeremitH[a] == "C" or isomeremitH[a] == "c":
+
+                if pointertoAtom != -1:
+                    #print(isomeremitH[pointertoAtom])
+                    #print(adWasserstoff)
+                    isomereID[IsomereIDzuordung(isomeremitH[pointertoAtom], adWasserstoff)] += 1
+                    adWasserstoff = 0
+                    pointertoAtom = a
+
+                else:
+                    pointertoAtom = a
+
+            elif isomeremitH[a] == "H":
+                adWasserstoff += 1
+
+        #print(isomeremitH[pointertoAtom])
+        #print(adWasserstoff)
+        isomereID[IsomereIDzuordung(isomeremitH[pointertoAtom], adWasserstoff)] += 1
+
+        IDtest = True
+
+        if isomereID[5] != anzahlalkohole:
+            IDtest= False
+        if isomereID[0] != cdeptID[0]:
+            IDtest = False
+        if isomereID[2] != cdeptID[1]:
+            IDtest = False
+        if isomereID[1] + isomereID[3] != cdeptID[2]:
+            Idtest = False
+
+        if IDtest:
+            neuisomerearray.append(isomere)
+
+    return neuisomerearray
+
+
+
+
+
 
 
 

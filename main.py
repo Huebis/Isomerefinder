@@ -51,4 +51,8 @@ msdata = data = [
 möglicheSummenformeln = MS.Summenformelerkennung(msmainpeak,0)
 print(MS.Summenformelranking(msmainpeak,msdata,möglicheSummenformeln))
 
+
+
+print(len(Formatumwandler.countWasserstoff(isomerearray,[2,0,5],1)))
+
 #print(isomerearray)
