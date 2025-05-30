@@ -11,7 +11,7 @@ isomerearray = Formatumwandler.Readfile()
 
 
 msmainpeak = 122
-msdata = data = [
+msdata = [
     [18.0, 2.8],
     [26.0, 1.2],
     [27.0, 3.6],
@@ -47,7 +47,8 @@ msdata = data = [
     [122.0, 80.9],
     [123.0, 6.3],
 ]
-
+cNRMdaten = [172.77, 133.83, 130.28, 129.44, 128.49]
+cdeptdaten = [[133.83, 1],[130.28, 1],[129.44, 1],[128.49, 1]]
 möglicheSummenformeln = MS.Summenformelerkennung(msmainpeak,0)
 print(MS.Summenformelranking(msmainpeak,msdata,möglicheSummenformeln))
 
