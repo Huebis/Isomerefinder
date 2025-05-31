@@ -38,7 +38,9 @@ def Summenformelerkennung():
             H -= O*16
 
 
-    return möglicheSF
+    Summenformelranking(möglicheSF)
+
+    return
 
 
 def Summenformelranking(möglichesummenformeln):

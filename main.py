@@ -1,6 +1,8 @@
+import Cdept
 import Formatumwandler
 import MS
 import Klassen
+import NMR
 
 isomerearray = Formatumwandler.Readfile()
 
@@ -53,10 +55,14 @@ Klassen.Molekuelinfo.cdeptdaten = [[133.83, 1],[130.28, 1],[129.44, 1],[128.49, 
 
 
 if Klassen.Molekuelinfo.cNRMdaten != None or Klassen.Molekuelinfo.cdeptdaten != None:
-    print("Molekuelinfo.cNRMdaten")
+    Cdept.Cmindestanzahl()
+if Klassen.Molekuelinfo.nmrdaten != None and Klassen.Molekuelinfo.d20nmrdaten != None:
+    NMR.Spektralanalyse_verschwundeD2Opeaks()
 
-möglicheSummenformeln = MS.Summenformelerkennung()
-MS.Summenformelranking(möglicheSummenformeln)
+
+MS.Summenformelerkennung()
+#MS.Summenformelranking(möglicheSummenformeln)
+
 Klassen.Molekuelinfo.Printinfo()
 
 

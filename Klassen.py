@@ -4,8 +4,8 @@ class Molekuelinfo():
 
     # Anzahl C / Anzahl 0/ Anzahl H
     isomere = [0,0,0]
-    # Anzahl Alkohole / Anzahl Aldehyde / Anzahl Ketone / Anzahl Ester + Carbonsäuren
-    oxygeniumsubstitution = [0,0,0,0]
+    # Anzahl Alkohole / Anzahl Aldehyde / Anzahl Ketone / Anzahl Carbonsäuren / Anzahl Ester + Carbonsäuren / Anzahl Carbonsäuren + Alkohole
+    oxygeniumsubstitution = [0,0,0,0,0,0]
     #Anzahl C / Anzahl CH / Anzahl CH2 / Anzahl CH3 / Anzahl an CH + CH3 welche noch nicht klar sind / weitere CHX gruppen, welche man aber noch nicht zugeordnet hat
     Carbonsubstitutionsgrad= [0,0,0,0,0,0]
 
@@ -13,6 +13,8 @@ class Molekuelinfo():
     msdata = None
     cNRMdaten = None
     cdeptdaten = None
+    nmrdaten = None
+    d20nmrdaten = None
 
     @classmethod
     def Replaceisomere(cls, list):

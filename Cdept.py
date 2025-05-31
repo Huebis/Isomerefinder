@@ -2,9 +2,9 @@ import Klassen
 
 def Cmindestanzahl():
     if Klassen.Molekuelinfo.cNRMdaten != None:
-        Klassen.Molekuelinfo.AddCarbonsubstitutionsgrad(5,Klassen.Molekuelinfo.cNRMdaten)
+        Klassen.Molekuelinfo.AddCarbonsubstitutionsgrad(5,len(Klassen.Molekuelinfo.cNRMdaten))
     else:
-        Klassen.Molekuelinfo.AddCarbonsubstitutionsgrad(5, Klassen.Molekuelinfo.cdeptdaten)
+        Klassen.Molekuelinfo.AddCarbonsubstitutionsgrad(5, len(Klassen.Molekuelinfo.cdeptdaten))
     return
 
 
