@@ -1,4 +1,4 @@
-
+import Klassen
 
 def IsDoucorrekt(C,O,H):
     dou = (2*C - H)
@@ -9,14 +9,14 @@ def IsDoucorrekt(C,O,H):
     return True
 
 
-def Summenformelerkennung(molaremasse,minC):
-    molaremasse = 122
+def Summenformelerkennung():
+    molaremasse = Klassen.Molekuelinfo.msmainpeak
 
     #Zeile 1 Anzahl C, danach Anzahl O und zum Schluss Anzahl H
     möglicheSF = []
 
-    C = minC
-    O = (molaremasse - minC*12) // 16
+    C = sum(Klassen.Molekuelinfo.Carbonsubstitutionsgrad)
+    O = (molaremasse - C*12) // 16
     H = molaremasse - 16*O
 
 
@@ -41,7 +41,9 @@ def Summenformelerkennung(molaremasse,minC):
     return möglicheSF
 
 
-def Summenformelranking(molaremasse, msspektrum, möglichesummenformeln):
+def Summenformelranking(möglichesummenformeln):
+    molaremasse = Klassen.Molekuelinfo.msmainpeak
+    msspektrum = Klassen.Molekuelinfo.msdata
     oneaddpeak = 0
     twoaddpeak = 0
     for a in range(len(msspektrum)-1,-1,-1):
@@ -77,6 +79,8 @@ def Summenformelranking(molaremasse, msspektrum, möglichesummenformeln):
             Summenformel[1] = möglichesummenformeln[a][1]
             Summenformel[2] = möglichesummenformeln[a][2]
 
+    Klassen.Molekuelinfo.Replaceisomere(Summenformel)
     return Summenformel
+
 
 

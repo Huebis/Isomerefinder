@@ -1,5 +1,6 @@
 import Formatumwandler
 import MS
+import Klassen
 
 isomerearray = Formatumwandler.Readfile()
 
@@ -10,8 +11,8 @@ isomerearray = Formatumwandler.Readfile()
     #Formatumwandler.AddWasserstoff2(isomere)
 
 
-msmainpeak = 122
-msdata = [
+Klassen.Molekuelinfo.msmainpeak = 122
+Klassen.Molekuelinfo.msdata = [
     [18.0, 2.8],
     [26.0, 1.2],
     [27.0, 3.6],
@@ -47,13 +48,19 @@ msdata = [
     [122.0, 80.9],
     [123.0, 6.3],
 ]
-cNRMdaten = [172.77, 133.83, 130.28, 129.44, 128.49]
-cdeptdaten = [[133.83, 1],[130.28, 1],[129.44, 1],[128.49, 1]]
-möglicheSummenformeln = MS.Summenformelerkennung(msmainpeak,0)
-print(MS.Summenformelranking(msmainpeak,msdata,möglicheSummenformeln))
+Klassen.Molekuelinfo.cNRMdaten = [172.77, 133.83, 130.28, 129.44, 128.49]
+Klassen.Molekuelinfo.cdeptdaten = [[133.83, 1],[130.28, 1],[129.44, 1],[128.49, 1]]
+
+
+if Klassen.Molekuelinfo.cNRMdaten != None or Klassen.Molekuelinfo.cdeptdaten != None:
+    print("Molekuelinfo.cNRMdaten")
+
+möglicheSummenformeln = MS.Summenformelerkennung()
+MS.Summenformelranking(möglicheSummenformeln)
+Klassen.Molekuelinfo.Printinfo()
 
 
 
-print(len(Formatumwandler.countWasserstoff(isomerearray,[2,0,5],1)))
+#print(len(Formatumwandler.countWasserstoff(isomerearray,[2,0,5],1)))
 
 #print(isomerearray)
