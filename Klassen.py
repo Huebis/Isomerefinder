@@ -15,6 +15,7 @@ class Molekuelinfo():
     cdeptdaten = None
     nmrdaten = None
     d20nmrdaten = None
+    CarbonID = None
 
     @classmethod
     def Replaceisomere(cls, list):
@@ -35,3 +36,14 @@ class Molekuelinfo():
         print("isomere:", cls.isomere)
         print("oxygenium:", cls.oxygeniumsubstitution)
         print("Carbonsubstitutionsgrad:", cls.Carbonsubstitutionsgrad)
+
+    def __init__(self):
+        # Ein mutables Objekt wie eine Liste wird in allen Instanzen geteilt, wenn es im Konstruktor nicht explizit initialisiert wird
+        self.CarbonID = [0] * 5
+
+    def test(self):
+        print("isomere:", self.isomere)
+        print("oxygenium:", self.oxygeniumsubstitution)
+        print("Carbonsubstitutionsgrad:", self.Carbonsubstitutionsgrad)
+        if self.CarbonID != None:
+            print("carbonID", self.CarbonID)

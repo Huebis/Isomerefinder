@@ -70,3 +70,19 @@ Klassen.Molekuelinfo.Printinfo()
 #print(len(Formatumwandler.countWasserstoff(isomerearray,[2,0,5],1)))
 
 #print(isomerearray)
+
+test = [Klassen.Molekuelinfo() for i in range(1, 21)]
+
+for a in range(20):
+    test[a].CarbonID[0] = a
+
+
+for a in range(20):
+    test[a].test()
+
+print(test)
+
+
+
+
+
