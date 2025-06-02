@@ -14,8 +14,9 @@ class Molekuelinfo():
     cNRMdaten = None
     cdeptdaten = None
     nmrdaten = None
+    cSymetrie = None
     d20nmrdaten = None
-    CarbonID = None
+    funktionelleGruppenkonfiguration = None
 
     @classmethod
     def Replaceisomere(cls, list):

@@ -41,10 +41,15 @@ def CdeptIDanalyse():
     if Klassen.Molekuelinfo.cNRMdaten != None:
         messdaten = Klassen.Molekuelinfo.cNRMdaten
 
+        if len(Klassen.Molekuelinfo.cNRMdaten) == Klassen.Molekuelinfo.isomere[0]:
+            Klassen.Molekuelinfo.cSymetrie = False
+        else:
+            Klassen.Molekuelinfo.cSymetrie = True
+
     elif Klassen.Molekuelinfo.cdeptdaten != None:
         messdaten = Klassen.Molekuelinfo.cdeptdaten
 
-    if messdaten != None
+    if messdaten != None:
         for messwert in messdaten:
 
             if plusminus(messwert, 175,5):
@@ -66,6 +71,14 @@ def CdeptIDanalyse():
                 #print("test")
 
     if Klassen.Molekuelinfo.cdeptdaten != None:
+        messdaten = Klassen.Molekuelinfo.cdeptdaten
+
+        for messwerte in messdaten:
+            if messwert > 0:
+                Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4] += 1
+            if messwert < 0:
+                Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2] += 1
+
         # Hier weiterarbeiten das nächste Mal alle CH1 CH3 zuordnen ( wie auch CH2) nachher dann Gleichungssystem lösen (sollte hoffentlich kein Problem sein. Aber mal schaue.
     return
 

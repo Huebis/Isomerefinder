@@ -63,6 +63,9 @@ if Klassen.Molekuelinfo.nmrdaten != None and Klassen.Molekuelinfo.d20nmrdaten !=
 MS.Summenformelerkennung()
 #MS.Summenformelranking(möglicheSummenformeln)
 
+Cdept.CdeptIDanalyse()
+
+
 Klassen.Molekuelinfo.Printinfo()
 
 
