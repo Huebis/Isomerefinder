@@ -66,8 +66,15 @@ MS.Summenformelerkennung()
 Cdept.CdeptIDanalyse()
 
 Klassen.Molekuelinfo.Printinfo()
-Math.FunktionelleGruppensubstitution()
+
+isomergruppen = Math.FunktionelleGruppensubstitution()
+
+for gruppe in isomergruppen:
+    gruppe.test()
+
 print("HAllo")
+
+isomergruppen[0].EntwicklungIsomerelist()
 
 
 #Klassen.Molekuelinfo.Printinfo()

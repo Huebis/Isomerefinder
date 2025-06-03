@@ -85,13 +85,10 @@ def FunktionelleGruppensubstitutionVERSUCH1GESCHEITERTEINFACHEREIDEE():
 
 
 def FunktionelleGruppensubstitution():
-    print("HLSLSSLS")
 
     C = Klassen.Molekuelinfo.isomere[0]
     O = Klassen.Molekuelinfo.isomere[2]
     H = Klassen.Molekuelinfo.isomere[1]
-
-
 
     möglichkeiten = []
 
@@ -138,11 +135,13 @@ def FunktionelleGruppensubstitution():
 
         gruppenkonfiguration[0] += 1
 
-
-
     print(möglichkeiten)
     print(len(möglichkeiten))
 
-    return
+    isomergruppen = [Klassen.Molekuelinfo() for i in range(len(möglichkeiten))]
+
+    for a in range(len(möglichkeiten)):
+        isomergruppen[a].gruppenkonfiguration = möglichkeiten[a]
+    return isomergruppen
 
 

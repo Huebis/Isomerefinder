@@ -1,4 +1,4 @@
-
+import subprocess
 
 class Molekuelinfo():
 
@@ -41,7 +41,64 @@ class Molekuelinfo():
     def __init__(self):
         # Ein mutables Objekt wie eine Liste wird in allen Instanzen geteilt, wenn es im Konstruktor nicht explizit initialisiert wird
         # self.CarbonID = [0] * 5
-        gruppenkonfiguration = []*8
+        self.gruppenkonfiguration = None
+
+    def EntwicklungIsomerelist(self):
+        result = subprocess.run('java -jar /home/eliahh/Workspace/Matura/test/MAYGEN/target/MAYGEN-1.8.jar -f "O(val=4)H4" -setElements -v -t -o /home/eliahh/Workspace/Matura/test/Isomergruppen', shell=True, capture_output=True, text=True)
+        print(result)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
 
     def test(self):
         print("isomere:", self.isomere)
