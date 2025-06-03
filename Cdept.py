@@ -1,4 +1,4 @@
-from os import MFD_ALLOW_SEALING
+# from os import MFD_ALLOW_SEALING
 
 import Klassen
 

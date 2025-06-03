@@ -65,7 +65,9 @@ MS.Summenformelerkennung()
 
 Cdept.CdeptIDanalyse()
 
+Klassen.Molekuelinfo.Printinfo()
 Math.FunktionelleGruppensubstitution()
+print("HAllo")
 
 
 #Klassen.Molekuelinfo.Printinfo()
