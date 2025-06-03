@@ -3,7 +3,7 @@ import Formatumwandler
 import MS
 import Klassen
 import NMR
-
+import Math
 isomerearray = Formatumwandler.Readfile()
 
 #Formatumwandler.AddWasserstoff2("test")
@@ -65,8 +65,10 @@ MS.Summenformelerkennung()
 
 Cdept.CdeptIDanalyse()
 
+Math.FunktionelleGruppensubstitution()
 
-Klassen.Molekuelinfo.Printinfo()
+
+#Klassen.Molekuelinfo.Printinfo()
 
 
 
@@ -74,16 +76,7 @@ Klassen.Molekuelinfo.Printinfo()
 
 #print(isomerearray)
 
-test = [Klassen.Molekuelinfo() for i in range(1, 21)]
 
-for a in range(20):
-    test[a].CarbonID[0] = a
-
-
-for a in range(20):
-    test[a].test()
-
-print(test)
 
 
 
