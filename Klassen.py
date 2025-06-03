@@ -40,11 +40,11 @@ class Molekuelinfo():
 
     def __init__(self):
         # Ein mutables Objekt wie eine Liste wird in allen Instanzen geteilt, wenn es im Konstruktor nicht explizit initialisiert wird
-        self.CarbonID = [0] * 5
+        # self.CarbonID = [0] * 5
+        gruppenkonfiguration = []*8
 
     def test(self):
         print("isomere:", self.isomere)
         print("oxygenium:", self.oxygeniumsubstitution)
         print("Carbonsubstitutionsgrad:", self.Carbonsubstitutionsgrad)
-        if self.CarbonID != None:
-            print("carbonID", self.CarbonID)
+        print("gruppenkonfiguration", self.gruppenkonfiguration)
