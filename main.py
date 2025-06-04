@@ -71,10 +71,11 @@ isomergruppen = Math.FunktionelleGruppensubstitution()
 
 for gruppe in isomergruppen:
     gruppe.test()
+    gruppe.EntwicklungIsomerelist()
 
 print("HAllo")
 
-isomergruppen[0].EntwicklungIsomerelist()
+#isomergruppen[0].EntwicklungIsomerelist()
 
 
 #Klassen.Molekuelinfo.Printinfo()

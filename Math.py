@@ -93,7 +93,7 @@ def FunktionelleGruppensubstitution():
     möglichkeiten = []
 
     # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / Carbonsäure / Ether
-    gruppenkonfiguration = [0,0,0,0,0,0,0,0,0,0]
+    gruppenkonfiguration = [0]*9
     obergrenze = [C,C,round(H/2), round(H/3)+1, O, round(O/2),round(O/2),round(O/2),O]
     untergrenze = [0,0,0,0,0,0,0,0,0]
 
@@ -111,7 +111,7 @@ def FunktionelleGruppensubstitution():
 
         if sum(gruppenkonfiguration)- gruppenkonfiguration[4] - gruppenkonfiguration[8] == C:
             if gruppenkonfiguration[4] + gruppenkonfiguration[5] + gruppenkonfiguration[6] + gruppenkonfiguration[7]*2 + gruppenkonfiguration[8] == O:
-                if gruppenkonfiguration[1] + gruppenkonfiguration[2]*2 + 3*gruppenkonfiguration[3] + gruppenkonfiguration[4] + 2*gruppenkonfiguration[7] == H:
+                if gruppenkonfiguration[1] + gruppenkonfiguration[2]*2 + 3*gruppenkonfiguration[3] + gruppenkonfiguration[4] + gruppenkonfiguration[5] + 2*gruppenkonfiguration[7] == H:
 
                     if Klassen.Molekuelinfo.cSymetrie == False:
                         #überprüfung der Cdeptdaten (falls vorhanden)

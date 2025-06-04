@@ -44,7 +44,31 @@ class Molekuelinfo():
         self.gruppenkonfiguration = None
 
     def EntwicklungIsomerelist(self):
-        result = subprocess.run('java -jar /home/eliahh/Workspace/Matura/test/MAYGEN/target/MAYGEN-1.8.jar -f "O(val=4)H4" -setElements -v -t -o /home/eliahh/Workspace/Matura/test/Isomergruppen', shell=True, capture_output=True, text=True)
+
+        # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / Carbonsäure / Ether (gruppenkonfiguration)
+
+        summenformelstring = ""
+        if self.gruppenkonfiguration[0] != 0:
+            summenformelstring += "C" + str(self.gruppenkonfiguration[0])
+        if self.gruppenkonfiguration[1] != 0:
+            summenformelstring += "N" + str(self.gruppenkonfiguration[1])
+        if self.gruppenkonfiguration[2] != 0:
+            summenformelstring += "O" + str(self.gruppenkonfiguration[2])
+        if self.gruppenkonfiguration[3] != 0:
+            summenformelstring += "S(val=1)" + str(self.gruppenkonfiguration[3])
+        if self.gruppenkonfiguration[4] != 0:
+            summenformelstring += "P(val=1)" + str(self.gruppenkonfiguration[4])
+        if self.gruppenkonfiguration[5] != 0:
+            summenformelstring += "F" + str(self.gruppenkonfiguration[5])
+        if self.gruppenkonfiguration[6] != 0:
+            summenformelstring += "I(val=2)" + str(self.gruppenkonfiguration[6])
+        if self.gruppenkonfiguration[7] != 0:
+            summenformelstring += "Cl" + str(self.gruppenkonfiguration[7])
+        if self.gruppenkonfiguration[8] != 0:
+            summenformelstring += "Br(val=2)" + str(self.gruppenkonfiguration[8])
+
+        result = subprocess.run('java -jar /home/eliahh/Workspace/Matura/test/MAYGEN/target/MAYGEN-1.8.jar -f "'+summenformelstring +'" -setElements -v -t -smi -o /home/eliahh/Workspace/Matura/test/Isomergruppen', shell=True, capture_output=True, text=True)
+
         print(result)
         
         
