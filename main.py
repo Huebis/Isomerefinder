@@ -4,6 +4,7 @@ import MS
 import Klassen
 import NMR
 import Math
+import Testcase
 isomerearray = Formatumwandler.Readfile()
 
 #Formatumwandler.AddWasserstoff2("test")
@@ -54,13 +55,21 @@ Klassen.Molekuelinfo.cNRMdaten = [172.77, 133.83, 130.28, 129.44, 128.49]
 Klassen.Molekuelinfo.cdeptdaten = [[133.83, 1],[130.28, 1],[129.44, 1],[128.49, 1]]
 
 
+Testcase.Case1()
+
+
+
+
 if Klassen.Molekuelinfo.cNRMdaten != None or Klassen.Molekuelinfo.cdeptdaten != None:
     Cdept.Cmindestanzahl()
 if Klassen.Molekuelinfo.nmrdaten != None and Klassen.Molekuelinfo.d20nmrdaten != None:
     NMR.Spektralanalyse_verschwundeD2Opeaks()
 
 
-MS.Summenformelerkennung()
+#MS.Summenformelerkennung()
+#Klassen.Molekuelinfo.Printinfo()
+Klassen.Molekuelinfo.isomere = [10,14,4]
+Klassen.Molekuelinfo.Printinfo()
 #MS.Summenformelranking(möglicheSummenformeln)
 
 Cdept.CdeptIDanalyse()
@@ -71,8 +80,9 @@ isomergruppen = Math.FunktionelleGruppensubstitution()
 
 for gruppe in isomergruppen:
     gruppe.test()
-    gruppe.EntwicklungIsomerelist()
+    #gruppe.EntwicklungIsomerelist()
 
+print(len(isomergruppen))
 print("HAllo")
 
 #isomergruppen[0].EntwicklungIsomerelist()

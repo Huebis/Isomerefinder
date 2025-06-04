@@ -30,10 +30,10 @@ def plusminus(messwert, wert , abweichung,):
 # Bei weitem noch nicht fertig. Ich möchte, dass das Programm erst nach der MS analyse laufen kann, damit ich mithilfe der genauen Anzahl an C atomen nie CO und C1 und C2 besser bestimmen kann und hoffentlich auch aus dem Gleichungssystem (mit natürlichen Lösugen) alle Möglichkeiten entnehmen kann.
 def CdeptIDanalyse():
 
-    for a in Klassen.Molekuelinfo.Carbonsubstitutionsgrad:
+    for a in range(len(Klassen.Molekuelinfo.Carbonsubstitutionsgrad)):
         Klassen.Molekuelinfo.Carbonsubstitutionsgrad[a] = 0
 
-    for a in Klassen.Molekuelinfo.oxygeniumsubstitution:
+    for a in range(len(Klassen.Molekuelinfo.oxygeniumsubstitution)):
         Klassen.Molekuelinfo.oxygeniumsubstitution[a] = 0
 
 
@@ -43,8 +43,10 @@ def CdeptIDanalyse():
 
         if len(Klassen.Molekuelinfo.cNRMdaten) == Klassen.Molekuelinfo.isomere[0]:
             Klassen.Molekuelinfo.cSymetrie = False
+            Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0] = len(Klassen.Molekuelinfo.cNRMdaten) - len(Klassen.Molekuelinfo.cdeptdaten)
         else:
             Klassen.Molekuelinfo.cSymetrie = True
+            Klassen.Molekuelinfo.anzahlcSymetrieelemente = Klassen.Molekuelinfo.isomere[0] - len(Klassen.Molekuelinfo.cNRMdaten)
 
     elif Klassen.Molekuelinfo.cdeptdaten != None:
         messdaten = Klassen.Molekuelinfo.cdeptdaten

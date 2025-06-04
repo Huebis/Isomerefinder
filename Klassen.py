@@ -15,6 +15,7 @@ class Molekuelinfo():
     cdeptdaten = None
     nmrdaten = None
     cSymetrie = None
+    anzahlcSymetrieelemente = None
     d20nmrdaten = None
     funktionelleGruppenkonfiguration = None
 
@@ -37,6 +38,7 @@ class Molekuelinfo():
         print("isomere:", cls.isomere)
         print("oxygenium:", cls.oxygeniumsubstitution)
         print("Carbonsubstitutionsgrad:", cls.Carbonsubstitutionsgrad)
+        print("Csymetry:", cls.cSymetrie)
 
     def __init__(self):
         # Ein mutables Objekt wie eine Liste wird in allen Instanzen geteilt, wenn es im Konstruktor nicht explizit initialisiert wird
@@ -72,54 +74,7 @@ class Molekuelinfo():
         print(result)
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         
         
 

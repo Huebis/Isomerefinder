@@ -84,6 +84,25 @@ def FunktionelleGruppensubstitutionVERSUCH1GESCHEITERTEINFACHEREIDEE():
     Carbonsubstitutionsgrad= [0,0,0,0,0,0]
 
 
+def SatzderCsymetrie(gruppenkonfiguration):
+    sum = 0 #die Summe aller potenzieller Symmetrischen Funktioneller Gruppen
+    for a in gruppenkonfiguration:
+            if a >= 2:
+                sum += a-1
+
+    if gruppenkonfiguration[4] >= 2:
+        sum -= a-1
+    if gruppenkonfiguration[8] >= 2:
+        sum -= a-1
+
+
+    if sum >= Klassen.Molekuelinfo.anzahlcSymetrieelemente:
+        return True
+    else:
+        return False
+
+
+
 def FunktionelleGruppensubstitution():
 
     C = Klassen.Molekuelinfo.isomere[0]
@@ -118,11 +137,19 @@ def FunktionelleGruppensubstitution():
                         if Klassen.Molekuelinfo.cdeptdaten != None:
                             if gruppenkonfiguration[2] == Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
                                 if gruppenkonfiguration[1] + gruppenkonfiguration[3] == Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
-                                    möglichkeiten.append(gruppenkonfiguration.copy())
+                                    if gruppenkonfiguration[0] == Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0]:
+                                        möglichkeiten.append(gruppenkonfiguration.copy())
                                     #if gruppenkonfiguration[4]+ gruppenkonfiguration[7] >= Klassen.Molekuelinfo.oxygeniumsubstitution[5]:
                                         #möglichkeiten.append(gruppenkonfiguration.copy())
-                    else:
+                    elif Klassen.Molekuelinfo.cSymetrie == True:
 
+                        if Klassen.Molekuelinfo.cdeptdaten != None:
+                            if gruppenkonfiguration[2] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
+                                if gruppenkonfiguration[1] + gruppenkonfiguration[3] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
+                                    if SatzderCsymetrie(gruppenkonfiguration):
+                                        möglichkeiten.append(gruppenkonfiguration.copy())
+
+                    else:
                         if Klassen.Molekuelinfo.cdeptdaten != None:
 
                             if gruppenkonfiguration[2] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
