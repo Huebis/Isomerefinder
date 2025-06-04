@@ -147,7 +147,11 @@ def FunktionelleGruppensubstitution():
                             if gruppenkonfiguration[2] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
                                 if gruppenkonfiguration[1] + gruppenkonfiguration[3] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
                                     if SatzderCsymetrie(gruppenkonfiguration):
-                                        möglichkeiten.append(gruppenkonfiguration.copy())
+                                        if gruppenkonfiguration[5] + gruppenkonfiguration[6] >= Klassen.Molekuelinfo.oxygeniumsubstitution[6]:
+                                            if Klassen.Molekuelinfo.oxygeniumsubstitution[6] == 0 and gruppenkonfiguration[5] + gruppenkonfiguration[6] == 0:
+                                                möglichkeiten.append(gruppenkonfiguration.copy())
+                                            elif Klassen.Molekuelinfo.oxygeniumsubstitution[6] > 0:
+                                                möglichkeiten.append(gruppenkonfiguration.copy())
 
                     else:
                         if Klassen.Molekuelinfo.cdeptdaten != None:

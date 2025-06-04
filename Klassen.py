@@ -4,8 +4,8 @@ class Molekuelinfo():
 
     # Anzahl C / Anzahl 0/ Anzahl H
     isomere = [0,0,0]
-    # Anzahl Alkohole / Anzahl Aldehyde / Anzahl Ketone / Anzahl Carbonsäuren / Anzahl Ester + Carbonsäuren / Anzahl Carbonsäuren + Alkohole
-    oxygeniumsubstitution = [0,0,0,0,0,0]
+    #0 Anzahl Alkohole /1 Anzahl Aldehyde /2 Anzahl Ketone /3 Anzahl Carbonsäuren /4 Anzahl Ester + Carbonsäuren /5 Anzahl Carbonsäuren + Alkohole /6 Anzahl Aldehyde + Ketone
+    oxygeniumsubstitution = [0]*7
     #Anzahl C / Anzahl CH / Anzahl CH2 / Anzahl CH3 / Anzahl an CH + CH3 welche noch nicht klar sind / weitere CHX gruppen, welche man aber noch nicht zugeordnet hat
     Carbonsubstitutionsgrad= [0,0,0,0,0,0]
 

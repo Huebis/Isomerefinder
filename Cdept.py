@@ -69,6 +69,10 @@ def CdeptIDanalyse():
                 Klassen.Molekuelinfo.oxygeniumsubstitution[2] += 1
                 Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0] += 1
 
+            if messwert > 195:
+                Klassen.Molekuelinfo.oxygeniumsubstitution[6] += 1
+
+
             #if plusminus(messwert, 128,15):
                 #print("test")
 
@@ -88,6 +92,37 @@ def CdeptIDanalyse():
     oxygeniumsubstitution = [0,0,0,0,0,0]
     #Anzahl C / Anzahl CH / Anzahl CH2 / Anzahl CH3 / Anzahl an CH + CH3 welche noch nicht klar sind / Anzahl Benzol weitere CHX gruppen, welche man aber noch nicht zugeordnet hat
     Carbonsubstitutionsgrad= [0,0,0,0,0,0]
+
+
+def ElementeimBereich(cNMR,anfang,ende):
+    sum = 0
+
+    for a in cNMR:
+        if a >= anfang:
+            if a <= ende:
+                sum += 1
+    return sum
+
+
+def CNMRgruppenkonfigurationsplausibilitätskontrolle_beikeinerCSymetrie(gruppenkonfiguration):
+
+    print("Ich überprüfe die CNMR gruppenkonfigurationsplausibiltät (bei keiner CSymetrie")
+    tempCNMR = Klassen.Molekuelinfo.cNRMdaten
+
+    gruppenkonfiguration.pop(4) #Alkohole sind nicht relevant
+    gruppenkonfiguration.pop(8) # Ether sind nicht relevant
+
+    bereiche = []
+
+    regelverstoss = False
+
+
+    if regelverstoss:
+        return False
+    else:
+        return True
+
+# Noch nicht fertig
 
 
 
