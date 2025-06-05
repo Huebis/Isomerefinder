@@ -1,5 +1,6 @@
 import Klassen
 import Cdept
+import NMR
 def FunktionelleGruppensubstitutionVERSUCH1GESCHEITERTEINFACHEREIDEE():
     if Klassen.Molekuelinfo.cSymetrie == False:
 
@@ -106,10 +107,17 @@ def SatzderCsymetrie(gruppenkonfiguration):
 def Plausibilitaetskontrolle(C,O,H,gruppenkonfiguration):
     if sum(gruppenkonfiguration) - gruppenkonfiguration[4] - gruppenkonfiguration[8] != C:
         return False
-    if gruppenkonfiguration[4] + gruppenkonfiguration[5] + gruppenkonfiguration[6] + gruppenkonfiguration[7] * 2 +gruppenkonfiguration[8] != O:
+    if gruppenkonfiguration[4] + gruppenkonfiguration[5] + gruppenkonfiguration[6] + gruppenkonfiguration[7] * 2 +gruppenkonfiguration[8] +2*gruppenkonfiguration[9] != O:
         return False
     if gruppenkonfiguration[1] + gruppenkonfiguration[2] * 2 + 3 * gruppenkonfiguration[3] + gruppenkonfiguration[4] +gruppenkonfiguration[5] + 2 * gruppenkonfiguration[7] != H:
         return False
+
+    # Überprüfung ob die Mindestanzahl an OH bzw. Carboxylgruppe erfüllt ist
+
+    if gruppenkonfiguration[4] + gruppenkonfiguration[7] < Klassen.Molekuelinfo.oxygeniumsubstitution[5]:
+        return False
+
+
 
 
 
@@ -131,12 +139,9 @@ def Plausibilitaetskontrolle(C,O,H,gruppenkonfiguration):
         if Klassen.Molekuelinfo.cNRMdaten != None:
             if not SatzderCsymetrie(gruppenkonfiguration):
                 return False
-            if gruppenkonfiguration[5] + gruppenkonfiguration[6] < Klassen.Molekuelinfo.oxygeniumsubstitution[6]:
-                return False
-            if Klassen.Molekuelinfo.oxygeniumsubstitution[6] == 0 and gruppenkonfiguration[5] + gruppenkonfiguration[6] != 0:
-                return False
-            if not Cdept.CNMRgruppenkonfigurationsplausibilitätskontrolle_beiCSymetrie(gruppenkonfiguration):
-                return False
+
+            #if not Cdept.CNMRgruppenkonfigurationsplausibilitätskontrolle_beiCSymetrie(gruppenkonfiguration):
+                #return False
 
     else:
         if Klassen.Molekuelinfo.cdeptdaten != None:
@@ -162,10 +167,10 @@ def FunktionelleGruppensubstitution():
 
     möglichkeiten = []
 
-    # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / Carbonsäure / Ether
-    gruppenkonfiguration = [0]*9
-    obergrenze = [C,C,round(H/2), round(H/3)+1, O, round(O/2),round(O/2),round(O/2),O]
-    untergrenze = [0,0,0,0,0,0,0,0,0] # Muss modifiziert werden
+    # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / 7 = Carbonsäure / 8 = Ether / 9 = Ester
+    gruppenkonfiguration = [0]*10
+    obergrenze = [C,C,round(H/2), round(H/3)+1, NMR.MaximalanzahlOH(), Cdept.maximalAldehyde(),Cdept.maximalKetone(),NMR.MaximalanzahlCOOH(),O,round(O/2)]
+    untergrenze = [0,0,0,0,0,Cdept.mindestanzahlAldehyde(),Cdept.mindestanzahlKetone(),0,0,0] # Muss modifiziert werden
 
 
 

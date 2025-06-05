@@ -58,7 +58,7 @@ Klassen.Molekuelinfo.cdeptdaten = [[133.83, 1],[130.28, 1],[129.44, 1],[128.49, 
 Testcase.Case1()
 
 
-
+# Programm startet
 
 if Klassen.Molekuelinfo.cNRMdaten != None or Klassen.Molekuelinfo.cdeptdaten != None:
     Cdept.Cmindestanzahl()
@@ -67,10 +67,13 @@ if Klassen.Molekuelinfo.nmrdaten != None and Klassen.Molekuelinfo.d20nmrdaten !=
 
 
 #MS.Summenformelerkennung()
-#Klassen.Molekuelinfo.Printinfo()
-Klassen.Molekuelinfo.isomere = [10,14,4]
+
+
+Klassen.Molekuelinfo.isomere = [10,14,4] # Eingriff da es noch nicht wirklich funktioniert
 Klassen.Molekuelinfo.Printinfo()
-#MS.Summenformelranking(möglicheSummenformeln)
+
+
+
 
 Cdept.CdeptIDanalyse()
 

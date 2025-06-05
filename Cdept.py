@@ -33,8 +33,6 @@ def CdeptIDanalyse():
     for a in range(len(Klassen.Molekuelinfo.Carbonsubstitutionsgrad)):
         Klassen.Molekuelinfo.Carbonsubstitutionsgrad[a] = 0
 
-    for a in range(len(Klassen.Molekuelinfo.oxygeniumsubstitution)):
-        Klassen.Molekuelinfo.oxygeniumsubstitution[a] = 0
 
 
     messdaten = None
@@ -48,41 +46,15 @@ def CdeptIDanalyse():
             Klassen.Molekuelinfo.cSymetrie = True
             Klassen.Molekuelinfo.anzahlcSymetrieelemente = Klassen.Molekuelinfo.isomere[0] - len(Klassen.Molekuelinfo.cNRMdaten)
 
-    elif Klassen.Molekuelinfo.cdeptdaten != None:
-        messdaten = Klassen.Molekuelinfo.cdeptdaten
 
-    if messdaten != None:
-        for messwert in messdaten:
-
-            if plusminus(messwert, 175,5):
-                Klassen.Molekuelinfo.oxygeniumsubstitution[3] += 1
-                # Zuerst muss ausgeschlossen werden, dass die Carbonsäure eigenlich ein COH=O-H ist.
-                if Klassen.Molekuelinfo.isomere[0] != 1 and Klassen.Molekuelinfo.isomere[1] != 2 and Klassen.Molekuelinfo.isomere[2] != 2:
-                    Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0] += 1
-
-            if plusminus(messwert, 200,5):
-                Klassen.Molekuelinfo.oxygeniumsubstitution[1] += 1
-                if Klassen.Molekuelinfo.isomere[0] != 1 and Klassen.Molekuelinfo.isomere[1] != 1 and Klassen.Molekuelinfo.isomere[2] != 2: # gleiches hier, nur beim Aldehyd
-                    Klassen.Molekuelinfo.Carbonsubstitutionsgrad[1] += 1
-
-            if plusminus(messwert, 210,5):
-                Klassen.Molekuelinfo.oxygeniumsubstitution[2] += 1
-                Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0] += 1
-
-            if messwert > 195:
-                Klassen.Molekuelinfo.oxygeniumsubstitution[6] += 1
-
-
-            #if plusminus(messwert, 128,15):
-                #print("test")
 
     if Klassen.Molekuelinfo.cdeptdaten != None:
         messdaten = Klassen.Molekuelinfo.cdeptdaten
 
-        for messwerte in messdaten:
-            if messwert > 0:
+        for messwert in messdaten:
+            if messwert[1] > 0:
                 Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4] += 1
-            if messwert < 0:
+            if messwert[1] < 0:
                 Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2] += 1
 
         # Hier weiterarbeiten das nächste Mal alle CH1 CH3 zuordnen ( wie auch CH2) nachher dann Gleichungssystem lösen (sollte hoffentlich kein Problem sein. Aber mal schaue.
@@ -93,6 +65,89 @@ def CdeptIDanalyse():
     #Anzahl C / Anzahl CH / Anzahl CH2 / Anzahl CH3 / Anzahl an CH + CH3 welche noch nicht klar sind / Anzahl Benzol weitere CHX gruppen, welche man aber noch nicht zugeordnet hat
     Carbonsubstitutionsgrad= [0,0,0,0,0,0]
 
+def mindestanzahlAldehyde():
+    if Klassen.Molekuelinfo.cdeptdaten == None:
+        return 0
+    anzahlAldehyde = 0
+    for a in Klassen.Molekuelinfo.cdeptdaten:
+        if a[0] >= 190:
+            if a[0] <= 250:
+                anzahlAldehyde += 1
+
+    if Klassen.Molekuelinfo.cSymetrie == False :
+        return anzahlAldehyde
+    else:
+        if anzahlAldehyde >= 1:
+            return 1
+        else:
+            return 0
+
+
+
+def maximalAldehyde():
+    if Klassen.Molekuelinfo.cdeptdaten == None:
+        return round(Klassen.Molekuelinfo.isomere[2]/2)
+
+    anzahlAldehyde = 0
+    for a in Klassen.Molekuelinfo.cdeptdaten:
+        if a[0] >= 190:
+            if a[0] <= 250:
+                anzahlAldehyde += 1
+
+    if Klassen.Molekuelinfo.cSymetrie == False:
+        return anzahlAldehyde
+    else:
+        if anzahlAldehyde == 0:
+            return 0
+        else:
+            return round(Klassen.Molekuelinfo.isomere[2]/2)
+
+
+def mindestanzahlKetone():
+    if Klassen.Molekuelinfo.cdeptdaten == None:
+        return 0
+    anzahlKetone = 0
+    tempnmr = Klassen.Molekuelinfo.cNRMdaten.copy()
+
+    for a in Klassen.Molekuelinfo.cdeptdaten:
+        tempnmr.remove(a[0])
+
+
+    for a in tempnmr:
+        if a >= 190:
+            if a <= 250:
+                anzahlKetone += 1
+
+    if Klassen.Molekuelinfo.cSymetrie == False:
+        return anzahlKetone
+    else:
+        if anzahlKetone >= 1:
+            return 1
+        else:
+            return 0
+
+def maximalKetone():
+    if Klassen.Molekuelinfo.cdeptdaten == None:
+        return round(Klassen.Molekuelinfo.isomere[2] / 2)
+
+    tempnmr = Klassen.Molekuelinfo.cNRMdaten.copy()
+
+    for a in Klassen.Molekuelinfo.cdeptdaten:
+        tempnmr.remove(a[0])
+
+    anzahlKetone = 0
+    for a in tempnmr:
+        if a >= 190:
+            if a <= 250:
+                anzahlKetone += 1
+
+    if Klassen.Molekuelinfo.cSymetrie == False:
+        return anzahlKetone
+    else:
+        if anzahlKetone == 0:
+            return 0
+        else:
+            return round(Klassen.Molekuelinfo.isomere[2] / 2)
 
 def ElementeimBereich(cNMR,anfang,ende):
     sum = 0
@@ -108,75 +163,17 @@ def CNMRgruppenkonfigurationsplausibilitätskontrolle_beikeinerCSymetrie(gruppen
 
     print("Ich überprüfe die CNMR gruppenkonfigurationsplausibiltät (bei CSymetrie")
     tempCNMR = Klassen.Molekuelinfo.cNRMdaten
-    #gruppenkonfiguration.pop(4)  # Alkohole sind nicht relevant
-    #gruppenkonfiguration.pop(8)  # Ether sind nicht relevant
-
-    if Klassen.Molekuelinfo.cdeptdaten != None:
-        dept = Klassen.Molekuelinfo.cdeptdaten
-        for a in range(len(tempCNMR)):
-            for b in range(len(dept)):
-                if tempCNMR[a] == dept[b][0]:
-                    tempCNMR.pop(a)
-                    break
-
-        #Herausfiltern der Aldehyde
-        anzahlAldehyde =  ElementeimBereich(dept,190,250)
-        if anzahlAldehyde == 0 and gruppenkonfiguration[5] != 0:
-            return False
-        if anzahlAldehyde > gruppenkonfiguration[5]:
-            return False
-        for a in range(len(dept)):
-            if dept[a] > 190:
-                dept.pop(a)
 
 
 
-
-
-
-
-    bereiche = []
-
-    regelverstoss = False
-
-
-    if regelverstoss:
-        return False
-    else:
-        return True
 
 # Noch nicht fertig
 
 def CNMRgruppenkonfigurationsplausibilitätskontrolle_beiCSymetrie(gruppenkonfiguration):
     tempCNMR = Klassen.Molekuelinfo.cNRMdaten.copy()
 
-    #gruppenkonfiguration.pop(4) #Alkohole sind nicht relevant
-    #gruppenkonfiguration.pop(8) # Ether sind nicht relevant
+    gruppenkonfiguration.pop(4) #Alkohole sind nicht relevant
+    #gruppenkonfiguration.pop(8) # Ether sind nicht relevant (aber muss ich behalten für die
+    # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 /  4 = Aldheyd / 5 = Keton / 6 = Carbonsäure / Ether
 
-    if Klassen.Molekuelinfo.cdeptdaten != None:
-        dept = Klassen.Molekuelinfo.cdeptdaten.copy()
-        for b in dept:
-            tempCNMR.remove(b[0])
-
-
-        # Herausfiltern der Aldehyde
-        anzahlAldehyde = 0
-
-        for a in dept:
-            if a[0] >= 190:
-                if a[0] <= 250:
-                    anzahlAldehyde += 1
-
-        if anzahlAldehyde == 0 and gruppenkonfiguration[5] != 0:
-            return False
-        if anzahlAldehyde > gruppenkonfiguration[5]:
-            return False
-        for a in range(len(dept)):
-            if dept[a][0] > 190:
-                dept.pop(a)
-
-        Bereiche = []:
-
-
-        return True
 
