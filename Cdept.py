@@ -106,11 +106,34 @@ def ElementeimBereich(cNMR,anfang,ende):
 
 def CNMRgruppenkonfigurationsplausibilitätskontrolle_beikeinerCSymetrie(gruppenkonfiguration):
 
-    print("Ich überprüfe die CNMR gruppenkonfigurationsplausibiltät (bei keiner CSymetrie")
+    print("Ich überprüfe die CNMR gruppenkonfigurationsplausibiltät (bei CSymetrie")
     tempCNMR = Klassen.Molekuelinfo.cNRMdaten
+    #gruppenkonfiguration.pop(4)  # Alkohole sind nicht relevant
+    #gruppenkonfiguration.pop(8)  # Ether sind nicht relevant
 
-    gruppenkonfiguration.pop(4) #Alkohole sind nicht relevant
-    gruppenkonfiguration.pop(8) # Ether sind nicht relevant
+    if Klassen.Molekuelinfo.cdeptdaten != None:
+        dept = Klassen.Molekuelinfo.cdeptdaten
+        for a in range(len(tempCNMR)):
+            for b in range(len(dept)):
+                if tempCNMR[a] == dept[b][0]:
+                    tempCNMR.pop(a)
+                    break
+
+        #Herausfiltern der Aldehyde
+        anzahlAldehyde =  ElementeimBereich(dept,190,250)
+        if anzahlAldehyde == 0 and gruppenkonfiguration[5] != 0:
+            return False
+        if anzahlAldehyde > gruppenkonfiguration[5]:
+            return False
+        for a in range(len(dept)):
+            if dept[a] > 190:
+                dept.pop(a)
+
+
+
+
+
+
 
     bereiche = []
 
@@ -124,5 +147,36 @@ def CNMRgruppenkonfigurationsplausibilitätskontrolle_beikeinerCSymetrie(gruppen
 
 # Noch nicht fertig
 
+def CNMRgruppenkonfigurationsplausibilitätskontrolle_beiCSymetrie(gruppenkonfiguration):
+    tempCNMR = Klassen.Molekuelinfo.cNRMdaten.copy()
 
+    #gruppenkonfiguration.pop(4) #Alkohole sind nicht relevant
+    #gruppenkonfiguration.pop(8) # Ether sind nicht relevant
+
+    if Klassen.Molekuelinfo.cdeptdaten != None:
+        dept = Klassen.Molekuelinfo.cdeptdaten.copy()
+        for b in dept:
+            tempCNMR.remove(b[0])
+
+
+        # Herausfiltern der Aldehyde
+        anzahlAldehyde = 0
+
+        for a in dept:
+            if a[0] >= 190:
+                if a[0] <= 250:
+                    anzahlAldehyde += 1
+
+        if anzahlAldehyde == 0 and gruppenkonfiguration[5] != 0:
+            return False
+        if anzahlAldehyde > gruppenkonfiguration[5]:
+            return False
+        for a in range(len(dept)):
+            if dept[a][0] > 190:
+                dept.pop(a)
+
+        Bereiche = []:
+
+
+        return True
 

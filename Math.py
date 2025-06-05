@@ -1,5 +1,5 @@
 import Klassen
-
+import Cdept
 def FunktionelleGruppensubstitutionVERSUCH1GESCHEITERTEINFACHEREIDEE():
     if Klassen.Molekuelinfo.cSymetrie == False:
 
@@ -103,6 +103,57 @@ def SatzderCsymetrie(gruppenkonfiguration):
 
 
 
+def Plausibilitaetskontrolle(C,O,H,gruppenkonfiguration):
+    if sum(gruppenkonfiguration) - gruppenkonfiguration[4] - gruppenkonfiguration[8] != C:
+        return False
+    if gruppenkonfiguration[4] + gruppenkonfiguration[5] + gruppenkonfiguration[6] + gruppenkonfiguration[7] * 2 +gruppenkonfiguration[8] != O:
+        return False
+    if gruppenkonfiguration[1] + gruppenkonfiguration[2] * 2 + 3 * gruppenkonfiguration[3] + gruppenkonfiguration[4] +gruppenkonfiguration[5] + 2 * gruppenkonfiguration[7] != H:
+        return False
+
+
+
+    if Klassen.Molekuelinfo.cSymetrie == False:
+        if Klassen.Molekuelinfo.cdeptdaten != None:
+            if gruppenkonfiguration[2] != Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
+                return False
+            if gruppenkonfiguration[1] + gruppenkonfiguration[3] +gruppenkonfiguration[5] != Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
+                return False
+            if gruppenkonfiguration[0] != Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0]:
+                return False
+
+    elif Klassen.Molekuelinfo.cSymetrie == True:
+        if Klassen.Molekuelinfo.cdeptdaten != None:
+            if gruppenkonfiguration[2] < Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
+                return False
+            if gruppenkonfiguration[1] + gruppenkonfiguration[3] < Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
+                return False
+        if Klassen.Molekuelinfo.cNRMdaten != None:
+            if not SatzderCsymetrie(gruppenkonfiguration):
+                return False
+            if gruppenkonfiguration[5] + gruppenkonfiguration[6] < Klassen.Molekuelinfo.oxygeniumsubstitution[6]:
+                return False
+            if Klassen.Molekuelinfo.oxygeniumsubstitution[6] == 0 and gruppenkonfiguration[5] + gruppenkonfiguration[6] != 0:
+                return False
+            if not Cdept.CNMRgruppenkonfigurationsplausibilitätskontrolle_beiCSymetrie(gruppenkonfiguration):
+                return False
+
+    else:
+        if Klassen.Molekuelinfo.cdeptdaten != None:
+            if gruppenkonfiguration[2] < Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
+                return False
+            if gruppenkonfiguration[1] + gruppenkonfiguration[3] < Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
+                return False
+        if Klassen.Molekuelinfo.cNRMdaten != None:
+            if gruppenkonfiguration[5] + gruppenkonfiguration[6] < Klassen.Molekuelinfo.oxygeniumsubstitution[6]:
+                return False
+            if Klassen.Molekuelinfo.oxygeniumsubstitution[6] == 0 and gruppenkonfiguration[5] + gruppenkonfiguration[6] != 0:
+                return False
+
+
+    return True
+
+
 def FunktionelleGruppensubstitution():
 
     C = Klassen.Molekuelinfo.isomere[0]
@@ -114,7 +165,9 @@ def FunktionelleGruppensubstitution():
     # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / Carbonsäure / Ether
     gruppenkonfiguration = [0]*9
     obergrenze = [C,C,round(H/2), round(H/3)+1, O, round(O/2),round(O/2),round(O/2),O]
-    untergrenze = [0,0,0,0,0,0,0,0,0]
+    untergrenze = [0,0,0,0,0,0,0,0,0] # Muss modifiziert werden
+
+
 
 
     while gruppenkonfiguration[-1] <= obergrenze[-1]:
@@ -128,45 +181,12 @@ def FunktionelleGruppensubstitution():
 
         # Plausibilitätskontrolle
 
-        if sum(gruppenkonfiguration)- gruppenkonfiguration[4] - gruppenkonfiguration[8] == C:
-            if gruppenkonfiguration[4] + gruppenkonfiguration[5] + gruppenkonfiguration[6] + gruppenkonfiguration[7]*2 + gruppenkonfiguration[8] == O:
-                if gruppenkonfiguration[1] + gruppenkonfiguration[2]*2 + 3*gruppenkonfiguration[3] + gruppenkonfiguration[4] + gruppenkonfiguration[5] + 2*gruppenkonfiguration[7] == H:
-
-                    if Klassen.Molekuelinfo.cSymetrie == False:
-                        #überprüfung der Cdeptdaten (falls vorhanden)
-                        if Klassen.Molekuelinfo.cdeptdaten != None:
-                            if gruppenkonfiguration[2] == Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
-                                if gruppenkonfiguration[1] + gruppenkonfiguration[3] == Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
-                                    if gruppenkonfiguration[0] == Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0]:
-                                        möglichkeiten.append(gruppenkonfiguration.copy())
-                                    #if gruppenkonfiguration[4]+ gruppenkonfiguration[7] >= Klassen.Molekuelinfo.oxygeniumsubstitution[5]:
-                                        #möglichkeiten.append(gruppenkonfiguration.copy())
-                    elif Klassen.Molekuelinfo.cSymetrie == True:
-
-                        if Klassen.Molekuelinfo.cdeptdaten != None:
-                            if gruppenkonfiguration[2] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
-                                if gruppenkonfiguration[1] + gruppenkonfiguration[3] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
-                                    if SatzderCsymetrie(gruppenkonfiguration):
-                                        if gruppenkonfiguration[5] + gruppenkonfiguration[6] >= Klassen.Molekuelinfo.oxygeniumsubstitution[6]:
-                                            if Klassen.Molekuelinfo.oxygeniumsubstitution[6] == 0 and gruppenkonfiguration[5] + gruppenkonfiguration[6] == 0:
-                                                möglichkeiten.append(gruppenkonfiguration.copy())
-                                            elif Klassen.Molekuelinfo.oxygeniumsubstitution[6] > 0:
-                                                möglichkeiten.append(gruppenkonfiguration.copy())
-
-                    else:
-                        if Klassen.Molekuelinfo.cdeptdaten != None:
-
-                            if gruppenkonfiguration[2] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
-
-                                if gruppenkonfiguration[1] + gruppenkonfiguration[3] >= Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
-                                    möglichkeiten.append(gruppenkonfiguration.copy())
-
-                                    #if gruppenkonfiguration[4]+ gruppenkonfiguration[7] >= Klassen.Molekuelinfo.oxygeniumsubstitution[5]:
-
+        if Plausibilitaetskontrolle(C,O,H,gruppenkonfiguration):
+            möglichkeiten.append(gruppenkonfiguration.copy())
 
         gruppenkonfiguration[0] += 1
 
-    print(möglichkeiten)
+
     print(len(möglichkeiten))
 
     isomergruppen = [Klassen.Molekuelinfo() for i in range(len(möglichkeiten))]
