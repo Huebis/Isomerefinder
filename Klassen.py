@@ -68,19 +68,93 @@ class Molekuelinfo():
             summenformelstring += "Cl" + str(self.gruppenkonfiguration[7])
         if self.gruppenkonfiguration[8] != 0:
             summenformelstring += "Br(val=2)" + str(self.gruppenkonfiguration[8])
+        if self.gruppenkonfiguration[9] != 0:
+            summenformelstring += "H(val=2)" + str(self.gruppenkonfiguration[9])
 
-        result = subprocess.run('java -jar /home/eliahh/Workspace/Matura/test/MAYGEN/target/MAYGEN-1.8.jar -f "'+summenformelstring +'" -setElements -v -t -smi -o /home/eliahh/Workspace/Matura/test/Isomergruppen', shell=True, capture_output=True, text=True)
+        result = subprocess.run('java -jar /home/eliahh/Workspace/Matura/test/MAYGEN/target/MAYGEN-1.8.jar -f "'+summenformelstring +'" -setElements -v -t -smi -m -o /home/eliahh/Workspace/Matura/test/Isomergruppen', shell=True, capture_output=True, text=True)
 
         print(result)
-        
-        
+
+        def test(self):
+            print("isomere:", self.isomere)
+            print("oxygenium:", self.oxygeniumsubstitution)
+            print("Carbonsubstitutionsgrad:", self.Carbonsubstitutionsgrad)
+            print("gruppenkonfiguration", self.gruppenkonfiguration)
+
+
+
+
+class individuum():
+    def CalcHeuristik(self):
+        return False
+    def Lokalesuche(self):
+        return False
+    def Muation(self):
+        return False
+    def SMilestransformator(self):
+        return False
+    def Strukturintertialgenerator(self,anzahlmutationen):
+        molekularsturktur = [0]* sum(self.elemente)
+        verfuegbareelemente = self.elemente
+
+        dbe = (self.elemente[0]*2 + self.elemente[1] - self.elemente[5] - self.elemente[6] - self.elemente[7] - self.elemente[8])
+        maxdreifachbindungen = dbe // 2
+
+
+
+        for element in self.elemente:
+            for a in range(element):
+                molekularsturktur.append(element)
+
+        #Einsetzen der dreifachbindungen
+        anzahlKohlenstoffatome = self.elemente[0]
+
+        if anzahlKohlenstoffatome // 2 > maxdreifachbindungen:
+            anzahlKohlenstoffatome = maxdreifachbindungen
+
+        for a in range(anzahlKohlenstoffatome // 2):
+            molekularsturktur[2*a].append([3,2*a+1])
+            molekularsturktur[2*a +1].append([3,2*a])
+
+        anzahl
+
+
+
+
+
+
+
+
+
+        return False
+
+    def __init__(self, gruppenkonfiguration, anzahlmutationen):
+
+        # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
+        self.elemente = [0] * len(gruppenkonfiguration)
+        self.elemente[0] = gruppenkonfiguration[0]
+        self.elemente[1] = gruppenkonfiguration[1]
+        self.elemente[2] = gruppenkonfiguration[2]
+        self.elemente[3] = gruppenkonfiguration[6]
+        self.elemente[4] = gruppenkonfiguration[8]
+        self.elemente[5] = gruppenkonfiguration[3]
+        self.elemente[6] = gruppenkonfiguration[4]
+        self.elemente[7] = gruppenkonfiguration[5]
+        self.elemente[8] = gruppenkonfiguration[7]
+        self.elementgruppengrenzen = [0,1,2,5]
+
+
+        self.molekularstruktur = self.Strukturintertialgenerator(anzahlmutationen)
+        self.smistring = None
+
+
+
 
         
         
 
 
-    def test(self):
-        print("isomere:", self.isomere)
-        print("oxygenium:", self.oxygeniumsubstitution)
-        print("Carbonsubstitutionsgrad:", self.Carbonsubstitutionsgrad)
-        print("gruppenkonfiguration", self.gruppenkonfiguration)
+
+
+
+

@@ -81,6 +81,8 @@ Klassen.Molekuelinfo.Printinfo()
 
 isomergruppen = Math.FunktionelleGruppensubstitution()
 
+print("Isomere werden gebildet")
+
 for gruppe in isomergruppen:
     gruppe.test()
     #gruppe.EntwicklungIsomerelist()

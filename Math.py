@@ -86,6 +86,36 @@ def FunktionelleGruppensubstitutionVERSUCH1GESCHEITERTEINFACHEREIDEE():
 
 
 def SatzderCsymetrie(gruppenkonfiguration):
+    # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / 7 = Carbonsäure / 8 = Ether / 9 = Ester
+
+    #sum = 0
+
+    #if gruppenkonfiguration[3] > 1:
+        #sum += gruppenkonfiguration[3] -1
+    #if gruppenkonfiguration[5] > 1:
+        #sum += gruppenkonfiguration[5] -1
+    #if gruppenkonfiguration[7] > 1:
+        #sum += gruppenkonfiguration[7] -1
+
+
+    #if sum >= Klassen.Molekuelinfo.anzahlcSymetrieelemente:
+        #return True
+    #else:
+        #return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # Veralteter Ansatz, da mann nur schauen muss wie viele einstämmige es hat
     sum = 0 #die Summe aller potenzieller Symmetrischen Funktioneller Gruppen
     for a in gruppenkonfiguration:
             if a >= 2:
@@ -190,6 +220,7 @@ def FunktionelleGruppensubstitution():
             möglichkeiten.append(gruppenkonfiguration.copy())
 
         gruppenkonfiguration[0] += 1
+
 
 
     print(len(möglichkeiten))
