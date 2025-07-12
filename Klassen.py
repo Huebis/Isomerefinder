@@ -94,29 +94,126 @@ class individuum():
     def SMilestransformator(self):
         return False
     def Strukturintertialgenerator(self,anzahlmutationen):
-        molekularsturktur = [0]* sum(self.elemente)
-        verfuegbareelemente = self.elemente
+        molekularsturktur = [[0] * 1 for _ in range(sum(self.elemente))]
 
-        dbe = (self.elemente[0]*2 + self.elemente[1] - self.elemente[5] - self.elemente[6] - self.elemente[7] - self.elemente[8])
-        maxdreifachbindungen = dbe // 2
+        def Anzahlverbindungen(elementnummer):
+            #print(elementnummer)
+            if elementnummer >=  self.elementgruppengrenzen[3]:
+                return 1
+            if elementnummer >= self.elementgruppengrenzen[2]:
+                return 2
+            if elementnummer >= self.elementgruppengrenzen[1]:
+                return 3
+            if elementnummer >= self.elementgruppengrenzen[0]:
+                return 4
+
+        def Anzahloffeneverbindungen(Atomgruppe):
+            anzahlmöglicheverbindungen = Anzahlverbindungen(Atomgruppe[0])
+
+
+            anzahlverbrauchteverbindungen = 0
+            for a in range(1,len(Atomgruppe),1):
+                anzahlverbrauchteverbindungen += Atomgruppe[a][0]
+
+            return anzahlmöglicheverbindungen - anzahlverbrauchteverbindungen
+
+
+        count = 0
+        for a in range(len(self.elemente)):
+            for b in range(self.elemente[a]):
+                molekularsturktur[count][0] = a
+                count += 1
+
+
+        #jetzt kann das wirkliche zusammenbauen eines provisorischen Moleküles beginnen
+
+        offeneverbindungen = Anzahloffeneverbindungen(molekularsturktur[0])
+        Doppelbindungsequivalenz = (self.elemente[0]*2 + self.elemente[1] -self.elemente[5] - self.elemente[6] -self.elemente[7] -self.elemente[8])/2
+
+        for a in range(1,len(molekularsturktur),1):
+            maxoffeneverbindungen = 0
+            ortmax = 0
+            for b in range(a):
+                if Anzahloffeneverbindungen(molekularsturktur[b]) > maxoffeneverbindungen:
+                    maxoffeneverbindungen = Anzahloffeneverbindungen(molekularsturktur[b])
+                    ortmax = b
+
+
+            #print(a)
+            #print(Doppelbindungsequivalenz)
+
+
+            if Anzahlverbindungen(molekularsturktur[a][0]) == 4:
+                if maxoffeneverbindungen >= 3 and Doppelbindungsequivalenz >= 2 and offeneverbindungen >= 3:
+                    molekularsturktur[a].append([3,ortmax])
+                    molekularsturktur[ortmax].append([3,a])
+                    offeneverbindungen -= 2
+                    Doppelbindungsequivalenz -= 2
+
+                elif maxoffeneverbindungen >= 2 and Doppelbindungsequivalenz >= 1 and offeneverbindungen:
+                    molekularsturktur[a].append([2, ortmax])
+                    molekularsturktur[ortmax].append([2, a])
+                    Doppelbindungsequivalenz -= 1
+                    #Anzahl der offenenverbindungen bleibt gleich
+                elif maxoffeneverbindungen >= 1:
+                    molekularsturktur[a].append([1, ortmax])
+                    molekularsturktur[ortmax].append([1, a])
+                    offeneverbindungen += 2
+
+            if Anzahlverbindungen(molekularsturktur[a][0]) == 3:
+                if maxoffeneverbindungen >= 3 and Doppelbindungsequivalenz >= 2 and offeneverbindungen >= 4:
+                    molekularsturktur[a].append([3, ortmax])
+                    molekularsturktur[ortmax].append([3, a])
+                    offeneverbindungen -= 3
+                    Doppelbindungsequivalenz -= 2
+
+                elif maxoffeneverbindungen >= 2 and Doppelbindungsequivalenz >= 1 and offeneverbindungen >= 2:
+                    molekularsturktur[a].append([2, ortmax])
+                    molekularsturktur[ortmax].append([2, a])
+                    Doppelbindungsequivalenz -= 1
+                    offeneverbindungen -= 1
+
+                elif maxoffeneverbindungen >= 1:
+                    molekularsturktur[a].append([1, ortmax])
+                    molekularsturktur[ortmax].append([1, a])
+                    offeneverbindungen += 1
+
+            if Anzahlverbindungen(molekularsturktur[a][0]) == 2:
+
+                if maxoffeneverbindungen >= 2 and Doppelbindungsequivalenz >= 1 and offeneverbindungen >= 3:
+                    molekularsturktur[a].append([2, ortmax])
+                    molekularsturktur[ortmax].append([2, a])
+                    Doppelbindungsequivalenz -= 1
+                    offeneverbindungen -= 2
+
+                elif maxoffeneverbindungen >= 1:
+                    molekularsturktur[a].append([1, ortmax])
+                    molekularsturktur[ortmax].append([1, a])
+
+            if Anzahlverbindungen(molekularsturktur[a][0]) == 1:
+                molekularsturktur[a].append([1, ortmax])
+                molekularsturktur[ortmax].append([1, a])
+                offeneverbindungen -= 1
+
+
+            if a == 5:
+                print(offeneverbindungen)
+                print(molekularsturktur)
+                print(Doppelbindungsequivalenz)
+                print(maxoffeneverbindungen)
+                print(ortmax)
+                print(Anzahloffeneverbindungen(molekularsturktur[0]))
+                print(Anzahlverbindungen(molekularsturktur[0][0]))
 
 
 
-        for element in self.elemente:
-            for a in range(element):
-                molekularsturktur.append(element)
+        print(molekularsturktur)
+        return molekularsturktur
 
-        #Einsetzen der dreifachbindungen
-        anzahlKohlenstoffatome = self.elemente[0]
 
-        if anzahlKohlenstoffatome // 2 > maxdreifachbindungen:
-            anzahlKohlenstoffatome = maxdreifachbindungen
 
-        for a in range(anzahlKohlenstoffatome // 2):
-            molekularsturktur[2*a].append([3,2*a+1])
-            molekularsturktur[2*a +1].append([3,2*a])
 
-        anzahl
+
 
 
 
@@ -147,7 +244,7 @@ class individuum():
         self.molekularstruktur = self.Strukturintertialgenerator(anzahlmutationen)
         self.smistring = None
 
-
+test = individuum([1,2,5,0,0,0,2,0,0],0)
 
 
         
