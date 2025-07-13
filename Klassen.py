@@ -1,4 +1,6 @@
 import subprocess
+import random
+
 
 class Molekuelinfo():
 
@@ -93,6 +95,7 @@ class individuum():
         return False
     def SMilestransformator(self):
         return False
+
     def Strukturintertialgenerator(self,anzahlmutationen):
         molekularsturktur = [[0] * 1 for _ in range(sum(self.elemente))]
 
@@ -118,6 +121,15 @@ class individuum():
             return anzahlmöglicheverbindungen - anzahlverbrauchteverbindungen
 
 
+        def AnzahlverbindungenzwischenzweiAtomen(Atom1, posititionAtom2):
+            for a in range(1,len(Atom1),1):
+                if Atom1[a][1] == posititionAtom2:
+                    return Atom1[a][0]
+            return 0
+
+
+
+
         count = 0
         for a in range(len(self.elemente)):
             for b in range(self.elemente[a]):
@@ -128,19 +140,17 @@ class individuum():
         #jetzt kann das wirkliche zusammenbauen eines provisorischen Moleküles beginnen
 
         offeneverbindungen = Anzahloffeneverbindungen(molekularsturktur[0])
-        Doppelbindungsequivalenz = (self.elemente[0]*2 + self.elemente[1] -self.elemente[5] - self.elemente[6] -self.elemente[7] -self.elemente[8])/2
+        Doppelbindungsequivalenz = (self.elemente[0]*2 + self.elemente[1] -self.elemente[5] - self.elemente[6] -self.elemente[7] -self.elemente[8])/2 + 1
+
 
         for a in range(1,len(molekularsturktur),1):
             maxoffeneverbindungen = 0
-            ortmax = 0
+            ortmax = -0
             for b in range(a):
                 if Anzahloffeneverbindungen(molekularsturktur[b]) > maxoffeneverbindungen:
                     maxoffeneverbindungen = Anzahloffeneverbindungen(molekularsturktur[b])
                     ortmax = b
 
-
-            #print(a)
-            #print(Doppelbindungsequivalenz)
 
 
             if Anzahlverbindungen(molekularsturktur[a][0]) == 4:
@@ -150,7 +160,7 @@ class individuum():
                     offeneverbindungen -= 2
                     Doppelbindungsequivalenz -= 2
 
-                elif maxoffeneverbindungen >= 2 and Doppelbindungsequivalenz >= 1 and offeneverbindungen:
+                elif maxoffeneverbindungen >= 2 and Doppelbindungsequivalenz >= 1:
                     molekularsturktur[a].append([2, ortmax])
                     molekularsturktur[ortmax].append([2, a])
                     Doppelbindungsequivalenz -= 1
@@ -196,19 +206,139 @@ class individuum():
                 offeneverbindungen -= 1
 
 
-            if a == 5:
-                print(offeneverbindungen)
-                print(molekularsturktur)
-                print(Doppelbindungsequivalenz)
-                print(maxoffeneverbindungen)
-                print(ortmax)
-                print(Anzahloffeneverbindungen(molekularsturktur[0]))
-                print(Anzahlverbindungen(molekularsturktur[0][0]))
+
+        #Es kann sein, dass es noch Atome hat, welche keine 2 Verbindungen oder mehr eingehen können, aber noch nicht genug verbindungen haben, dafür muss das Doppeblindungsequivalenz aber grösser als 0 sein. Danach versuche das Program die "Löcher" zu schliessen
+
+        if Doppelbindungsequivalenz > 0:
+
+            restlicheoffenestellen = []
+            for atom in molekularsturktur:
+                restlicheoffenestellen.append(Anzahloffeneverbindungen(atom))
+
+            
+            # zuerst dreifachoffene stellen werden gesucht
+            positionen = []
+
+            for count, wert in enumerate(restlicheoffenestellen):
+                if wert == 3:
+                    positionen.append(count)
+
+            if positionen != []:
+
+                a = 0
+                while a < len(positionen):
+                    for b in range(a+1,len(positionen)):
+                        if AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]], molekularsturktur[positionen[b]]) == 0:
+
+                            molekularsturktur[positionen[a]].append([3, positionen[b]])
+                            molekularsturktur[positionen[b]].append([3, positionen[a]])
+                            Doppelbindungsequivalenz -= 3
+                            positionen.pop(b)
+                            break
+                    if Anzahloffeneverbindungen(molekularsturktur[positionen[a]]) == 0:
+                        positionen.pop(a)
+                    else:
+                        a += 1
+
+            # zweifachoffene Stellen versuchen zu schliessen
+            for count, wert in enumerate(restlicheoffenestellen):
+                if wert == 2:
+                    positionen.append(count)
+
+
+            if positionen != []:
+                a = 0
+                while a < len(positionen):
+                    for b in range(a+1, len(positionen)):
+                        if AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],molekularsturktur[positionen[b]]) == 0:
+                            molekularsturktur[positionen[a]].append([2, positionen[b]])
+                            molekularsturktur[positionen[b]].append([2, positionen[a]])
+                            Doppelbindungsequivalenz -= 2
+                            positionen.pop(b)
+                            break
+                    if Anzahloffeneverbindungen(molekularsturktur[positionen[a]]) <= 1:
+                        positionen.pop(a)
+                    else:
+                        a += 1
+
+
+            # die einfachen STellen werden am schluss auch noch versucht zu schliessen
+            positionen = []
+            for count, wert in enumerate(restlicheoffenestellen):
+                if wert >= 1:
+                    positionen.append(count)
+
+            if positionen != []:
+                a = 0
+                while a < len(positionen):
+                    for b in range(a+1, len(positionen)):
+                        if AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],molekularsturktur[positionen[b]]) == 0:
+                            molekularsturktur[positionen[a]].append([1, positionen[b]])
+                            molekularsturktur[positionen[b]].append([1, positionen[a]])
+                            Doppelbindungsequivalenz -= 1
+                            if Anzahloffeneverbindungen(molekularsturktur[positionen[b]]) == 0:
+                                positionen.pop(b)
+                            break
+                    if Anzahloffeneverbindungen(molekularsturktur[positionen[a]]) == 0:
+                        positionen.pop(a)
+                    else:
+                        a += 1
+            
+            # es kann leider am Schluss noch sein, dass eine Molekül noch zwei freie Verbindungen hat, diese werden jetzt noch mit einer Art der Elektophilen Additon geschlossen
+            for count, atom in enumerate(molekularsturktur):
+                if (Anzahloffeneverbindungen(atom)) == 2:
+                    #Nun wird versucht eine Doppelbindung oder dreifachbindung um eins zu reduzieren und dann mit den neuen zwei offnene stellen das Atom damit zu verbinden
+                    breakbool = False
+                    for a in range(len(molekularsturktur)):
+                        for b in range(1,len(molekularsturktur[a])):
+                            if molekularsturktur[a][b][0] >= 2 and a != count:
+                                breakbool = True
+                                molekularsturktur[a][b][0] -= 1
+                                for c in range(1,len(molekularsturktur[molekularsturktur[a][b][1]])):
+                                    if molekularsturktur[molekularsturktur[a][b][1]][c][1] == a:
+                                        molekularsturktur[molekularsturktur[a][b][1]][c][0] -= 1
+                                        break
+                                Doppelbindungsequivalenz -= 1
+
+
+                                if AnzahlverbindungenzwischenzweiAtomen(atom,a) == 0:
+                                    molekularsturktur[count].append([1,a])
+                                    molekularsturktur[a].append([1,count])
+                                else:
+                                    for c in range(1,len(molekularsturktur[a])):
+                                        if molekularsturktur[a][c][1] == count:
+                                            molekularsturktur[a][c][0] += 1
+                                            break
+                                if AnzahlverbindungenzwischenzweiAtomen(atom,molekularsturktur[a][b][1]) == 0:
+                                    molekularsturktur[count].append([1,molekularsturktur[a][b][1]])
+                                    molekularsturktur[molekularsturktur[a][b][1]].append([1,count])
+
+                                else:
+                                    for c in range(1,len(molekularsturktur[molekularsturktur[a][b][1]])):
+                                        if molekularsturktur[a][c][1] == count:
+                                            molekularsturktur[a][c][0] += 1
+                                            break
+
+                        if breakbool:
+                            break
 
 
 
-        print(molekularsturktur)
-        return molekularsturktur
+
+
+        if Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0:
+            for atom in molekularsturktur:
+                if Anzahloffeneverbindungen(atom) != 0:
+                    print(self.grppenkonfiguration)
+
+        if False:
+            for atom in molekularsturktur:
+                print(Anzahloffeneverbindungen(atom))
+            print("Doppelbindungsequivalenz:" + str(Doppelbindungsequivalenz))
+            print(molekularsturktur)
+
+
+        return True
 
 
 
@@ -228,6 +358,7 @@ class individuum():
     def __init__(self, gruppenkonfiguration, anzahlmutationen):
 
         # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
+        self.grppenkonfiguration = gruppenkonfiguration
         self.elemente = [0] * len(gruppenkonfiguration)
         self.elemente[0] = gruppenkonfiguration[0]
         self.elemente[1] = gruppenkonfiguration[1]
@@ -244,13 +375,16 @@ class individuum():
         self.molekularstruktur = self.Strukturintertialgenerator(anzahlmutationen)
         self.smistring = None
 
-test = individuum([1,2,5,0,0,0,2,0,0],0)
+test = individuum([17, 16, 4, 7, 16, 18, 5, 13, 9],0)
 
 
+for a in range(10000):
+    test = individuum([random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20)], 0)
         
-        
+print("finish")
+# testfehlschlänge
 
-
+#[5,0,0,0,0,0,0,0,0]
 
 
 
