@@ -1,5 +1,6 @@
 import subprocess
 import random
+import copy
 
 from rdkit.Chem import FindAllSubgraphsOfLengthN
 
@@ -105,14 +106,14 @@ class individuum():
                 return Atom1[a][0]
         return 0
 
-    def Deletverbindung(self, posititionatom1, positionatom2):
-        for a in range(1, len(self.molekularstruktur[posititionatom1])):
-            if self.molekularstruktur[posititionatom1][a][1] == positionatom2:
-                self.molekularstruktur[posititionatom1].pop(a)
+    def Deletverbindung(self, positionatom1, positionatom2):
+        for a in range(1, len(self.molekularstruktur[positionatom1])):
+            if self.molekularstruktur[positionatom1][a][1] == positionatom2:
+                self.molekularstruktur[positionatom1].pop(a)
                 break
-        for a in range(1, len(self.molekularstruktur[posititionatom2])):
-            if self.molekularstruktur[posititionatom2][a][1] == positionatom1:
-                self.molekularstruktur[posititionatom2].pop(a)
+        for a in range(1, len(self.molekularstruktur[positionatom2])):
+            if self.molekularstruktur[positionatom2][a][1] == positionatom1:
+                self.molekularstruktur[positionatom2].pop(a)
                 break
         return
 
@@ -356,7 +357,186 @@ class individuum():
         
 
     def SMilestransformator(self):
-        return False
+        def Übersetzung(atomnummer, wertigkeit):
+            # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
+            if wertigkeit == 1:
+                if atomnummer == 0:
+                    return "(C)"
+                if atomnummer == 1:
+                    return "(C)"
+                if atomnummer == 2:
+                    return "(C)"
+                if atomnummer == 3:
+                    return "(C(=O))"
+                if atomnummer == 4:
+                    return "(O)"
+                if atomnummer == 5:
+                    return "(C)"
+                if atomnummer == 6:
+                    return "(O)"
+                if atomnummer == 7:
+                    return "(C(=0))"
+                if atomnummer == 8:
+                    return "(C(O))"
+            if wertigkeit == 2:
+                if atomnummer == 0:
+                    return "(=C)"
+                if atomnummer == 1:
+                    return "(=C)"
+                if atomnummer == 2:
+                    return "(=C)"
+                if atomnummer == 3:
+                    return "(=C(=O))"
+                if atomnummer == 4:
+                    return "(=O)"
+
+            if wertigkeit == 3:
+                if atomnummer == 0:
+                    return "(#C)"
+                if atomnummer == 1:
+                    return "(#C)"
+
+        def LängederÜbersetzung(atomnummer):
+            if atomnummer == 0:
+                return 3
+            if atomnummer == 1:
+                return 3
+            if atomnummer == 2:
+                return 3
+            if atomnummer == 3:
+                return 7
+            if atomnummer == 4:
+                return 3
+            if atomnummer == 5:
+                return 3
+            if atomnummer == 6:
+                return 3
+            if atomnummer == 7:
+                return 7
+            if atomnummer == 8:
+                return 6
+
+        def PositionenimStringanpassen(liste, ortderänderung, anzahlzeichen):
+            print("längenänderung: " + str(anzahlzeichen))
+            for a in range(len(liste)):
+                if liste[a] != None:
+                    if liste[a][0] >= ortderänderung:
+                        liste[a][0] += anzahlzeichen
+                    if liste[a][1] >= ortderänderung:
+                        liste[a][1] += anzahlzeichen
+            return liste
+
+
+        gemachteAtomgruppen = [False for a in range(len(self.molekularstruktur))]
+        ortdergemachtenAtomgruppen = [None for a in range(len(self.molekularstruktur))]
+        verbindungennochüberprüfen= []
+        cyclozähler = 0
+
+
+
+
+
+        #ich fange immer mit dem ersten an
+
+        gemachteAtomgruppen[0] = True
+        ortdergemachtenAtomgruppen[0] = [0,LängederÜbersetzung(0)]
+        verbindungennochüberprüfen.append(0)
+
+        outputstring = Übersetzung(self.molekularstruktur[0][0],1)
+
+        while verbindungennochüberprüfen != []:
+            momentanesAtom = verbindungennochüberprüfen[0]
+
+            print(self.molekularstruktur)
+            print("momentanes")
+            print("noch alle noch zuüberprüfenden dinge"+ str(verbindungennochüberprüfen))
+            verbindendesAtom = self.molekularstruktur[momentanesAtom][1][1]
+            print("verbindendesAtom: " + str(verbindendesAtom))
+            wertigkeitderverbindung = self.molekularstruktur[momentanesAtom][1][0]
+            self.Deletverbindung(momentanesAtom,verbindendesAtom)
+
+            print("outputstring: " + str(outputstring))
+
+            if gemachteAtomgruppen[verbindendesAtom]: # ergibt True, wenn es schon gemacht wurde
+                cyclozähler += 1
+
+                if cyclozähler < 10:
+                    zusatzstring = str(cyclozähler)
+                    längenaddition = 1
+                else:
+                    zusatzstring = "%" + str(cyclozähler)
+                    längenaddition = len(zusatzstring)
+
+                mehrfachbindungsstringaddition = ""
+                längenadditiondurchmehrfachbindung = 0
+                if wertigkeitderverbindung == 2:
+                    mehrfachbindungsstringaddition = "="
+                    längenadditiondurchmehrfachbindung = 1
+                if wertigkeitderverbindung == 3:
+                    mehrfachbindungsstringaddition = "#"
+                    längenadditiondurchmehrfachbindung = 1
+
+
+                ortimstringumanzusetzen1 = ortdergemachtenAtomgruppen[momentanesAtom][0] + 2
+                ortimstringumanzusetzen2 = ortdergemachtenAtomgruppen[verbindendesAtom][0] + 2
+
+                # Da es vorkommen kann, dass vor dem Atom C ein Zeichen für eine Doppelbindung oder eine Dreifachbindung ist, muss der Ort jetzt noch angepasst werden, dass dies nicht passieren kann
+                #es kann aber maximal um eine stelle verschoben werden
+                print("ort1 :" + str(ortimstringumanzusetzen1))
+                print("ort2 :" + str(ortimstringumanzusetzen2))
+                print("längedesstrings:" + str(len(outputstring)))
+                print(ortdergemachtenAtomgruppen)
+                if outputstring[ortimstringumanzusetzen1-1] == "#" or outputstring[ortimstringumanzusetzen1-1] == "=":
+                    ortimstringumanzusetzen1 += 1
+                if outputstring[ortimstringumanzusetzen2-1] == "#" or outputstring[ortimstringumanzusetzen2-1] == "=":
+                    ortimstringumanzusetzen2 += 1
+
+
+                outputstring = outputstring[:ortimstringumanzusetzen1] + mehrfachbindungsstringaddition + zusatzstring + outputstring[ortimstringumanzusetzen1:]
+                ortdergemachtenAtomgruppen = PositionenimStringanpassen(ortdergemachtenAtomgruppen, ortimstringumanzusetzen1, längenadditiondurchmehrfachbindung + längenaddition)
+
+                outputstring = outputstring[:ortimstringumanzusetzen2] + zusatzstring + outputstring[ortimstringumanzusetzen2:]
+                ortdergemachtenAtomgruppen = PositionenimStringanpassen(ortdergemachtenAtomgruppen,ortimstringumanzusetzen2,längenaddition)
+
+
+
+
+
+
+
+            else:
+                #wird vor der schliessenenden Klammer am ende Hinzugefügt und in der liste OrtdergemachtenAtomgruppen vermekrt, daraufhin müssen alle Werte der Liste angepasst werden
+                gemachteAtomgruppen[verbindendesAtom] = True
+                verbindungennochüberprüfen.append(verbindendesAtom)
+                ortimstringumanzusetzen = ortdergemachtenAtomgruppen[momentanesAtom][1]  # Minus 1 wegen der Klammer die man überspringen muss
+
+                längenadditiondurchmehrfachbindung = 0
+                if wertigkeitderverbindung > 1:
+                    längenadditiondurchmehrfachbindung = 1
+
+
+                outputstring = outputstring[:ortimstringumanzusetzen] + Übersetzung(self.molekularstruktur[verbindendesAtom][0],wertigkeitderverbindung) + outputstring[ortimstringumanzusetzen:]
+
+                ortdergemachtenAtomgruppen = PositionenimStringanpassen(ortdergemachtenAtomgruppen,ortimstringumanzusetzen,LängederÜbersetzung(self.molekularstruktur[verbindendesAtom][0])+längenadditiondurchmehrfachbindung)
+
+                ortdergemachtenAtomgruppen[verbindendesAtom] = [ortimstringumanzusetzen,ortimstringumanzusetzen + LängederÜbersetzung(self.molekularstruktur[verbindendesAtom][0]) + längenadditiondurchmehrfachbindung -1]
+
+
+
+
+
+            for a in range(len(verbindungennochüberprüfen)-1,-1,-1):
+                print(a)
+                if (len(self.molekularstruktur[verbindungennochüberprüfen[a]]) == 1):
+                    verbindungennochüberprüfen.pop(a)
+            print(verbindungennochüberprüfen)
+            print(self.molekularstruktur)
+
+        self.smistring = outputstring #Muss bei Smi einfach so sein, es darf am Anfang und am Ende keine Klammer haben. Da es die äusserten Klammern sind, spielt es auch keine Rolle
+        print(self.smistring)
+
+
+
 
     def Anzahlverbindungen(self, elementnummer):
         if elementnummer >= self.elementgruppengrenzen[3]:
@@ -623,7 +803,8 @@ class individuum():
 
 
 
-test = individuum([4, 2, 3, 4, 0, 2, 4, 0, 2],0)
+test = individuum([4, 0, 0, 0, 0, 0, 0, 0, 2],0)
+test.SMilestransformator()
 
 
 #for a in range(10000):
