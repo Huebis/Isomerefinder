@@ -105,6 +105,21 @@ class individuum():
                 return Atom1[a][0]
         return 0
 
+    def Deletverbindung(self, posititionatom1, positionatom2):
+        for a in range(1, len(self.molekularstruktur[posititionatom1])):
+            if self.molekularstruktur[posititionatom1][a][1] == positionatom2:
+                self.molekularstruktur[posititionatom1].pop(a)
+                break
+        for a in range(1, len(self.molekularstruktur[posititionatom2])):
+            if self.molekularstruktur[posititionatom2][a][1] == positionatom1:
+                self.molekularstruktur[posititionatom2].pop(a)
+                break
+        return
+
+    def Creatverbindung(self, positionatom1, positionatom2, wertigkeitderVerbindung):
+        self.molekularstruktur[positionatom1].append([wertigkeitderVerbindung, positionatom2])
+        self.molekularstruktur[positionatom2].append([wertigkeitderVerbindung, positionatom1])
+
 
     def isligit(self, anzahlverbindungenüberspringen = False, anazahlAtomeüberspringen = False, topologischzusammenhängendüberspringen = False):
 
@@ -206,23 +221,130 @@ class individuum():
                 wertigkeitatom = self.Anzahlverbindungen(self.molekularstruktur[positionatom][0])
 
                 if wertigkeitatom == 1:
-                    if MutationzweiergleichwertigerAtome(1):
+                    if MutationzweiergleichwertigerAtome(positionatom):
                         return True
                 if wertigkeitatom == 2:
-                    möglichesubstitutionen = []
-                    #Suche eine einfachbindung und schmuggle dich rein
-                    for position,atom in enumerate(self.molekularstruktur):
-                        for a in range(1, len(atom)):
-                            if atom[a][0] == 1 and position != positionatom:
-                                möglichesubstitutionen.append([position,a])
-                    if möglichesubstitutionen != []:
-                        substitutionsverbindung = random.randint(0,len(möglichesubstitutionen)-1)
-                    return False
-                if wertigkeitatom == 3:
-                    return False
+                    if len(self.molekularstruktur[positionatom]) == 3: #bzw es zwei einfachbindungen hat
+                        möglichesubstitutionen = []
+                        #Suche eine einfachbindung und schmuggle dich rein
+                        for position,atom in enumerate(self.molekularstruktur):
+                            for a in range(1, len(atom)):
+                                if atom[a][0] == 1 and position != positionatom:
+                                    möglichesubstitutionen.append([position,a])
+                        if möglichesubstitutionen != []:
+                            substitutionsverbindung = random.randint(0,len(möglichesubstitutionen)-1)
 
-                if wertigkeitatom == 4:
-                    return False
+                            #das zwei Wertigkeatom muss zuerst von seinen zwei verbindungen herausgelöst werden, und die beidenen offnene stellen wieder zusammengeflickt werden
+                            positionatom2 = self.molekularstruktur[positionatom][1][1]
+                            positionatom3 = self.molekularstruktur[positionatom][2][1]
+                            self.Deletverbindung(positionatom, positionatom2)
+                            self.Deletverbindung(positionatom, positionatom3)
+                            self.Creatverbindung(positionatom2,positionatom3,1)
+
+                            # das herausgelöste Atom wird nun wieder an bestimmten ort wieder eingesetzt
+                            positionsubstitiontsatom1 = möglichesubstitutionen[substitutionsverbindung][0]
+                            positionsubstitiontsatom2 = self.molekularstruktur[positionsubstitiontsatom1][möglichesubstitutionen[substitutionsverbindung][1]][1]
+                            self.Deletverbindung(positionsubstitiontsatom1, positionsubstitiontsatom2)
+
+                            #neue verbindungen werden erstellt
+                            self.Creatverbindung(positionsubstitiontsatom1,positionatom,1)
+                            self.Creatverbindung(positionsubstitiontsatom2, positionatom, 1)
+
+
+
+                if wertigkeitatom == 3:
+                    if len(self.molekularstruktur[positionatom]) == 4: #bzw es drei einfachbindungen hat. Deshalb werden dann zwei miteinander verknüpft, der dritte bleibt und das Atom kann ziwschen eine einfach Bindung sich einfügen:
+                        möglichesubstitutionen = []
+                        # Suche eine einfachbindung und schmuggle dich rein
+                        for position, atom in enumerate(self.molekularstruktur):
+                            for a in range(1, len(atom)):
+                                if atom[a][0] == 1 and position != positionatom:
+                                    möglichesubstitutionen.append([position, a])
+                        if möglichesubstitutionen != []:
+                            substitutionsverbindung = random.randint(0, len(möglichesubstitutionen) - 1)
+
+                            #zwei einfachbindungen werden aufgespalten. Es spielt keine Rolle und da die Reihenfolge sowiso zufällig ist, nehme ich einfach die ersten zwei
+                            positionatom2 = self.molekularstruktur[positionatom][1][1]
+                            positionatom3 = self.molekularstruktur[positionatom][2][1]
+                            self.Deletverbindung(positionatom, positionatom2)
+                            self.Deletverbindung(positionatom, positionatom3)
+                            self.Creatverbindung(positionatom2, positionatom3, 1)
+
+                            positionverbleibendesatom = self.molekularstruktur[positionatom][1][1] # es kann sein, dass mit diesem Atom eine neue Bindung eingeganen werden soll, dann muss es aber anstatt einer neuer einfachbindung eine doppelbindung geben
+
+                            # das herausgelöste Atom wird nun wieder an bestimmten ort wieder eingesetzt
+                            positionsubstitiontsatom1 = möglichesubstitutionen[substitutionsverbindung][0]
+                            positionsubstitiontsatom2 = self.molekularstruktur[positionsubstitiontsatom1][möglichesubstitutionen[substitutionsverbindung][1]][1]
+                            self.Deletverbindung(positionsubstitiontsatom1, positionsubstitiontsatom2)
+
+                            # neue verbindungen werden erstellt
+                            if positionverbleibendesatom != positionsubstitiontsatom1:
+                                self.Creatverbindung(positionsubstitiontsatom1, positionatom, 1)
+                            else:
+                                self.Deletverbindung(positionatom, positionverbleibendesatom)
+                                self.Creatverbindung(positionatom, positionverbleibendesatom, 2)
+
+                            if positionverbleibendesatom != positionsubstitiontsatom2:
+                                self.Creatverbindung(positionsubstitiontsatom2, positionatom, 1)
+                            else:
+                                self.Deletverbindung(positionatom, positionverbleibendesatom)
+                                self.Creatverbindung(positionatom, positionverbleibendesatom, 2)
+
+
+
+                    if len(self.molekularstruktur[positionatom]) == 3: #Bedeutet, dass das Atom eine Doppelbindung und eine einfachbindung hat
+                        möglichesubstitutionen = []
+                        # Suche eine einfachbindung und schmuggle dich rein
+                        for position, atom in enumerate(self.molekularstruktur):
+                            for a in range(1, len(atom)):
+                                if atom[a][0] == 1 and position != positionatom:
+                                    möglichesubstitutionen.append([position, a])
+                        if möglichesubstitutionen != []:
+                            substitutionsverbindung = random.randint(0, len(möglichesubstitutionen) - 1)
+
+                            #die Einfachbindung wird aufgespalten und die Doppelbindung wird zu einer Einfachbindung. Es ist nicht optimal, um das Molekül perfekt wegzunehmen, aber ansonsten hat man probleme "verschliese" der offenene Verbindungen
+                            if self.molekularstruktur[positionatom][1][0] == 1:
+                                positionatomeinfachbindung = self.molekularstruktur[positionatom][1][1]
+                                positionatomdoppelbindung = self.molekularstruktur[positionatom][2][1]
+                            else:
+                                positionatomeinfachbindung = self.molekularstruktur[positionatom][2][1]
+                                positionatomdoppelbindung = self.molekularstruktur[positionatom][1][1]
+
+                            self.Deletverbindung(positionatom, positionatomeinfachbindung)
+                            self.Deletverbindung(positionatom, positionatomdoppelbindung)
+                            self.Creatverbindung(positionatomeinfachbindung, positionatomdoppelbindung, 1)
+                            self.Creatverbindung(positionatomdoppelbindung, positionatom)
+
+                            positionverbleibendesatom = self.molekularstruktur[positionatom][1][1] # es kann sein, dass mit diesem Atom eine neue Bindung eingeganen werden soll, dann muss es aber anstatt einer neuer einfachbindung eine doppelbindung geben
+
+                            # das herausgelöste Atom wird nun wieder an bestimmten ort wieder eingesetzt
+                            positionsubstitiontsatom1 = möglichesubstitutionen[substitutionsverbindung][0]
+                            positionsubstitiontsatom2 = self.molekularstruktur[positionsubstitiontsatom1][möglichesubstitutionen[substitutionsverbindung][1]][1]
+                            self.Deletverbindung(positionsubstitiontsatom1, positionsubstitiontsatom2)
+
+                            # neue verbindungen werden erstellt
+                            if positionverbleibendesatom != positionsubstitiontsatom1:
+                                self.Creatverbindung(positionsubstitiontsatom1, positionatom, 1)
+                            else:
+                                self.Deletverbindung(positionatom, positionverbleibendesatom)
+                                self.Creatverbindung(positionatom, positionverbleibendesatom, 2)
+
+                            if positionverbleibendesatom != positionsubstitiontsatom2:
+                                self.Creatverbindung(positionsubstitiontsatom2, positionatom, 1)
+                            else:
+                                self.Deletverbindung(positionatom, positionverbleibendesatom)
+                                self.Creatverbindung(positionatom, positionverbleibendesatom, 2) #
+
+
+
+
+
+
+                # es ist mit abstand der schwierigste Fall und somit lasse ich ihn für den Moment aus, sollte keine riesigen auswirkungen haben
+
+
+                #if wertigkeitatom == 4:
+                    #return False
 
 
 
