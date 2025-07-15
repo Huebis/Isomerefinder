@@ -209,7 +209,14 @@ class individuum():
                     if MutationzweiergleichwertigerAtome(1):
                         return True
                 if wertigkeitatom == 2:
+                    möglichesubstitutionen = []
                     #Suche eine einfachbindung und schmuggle dich rein
+                    for position,atom in enumerate(self.molekularstruktur):
+                        for a in range(1, len(atom)):
+                            if atom[a][0] == 1 and position != positionatom:
+                                möglichesubstitutionen.append([position,a])
+                    if möglichesubstitutionen != []:
+                        substitutionsverbindung = random.randint(0,len(möglichesubstitutionen)-1)
                     return False
                 if wertigkeitatom == 3:
                     return False
@@ -504,6 +511,14 @@ print("finish")
 # testfehlschlänge
 
 #[5,0,0,0,0,0,0,0,0]
+
+
+
+
+
+
+
+
 
 
 
