@@ -19,8 +19,5 @@ def test():
 #[[0, [3, 1], [1, 2]], [0, [3, 0], [1, 3]], [0, [1, 0], [3, 3]], [0, [3, 2], [1, 1]]]
 
 
-test = "|C|(=C(C))(C)(C)"
-
-print(test[2])
-print(test[:6])
-print(test[:15])
+if False and False:
+    print("ajaj")
