@@ -2,6 +2,10 @@ import subprocess
 import random
 import copy
 
+import rdkit.Chem.AllChem
+from rdkit import Chem
+from rdkit.Chem import Draw
+
 from rdkit.Chem import FindAllSubgraphsOfLengthN
 
 
@@ -375,7 +379,7 @@ class individuum():
                 if atomnummer == 6:
                     return "(O)"
                 if atomnummer == 7:
-                    return "(C(=0))"
+                    return "(C(=O))"
                 if atomnummer == 8:
                     return "(C(O))"
             if wertigkeit == 2:
@@ -417,7 +421,7 @@ class individuum():
                 return 6
 
         def PositionenimStringanpassen(liste, ortderänderung, anzahlzeichen):
-            print("längenänderung: " + str(anzahlzeichen))
+
             for a in range(len(liste)):
                 if liste[a] != None:
                     if liste[a][0] >= ortderänderung:
@@ -444,18 +448,17 @@ class individuum():
 
         outputstring = Übersetzung(self.molekularstruktur[0][0],1)
 
+        outputstring = "|" + outputstring[1:-1] + "|"
+
         while verbindungennochüberprüfen != []:
             momentanesAtom = verbindungennochüberprüfen[0]
 
-            print(self.molekularstruktur)
-            print("momentanes")
-            print("noch alle noch zuüberprüfenden dinge"+ str(verbindungennochüberprüfen))
             verbindendesAtom = self.molekularstruktur[momentanesAtom][1][1]
-            print("verbindendesAtom: " + str(verbindendesAtom))
+
             wertigkeitderverbindung = self.molekularstruktur[momentanesAtom][1][0]
             self.Deletverbindung(momentanesAtom,verbindendesAtom)
 
-            print("outputstring: " + str(outputstring))
+
 
             if gemachteAtomgruppen[verbindendesAtom]: # ergibt True, wenn es schon gemacht wurde
                 cyclozähler += 1
@@ -482,21 +485,33 @@ class individuum():
 
                 # Da es vorkommen kann, dass vor dem Atom C ein Zeichen für eine Doppelbindung oder eine Dreifachbindung ist, muss der Ort jetzt noch angepasst werden, dass dies nicht passieren kann
                 #es kann aber maximal um eine stelle verschoben werden
-                print("ort1 :" + str(ortimstringumanzusetzen1))
-                print("ort2 :" + str(ortimstringumanzusetzen2))
-                print("längedesstrings:" + str(len(outputstring)))
-                print(ortdergemachtenAtomgruppen)
+
                 if outputstring[ortimstringumanzusetzen1-1] == "#" or outputstring[ortimstringumanzusetzen1-1] == "=":
                     ortimstringumanzusetzen1 += 1
                 if outputstring[ortimstringumanzusetzen2-1] == "#" or outputstring[ortimstringumanzusetzen2-1] == "=":
                     ortimstringumanzusetzen2 += 1
 
 
+                if cyclozähler == 1:
+                    print(self.molekularstruktur)
+                    print(ortimstringumanzusetzen1)
+                    print(ortimstringumanzusetzen2)
+                    print(outputstring)
+
+
                 outputstring = outputstring[:ortimstringumanzusetzen1] + mehrfachbindungsstringaddition + zusatzstring + outputstring[ortimstringumanzusetzen1:]
                 ortdergemachtenAtomgruppen = PositionenimStringanpassen(ortdergemachtenAtomgruppen, ortimstringumanzusetzen1, längenadditiondurchmehrfachbindung + längenaddition)
 
+                if ortimstringumanzusetzen1 < ortimstringumanzusetzen2:
+                    ortimstringumanzusetzen2 += längenadditiondurchmehrfachbindung + längenaddition
+
                 outputstring = outputstring[:ortimstringumanzusetzen2] + zusatzstring + outputstring[ortimstringumanzusetzen2:]
                 ortdergemachtenAtomgruppen = PositionenimStringanpassen(ortdergemachtenAtomgruppen,ortimstringumanzusetzen2,längenaddition)
+
+                if cyclozähler == 1:
+                    print(self.molekularstruktur)
+                    print(outputstring)
+
 
 
 
@@ -526,16 +541,28 @@ class individuum():
 
 
             for a in range(len(verbindungennochüberprüfen)-1,-1,-1):
-                print(a)
                 if (len(self.molekularstruktur[verbindungennochüberprüfen[a]]) == 1):
                     verbindungennochüberprüfen.pop(a)
-            print(verbindungennochüberprüfen)
-            print(self.molekularstruktur)
 
-        self.smistring = outputstring #Muss bei Smi einfach so sein, es darf am Anfang und am Ende keine Klammer haben. Da es die äusserten Klammern sind, spielt es auch keine Rolle
+
+        #Die eckigen Klammern müsseen entfern werden, da es um das erste Atom keine Klammern haben darf. Damit der Algoryhmus aber immer perfekt klappt, muss man sie am Anfang hinzufügen und jetzt wieder rausnehmen
+
+        outputstring = outputstring.replace("|","")
+
+
+        self.smistring = outputstring    #Muss bei Smi einfach so sein, es darf am Anfang und am Ende keine Klammer haben. Da es die äusserten Klammern sind, spielt es auch keine Rolle
         print(self.smistring)
 
 
+    def DarstellungMolekülinSMI(self, mitWasserstoff = False):
+        if self.smistring != None:
+
+            mol = Chem.MolFromSmiles(self.smistring)
+            if mitWasserstoff:
+                mol = Chem.AddHs(mol)
+            rdkit.Chem.AllChem.Compute2DCoords(mol)
+            img = Draw.MolToImage(mol, size=(2000, 2000), kekulize=True, bgcolor=(255, 255, 255))
+            img.show()
 
 
     def Anzahlverbindungen(self, elementnummer):
@@ -635,6 +662,7 @@ class individuum():
 
         if Doppelbindungsequivalenz > 0:
 
+
             restlicheoffenestellen = []
             for atom in molekularsturktur:
                 restlicheoffenestellen.append(self.Anzahloffeneverbindungen(atom))
@@ -652,7 +680,7 @@ class individuum():
                 a = 0
                 while a < len(positionen):
                     for b in range(a+1,len(positionen)):
-                        if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]], molekularsturktur[positionen[b]]) == 0:
+                        if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],positionen[b]) == 0:
 
                             molekularsturktur[positionen[a]].append([3, positionen[b]])
                             molekularsturktur[positionen[b]].append([3, positionen[a]])
@@ -674,7 +702,7 @@ class individuum():
                 a = 0
                 while a < len(positionen):
                     for b in range(a+1, len(positionen)):
-                        if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],molekularsturktur[positionen[b]]) == 0:
+                        if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],positionen[b]) == 0:
                             molekularsturktur[positionen[a]].append([2, positionen[b]])
                             molekularsturktur[positionen[b]].append([2, positionen[a]])
                             Doppelbindungsequivalenz -= 2
@@ -693,16 +721,33 @@ class individuum():
                     positionen.append(count)
 
             if positionen != []:
+
                 a = 0
                 while a < len(positionen):
                     for b in range(a+1, len(positionen)):
-                        if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],molekularsturktur[positionen[b]]) == 0:
+
+                        if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],positionen[b]) == 0:
+                            print("ich bin hier")
                             molekularsturktur[positionen[a]].append([1, positionen[b]])
                             molekularsturktur[positionen[b]].append([1, positionen[a]])
                             Doppelbindungsequivalenz -= 1
                             if self.Anzahloffeneverbindungen(molekularsturktur[positionen[b]]) == 0:
                                 positionen.pop(b)
                             break
+                        elif self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],positionen[b]) <= 2:
+
+                            for c in range(1,len(molekularsturktur[positionen[a]])):
+                                if molekularsturktur[positionen[a]][c][1] == positionen[b]:
+                                    molekularsturktur[positionen[a]][c][0] += 1
+
+                            for c in range(1,len(molekularsturktur[positionen[b]])):
+                                if molekularsturktur[positionen[b]][c][1] == positionen[a]:
+                                    molekularsturktur[positionen[b]][c][0] += 1
+
+                            if self.Anzahloffeneverbindungen(molekularsturktur[positionen[b]]) == 0:
+                                positionen.pop(b)
+                            break
+
                     if self.Anzahloffeneverbindungen(molekularsturktur[positionen[a]]) == 0:
                         positionen.pop(a)
                     else:
@@ -753,7 +798,7 @@ class individuum():
         if Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0:
             for atom in molekularsturktur:
                 if self.Anzahloffeneverbindungen(atom) != 0:
-                    print(self.grppenkonfiguration)
+                    print(self.gruppenkonfiguration)
 
         if False:
             for atom in molekularsturktur:
@@ -764,25 +809,12 @@ class individuum():
 
         return molekularsturktur
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         return False
 
     def __init__(self, gruppenkonfiguration, anzahlmutationen):
 
         # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
-        self.grppenkonfiguration = gruppenkonfiguration
+        self.gruppenkonfiguration = gruppenkonfiguration
         self.elemente = [0] * len(gruppenkonfiguration)
         self.elemente[0] = gruppenkonfiguration[0]
         self.elemente[1] = gruppenkonfiguration[1]
@@ -795,19 +827,30 @@ class individuum():
         self.elemente[8] = gruppenkonfiguration[7]
         self.elementgruppengrenzen = [0,1,2,5]
 
+        Doppelbindungsequivalenz = (self.elemente[0]*2 + self.elemente[1] -self.elemente[5] - self.elemente[6] -self.elemente[7] -self.elemente[8])/2 + 1
+        if not (Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0):
+            print(self.elemente)
+            print("FEHLERMELDUNG, dieses Molekül exisistiert aufgrund einer nicht möglichen Doppelbindungswquivalenz nicht.")
+            return
+
 
         self.molekularstruktur = self.Strukturintertialgenerator(anzahlmutationen)
         self.smistring = None
 
+
+
         print("überprüfung :" +str(self.isligit()))
+        print(self.molekularstruktur)
 
 
 
-test = individuum([4, 0, 0, 0, 0, 0, 0, 0, 2],0)
+
+test = individuum([4,2 , 2, 2, 2, 2, 2, 0, 0],0)
 test.SMilestransformator()
+test.DarstellungMolekülinSMI(True)
 
 
-#for a in range(10000):
+#for a in range(100000  ):
     #test = individuum([random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20)], 0)
         
 print("finish")
