@@ -122,8 +122,15 @@ class individuum():
         return
 
     def Creatverbindung(self, positionatom1, positionatom2, wertigkeitderVerbindung):
-        self.molekularstruktur[positionatom1].append([wertigkeitderVerbindung, positionatom2])
-        self.molekularstruktur[positionatom2].append([wertigkeitderVerbindung, positionatom1])
+        if self.AnzahlverbindungenzwischenzweiAtomen(self.molekularstruktur[positionatom1],positionatom2) == 0:
+            self.molekularstruktur[positionatom1].append([wertigkeitderVerbindung, positionatom2])
+            self.molekularstruktur[positionatom2].append([wertigkeitderVerbindung, positionatom1])
+        else:
+            wertigkeitderaltenVerbindung = self.AnzahlverbindungenzwischenzweiAtomen(self.molekularstruktur[positionatom1],positionatom2)
+            self.Deletverbindung(positionatom1,positionatom2)
+            self.molekularstruktur[positionatom1].append([wertigkeitderVerbindung+wertigkeitderaltenVerbindung, positionatom2])
+            self.molekularstruktur[positionatom2].append([wertigkeitderVerbindung+wertigkeitderaltenVerbindung, positionatom1])
+
 
 
     def isligit(self, anzahlverbindungenüberspringen = False, anazahlAtomeüberspringen = False, topologischzusammenhängendüberspringen = False):
@@ -291,13 +298,14 @@ class individuum():
             return False
 
         def MutationAtomherausreisenundanderswoneueinsetzen():
+
             for a in range(5):
                 positionatom = random.randint(0,len(self.molekularstruktur)-1)
                 wertigkeitatom = self.Anzahlverbindungen(self.molekularstruktur[positionatom][0])
 
-                if wertigkeitatom == 1:
-                    if MutationzweiergleichwertigerAtome(positionatom):
-                        return True
+                #if wertigkeitatom == 1:
+                    #if MutationzweiergleichwertigerAtome(positionatom):
+                        #return True
                 if wertigkeitatom == 2:
                     if len(self.molekularstruktur[positionatom]) == 3: #bzw es zwei einfachbindungen hat
                         möglichesubstitutionen = []
@@ -325,11 +333,15 @@ class individuum():
                             self.Creatverbindung(positionsubstitiontsatom1,positionatom,1)
                             self.Creatverbindung(positionsubstitiontsatom2, positionatom, 1)
 
+                            return True
+
 
 
                 if wertigkeitatom == 3:
                     if len(self.molekularstruktur[positionatom]) == 4: #bzw es drei einfachbindungen hat. Deshalb werden dann zwei miteinander verknüpft, der dritte bleibt und das Atom kann ziwschen eine einfach Bindung sich einfügen:
                         möglichesubstitutionen = []
+
+                        print("Ich bin Hier")
                         # Suche eine einfachbindung und schmuggle dich rein
                         for position, atom in enumerate(self.molekularstruktur):
                             for a in range(1, len(atom)):
@@ -338,8 +350,10 @@ class individuum():
                         if möglichesubstitutionen != []:
                             substitutionsverbindung = random.randint(0, len(möglichesubstitutionen) - 1)
 
+
                             #zwei einfachbindungen werden aufgespalten. Es spielt keine Rolle und da die Reihenfolge sowiso zufällig ist, nehme ich einfach die ersten zwei
                             positionatom2 = self.molekularstruktur[positionatom][1][1]
+
                             positionatom3 = self.molekularstruktur[positionatom][2][1]
                             self.Deletverbindung(positionatom, positionatom2)
                             self.Deletverbindung(positionatom, positionatom3)
@@ -364,6 +378,7 @@ class individuum():
                             else:
                                 self.Deletverbindung(positionatom, positionverbleibendesatom)
                                 self.Creatverbindung(positionatom, positionverbleibendesatom, 2)
+                            return True
 
 
 
@@ -388,7 +403,7 @@ class individuum():
                             self.Deletverbindung(positionatom, positionatomeinfachbindung)
                             self.Deletverbindung(positionatom, positionatomdoppelbindung)
                             self.Creatverbindung(positionatomeinfachbindung, positionatomdoppelbindung, 1)
-                            self.Creatverbindung(positionatomdoppelbindung, positionatom)
+                            self.Creatverbindung(positionatomdoppelbindung, positionatom,1)
 
                             positionverbleibendesatom = self.molekularstruktur[positionatom][1][1] # es kann sein, dass mit diesem Atom eine neue Bindung eingeganen werden soll, dann muss es aber anstatt einer neuer einfachbindung eine doppelbindung geben
 
@@ -409,6 +424,8 @@ class individuum():
                             else:
                                 self.Deletverbindung(positionatom, positionverbleibendesatom)
                                 self.Creatverbindung(positionatom, positionverbleibendesatom, 2) #
+
+                            return True
 
 
 
@@ -432,7 +449,8 @@ class individuum():
 
 
 
-        MutationzweiergleichwertigerAtome()
+        #MutationzweiergleichwertigerAtome()
+        MutationAtomherausreisenundanderswoneueinsetzen()
         
         
         
@@ -528,7 +546,11 @@ class individuum():
 
         outputstring = "|" + outputstring[1:-1] + "|"
 
+        molekularstrukturcopy = copy.deepcopy(self.molekularstruktur) # Da im prozess die molekularstruktur verändern bzw. gelöscht wird, wird sie hier in einer anderen Variabel gespeichert und am Schluss wieder zum originalzustand zurückgeführt
+
         while verbindungennochüberprüfen != []:
+
+
             momentanesAtom = verbindungennochüberprüfen[0]
 
             verbindendesAtom = self.molekularstruktur[momentanesAtom][1][1]
@@ -539,6 +561,7 @@ class individuum():
 
 
             if gemachteAtomgruppen[verbindendesAtom]: # ergibt True, wenn es schon gemacht wurde
+
                 cyclozähler += 1
 
                 if cyclozähler < 10:
@@ -570,12 +593,6 @@ class individuum():
                     ortimstringumanzusetzen2 += 1
 
 
-                if cyclozähler == 1:
-                    print(self.molekularstruktur)
-                    print(ortimstringumanzusetzen1)
-                    print(ortimstringumanzusetzen2)
-                    print(outputstring)
-
 
                 outputstring = outputstring[:ortimstringumanzusetzen1] + mehrfachbindungsstringaddition + zusatzstring + outputstring[ortimstringumanzusetzen1:]
                 ortdergemachtenAtomgruppen = PositionenimStringanpassen(ortdergemachtenAtomgruppen, ortimstringumanzusetzen1, längenadditiondurchmehrfachbindung + längenaddition)
@@ -585,15 +602,6 @@ class individuum():
 
                 outputstring = outputstring[:ortimstringumanzusetzen2] + zusatzstring + outputstring[ortimstringumanzusetzen2:]
                 ortdergemachtenAtomgruppen = PositionenimStringanpassen(ortdergemachtenAtomgruppen,ortimstringumanzusetzen2,längenaddition)
-
-                if cyclozähler == 1:
-                    print(self.molekularstruktur)
-                    print(outputstring)
-
-
-
-
-
 
 
 
@@ -630,17 +638,23 @@ class individuum():
 
         self.smistring = outputstring    #Muss bei Smi einfach so sein, es darf am Anfang und am Ende keine Klammer haben. Da es die äusserten Klammern sind, spielt es auch keine Rolle
         print(self.smistring)
+        # Da self.molekularstruktur jetzt eigentlich gelöscht ist, wird dies wieder neu mit der Copy vom Anfang überspielt
+        self.molekularstruktur = copy.deepcopy(molekularstrukturcopy)
+
+        return
 
 
-    def DarstellungMolekülinSMI(self, mitWasserstoff = False):
+    def DarstellungMolekülinSMI(self, mitWasserstoff = False, mitBild = True):
         if self.smistring != None:
 
             mol = Chem.MolFromSmiles(self.smistring)
             if mitWasserstoff:
                 mol = Chem.AddHs(mol)
             rdkit.Chem.AllChem.Compute2DCoords(mol)
-            img = Draw.MolToImage(mol, size=(2000, 2000), kekulize=True, bgcolor=(255, 255, 255))
-            img.show()
+            if mitBild:
+                img = Draw.MolToImage(mol, size=(2000, 2000), kekulize=True, bgcolor=(255, 255, 255))
+                img.show()
+        return
 
 
     def Anzahlverbindungen(self, elementnummer):
@@ -923,9 +937,22 @@ class individuum():
 
 
 
-test = individuum([4,2 , 2, 2, 2, 2, 2, 0, 0],0)
+test = individuum([2,2 , 2, 2, 2, 2, 2, 0, 0],0)
+
+
 test.SMilestransformator()
-test.DarstellungMolekülinSMI(True)
+test.DarstellungMolekülinSMI(False )
+
+for a in range(1000000):
+    
+    if not test.isligit:
+        raise ValueError("Ungültiger Wert!")
+    test.Muation()
+    test.SMilestransformator()
+    test.DarstellungMolekülinSMI(False, False)
+
+
+
 
 
 #for a in range(100000  ):
