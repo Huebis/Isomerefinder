@@ -138,6 +138,7 @@ class individuum():
         def AlleAtomehabenalleverbindungenverbraucht():
             for atom in self.molekularstruktur:
                 if self.Anzahloffeneverbindungen(atom) != 0:
+                    print("Error nicht alle Atome haben die richtige Anzahl an Verbindungen" + str(atom))
                     return False
             return True
 
@@ -147,9 +148,11 @@ class individuum():
                 elemente[atom[0]] += 1
             if elemente == self.elemente:
                 return True
+
+            print("Error es kommen nicht alle Atome in der richtigen Anzahl vor")
             return False
 
-            return False
+
 
         def Topologischzusammenhängend():
             überprüfteatome = [False for a in range(len(self.molekularstruktur))]
@@ -168,6 +171,7 @@ class individuum():
 
             for a in überprüfteatome:
                 if not a:
+                    print("Error das Atom ist nicht zusammenhängend")
                     return False
 
             return True
@@ -196,41 +200,42 @@ class individuum():
 
         def MutationzweiergleichwertigerAtome(spezifischeposition = None):
 
-            for a in range(10):
-                if spezifischeposition == None:
-                    positionatom1 = random.randint(self.elementgruppengrenzen[1], len(self.molekularstruktur)-1)
-                else:
-                    positionatom1 = spezifischeposition
+            if spezifischeposition == None:
+                positionatom1 = random.randint(self.elementgruppengrenzen[1], len(self.molekularstruktur) - 1)
+            else:
+                positionatom1 = spezifischeposition
 
+            wertigkeitatom1 = self.Anzahlverbindungen(self.molekularstruktur[positionatom1][0])
+            gleichwertigeatome = []
+            for count, atom in enumerate(self.molekularstruktur):
+                if atom[0] != self.molekularstruktur[positionatom1][0] and self.Anzahlverbindungen(
+                        atom[0]) == wertigkeitatom1:
+                    gleichwertigeatome.append(count)
 
-                wertigkeitatom1 = self.Anzahlverbindungen(self.molekularstruktur[positionatom1][0])
-                gleichwertigeatome = []
-                for count, atom in enumerate(self.molekularstruktur):
-                    if atom[0] != self.molekularstruktur[positionatom1][0] and self.Anzahlverbindungen(atom[0]) == wertigkeitatom1:
-                        gleichwertigeatome.append(count)
+            if gleichwertigeatome != []:
+                positionatom2 = gleichwertigeatome[random.randint(0, len(gleichwertigeatome) - 1)]
+                atom1 = self.molekularstruktur[positionatom1][0]
+                atom2 = self.molekularstruktur[positionatom2][0]
+                self.molekularstruktur[positionatom1][0] = atom2
+                self.molekularstruktur[positionatom2][0] = atom1
+                return True
 
-                if gleichwertigeatome != []:
-                    positionatom2 = gleichwertigeatome[random.randint(0,len(gleichwertigeatome)-1)]
-                    atom1 = self.molekularstruktur[positionatom1][0]
-                    atom2 = self.molekularstruktur[positionatom2][0]
-                    self.molekularstruktur[positionatom1][0] = atom2
-                    self.molekularstruktur[positionatom2][0] = atom1
-                    return True
             return False
 
         def MutationreduzierungMehrfachbindungzuanderemOrt():
 
             #überprüfen ob es überhaupt Mehrfachbindungen hat
             listeallerMehrfachbindungen = []
-            for Atomposition,Atom in self.molekularstruktur:
-                for a in range(1,len(Atom)):
-                    if Atom[a][0] > 1:
-                        listeallerMehrfachbindungen.append[Atomposition, a]
+            for atomposition,atom in enumerate(self.molekularstruktur):
+                for a in range(1,len(atom)):
+                    if atom[a][0] > 1:
+                        listeallerMehrfachbindungen.append([atomposition, atom[a][1]])
 
             if listeallerMehrfachbindungen == []:
                 return False
 
-
+            print("liste aller möglichkeiten")
+            print(listeallerMehrfachbindungen)
             #Jetzt müssen alle einfach oder Doppelbindungen gesucht werden, an welchem an beiden Atomen davon zwei Einzelbindungen sind, welche mann dann "herübernehmen kann"
             substitutionsmöglichkeiten = [] # Immer Viereinträge einfachbindung mit Atom1, Atom1, Atom2 (Atom1 und Atom2 sind der Ort bei dem die Verbindung erhöht wird), einfachbindung mit Atom2
 
@@ -240,55 +245,82 @@ class individuum():
                 boolatom2 = False
                 positionatomineinfachverbindungmitatom1 = 0
                 positionatomineinfachverbindungmitatom2 = 0
-                for a in range(len(1,self.molekularstruktur[positionatom1])):
+                for a in range(1,len(self.molekularstruktur[positionatom1])):
                     if self.molekularstruktur[positionatom1][a][0] == 1 and self.molekularstruktur[positionatom1][a][1] != positionatom2:
-                        boolatom1 == True
-                        positionatomineinfachverbindungmitatom1 == self.molekularstruktur[positionatom1][a][1]
+                        boolatom1 = True
+                        positionatomineinfachverbindungmitatom1 = self.molekularstruktur[positionatom1][a][1]
 
-                for a in range(len(1,self.molekularstruktur[positionatom2])):
+                for a in range(1,len(self.molekularstruktur[positionatom2])):
                     if self.molekularstruktur[positionatom2][a][0] == 1 and self.molekularstruktur[positionatom2][a][1] != positionatom1:
-                        boolatom2 == True
-                        positionatomineinfachverbindungmitatom2 == self.molekularstruktur[positionatom2][a][1]
+                        boolatom2 = True
+                        positionatomineinfachverbindungmitatom2 = self.molekularstruktur[positionatom2][a][1]
 
                 if boolatom1 and boolatom2:
-                    return True, positionatomineinfachverbindungmitatom1, positionatomineinfachverbindungmitatom1
+                        return True, positionatomineinfachverbindungmitatom1, positionatomineinfachverbindungmitatom2
                 else:
                     return False,None,None
 
-            for Atomposition,Atom in self.molekularstruktur:
-                if self.Anzahlverbindungen(Atom[0]) > 1:
-                    for a in range(1,len(Atom)):
-                        if Atom[a][1] <= 2:
-                            antwort = isteineweitereeinfachbindungbeibeidenvorhanden(Atomposition,Atom[a][1])
-                            if antwort[0]:
-                                substitutionsmöglichkeiten[antwort[1],Atomposition,Atom[a][1],antwort[2]]
+            for atomposition,atom in enumerate(self.molekularstruktur):
+                if self.Anzahlverbindungen(atom[0]) > 1:
+                    for a in range(1,len(atom)):
+                        if atom[a][0] == 1:
+                            antwort = isteineweitereeinfachbindungbeibeidenvorhanden(atomposition,atom[a][1])
+                            if antwort[0] and (self.Anzahlverbindungen(atom[0]) >= 3 or self.Anzahlverbindungen(self.molekularstruktur[atom[a][1]][0]) >= 3) :
+                                substitutionsmöglichkeiten.append([antwort[1],atomposition,atom[a][1],antwort[2]])
+                        elif atom[a][0] == 2:
+                            antwort = isteineweitereeinfachbindungbeibeidenvorhanden(atomposition,atom[a][1])
+                            if antwort[0] and (self.Anzahlverbindungen(atom[0]) >= 4 or self.Anzahlverbindungen(self.molekularstruktur[atom[a][1]][0]) >= 4) :
+                                substitutionsmöglichkeiten.append([antwort[1],atomposition,atom[a][1],antwort[2]])
+
+
+            # jetzt wird sich für eine Mehrfachverbindung entschieden
+            randommehrfachbindung = random.randint(0, len(listeallerMehrfachbindungen) - 1)
+            reduzierdesAtom1 = listeallerMehrfachbindungen[randommehrfachbindung][0]
+            reduzierdesAtom2 = listeallerMehrfachbindungen[randommehrfachbindung][1]
+
+            print("Substitutionsmöglichkeiten")
+            print(substitutionsmöglichkeiten)
+
+            # die Substitutionsmöglichkeiten werden jetzt noch gefiltert
+            for a in range(len(substitutionsmöglichkeiten)-1,-1,-1):
+                if substitutionsmöglichkeiten[a][0] == reduzierdesAtom1 or substitutionsmöglichkeiten[a][0] == reduzierdesAtom2:
+                    substitutionsmöglichkeiten.pop(a)
+
+                elif substitutionsmöglichkeiten[a][3] == reduzierdesAtom1 or substitutionsmöglichkeiten[a][3] == reduzierdesAtom2:
+                    substitutionsmöglichkeiten.pop(a)
+
+                elif substitutionsmöglichkeiten[a][1] == reduzierdesAtom1 or substitutionsmöglichkeiten[a][1] == reduzierdesAtom2:
+                    substitutionsmöglichkeiten.pop(a)
+
+                elif substitutionsmöglichkeiten[a][2] == reduzierdesAtom1 or substitutionsmöglichkeiten[a][2] == reduzierdesAtom2:
+                    substitutionsmöglichkeiten.pop(a)
+
 
             if substitutionsmöglichkeiten == []:
                 return False
+            print(substitutionsmöglichkeiten)
 
 
-            randommehrfachbindung = random.randint(0, len(listeallerMehrfachbindungen)-1)
+
             randomsubstitution = random.randint(0,len(substitutionsmöglichkeiten)-1)
 
-            reduzierdesAtom1 = listeallerMehrfachbindungen[randommehrfachbindung][0]
-            reduzierdesAtom2 = listeallerMehrfachbindungen[randommehrfachbindung][1]
+
 
             einfachbindungzusubstitutionsAtom1 = substitutionsmöglichkeiten[randomsubstitution][0]
             einfachbindungzusubstitutionsAtom2 = substitutionsmöglichkeiten[randomsubstitution][3]
             substitutionsAtom1 = substitutionsmöglichkeiten[randomsubstitution][1]
             substitutionsAtom2 = substitutionsmöglichkeiten[randomsubstitution][2]
 
-            wertigkeitderVerbindungbeiderReduzierten = self.AnzahlverbindungenzwischenzweiAtomen(self.molekularstruktur[reduzierdesAtom1], reduzierdesAtom2)
-            wertigkeitderVerbindungbeiderSubstitution = self.AnzahlverbindungenzwischenzweiAtomen(self.molekularstruktur[substitutionsAtom1], substitutionsAtom2)
-            self.Deletverbindung(reduzierdesAtom1,reduzierdesAtom2)
-            self.Creatverbindung(reduzierdesAtom1,reduzierdesAtom2,wertigkeitderVerbindungbeiderReduzierten-1)
+            self.Creatverbindung(reduzierdesAtom1,reduzierdesAtom2,-1)
+
             self.Deletverbindung(einfachbindungzusubstitutionsAtom1,substitutionsAtom1)
             self.Creatverbindung(einfachbindungzusubstitutionsAtom1, reduzierdesAtom1, 1)
             self.Deletverbindung(einfachbindungzusubstitutionsAtom2, substitutionsAtom2)
-            self.Creatverbindung(einfachbindungzusubstitutionsAtom2,reduzierdesAtom2)
-            self.Deletverbindung(substitutionsAtom1,substitutionsAtom2)
-            self.Creatverbindung(substitutionsAtom1, substitutionsAtom2, wertigkeitderVerbindungbeiderSubstitution + 1)
+            self.Creatverbindung(einfachbindungzusubstitutionsAtom2,reduzierdesAtom2,1)
+            self.Creatverbindung(substitutionsAtom1, substitutionsAtom2, 1)
+
             return True
+
 
 
         def MutationreduzierungMehrfachbindungzueinemCyclo():
@@ -301,10 +333,10 @@ class individuum():
 
             positionatom = random.randint(0, len(self.molekularstruktur) - 1)
             wertigkeitatom = self.Anzahlverbindungen(self.molekularstruktur[positionatom][0])
-            print("WErtigkeit der Änderung: " +str(wertigkeitatom))
-            # if wertigkeitatom == 1:
-            # if MutationzweiergleichwertigerAtome(positionatom):
-            # return True
+
+            if wertigkeitatom == 1:
+                if MutationzweiergleichwertigerAtome(positionatom):
+                    return True
             if wertigkeitatom == 2:
                 if len(self.molekularstruktur[positionatom]) == 3:  # bzw es zwei einfachbindungen hat
                     möglichesubstitutionen = []
@@ -317,7 +349,6 @@ class individuum():
                         return False
 
                     substitutionsverbindung = random.randint(0, len(möglichesubstitutionen) - 1)
-                    print(self.molekularstruktur)
 
                     # das zwei Wertigkeatom muss zuerst von seinen zwei verbindungen herausgelöst werden, und die beidenen offnene stellen wieder zusammengeflickt werden
                     positionatom2 = self.molekularstruktur[positionatom][1][1]
@@ -335,8 +366,7 @@ class individuum():
                     self.Creatverbindung(positionsubstitiontsatom1, positionatom, 1)
                     self.Creatverbindung(positionsubstitiontsatom2, positionatom, 1)
 
-                    print(positionatom2)
-                    print(positionatom3)
+
 
                     return True
                 else:
@@ -346,7 +376,6 @@ class individuum():
                 if len(self.molekularstruktur[positionatom]) == 4:  # bzw es drei einfachbindungen hat. Deshalb werden dann zwei miteinander verknüpft, der dritte bleibt und das Atom kann ziwschen eine einfach Bindung sich einfügen:
                     möglichesubstitutionen = []
 
-                    print("Ich bin Hier")
                     # Suche eine einfachbindung und schmuggle dich rein
                     for position, atom in enumerate(self.molekularstruktur):
                         for a in range(1, len(atom)):
@@ -373,6 +402,16 @@ class individuum():
 
                     self.Deletverbindung(positionatom, positionatom2)
                     self.Deletverbindung(positionatom, positionatom3)
+
+                    #Rein Topologisch muss es jetzt immer noch alles zusammenhängend sein, wäre dies nicht mehr der Fall muss der Mutationsversuch abgebrochen werden, da sich daraus zwei unterschiedliche Moleküle bilden würden
+
+                    if not self.isligit(True,True,False):# es muss nur die Topologie geprüft werden
+                        # Fall ist aufgetreten und nun wird alles wieder rückgäng gemacht werden
+                        self.Creatverbindung(positionatom, positionatom2,1)
+                        self.Creatverbindung(positionatom, positionatom3,1)
+                        return False
+
+
                     self.Creatverbindung(positionatom2, positionatom3, 1)
 
 
@@ -459,13 +498,36 @@ class individuum():
 
 
 
+        randommutationszeiger = random.random()
+
+        if randommutationszeiger < 0.4:
+            print("MutationzweiergleichwertigerAtome")
+            for a in range(10):
+                if MutationzweiergleichwertigerAtome():
+                    return True
 
 
-        #MutationzweiergleichwertigerAtome()
-        for a in range(10):
-            if MutationAtomherausreisenundanderswoneueinsetzen():
-                break
-        return
+
+        elif randommutationszeiger < 0.7:
+            print("MutationAtomherausreisenundanderswoneueinsetzen ")
+            for a in range(10):
+                if MutationAtomherausreisenundanderswoneueinsetzen():
+                    return True
+        else:
+            print("MutationverschiebungMehrfachbindung")
+            for a in range(2):
+                zwischenspeichermolekularstruktur = copy.deepcopy(self.molekularstruktur)
+                if MutationreduzierungMehrfachbindungzuanderemOrt():
+                    # Es gibt leider sehr viele Spezialfälle, bei welchem diese Mutation nicht geht. Diese sind aber meistens so speziel, dass es sich nicht lohnt, diese manuel einzelt herauszufiltern. Daher überprüfe ich das Molekül und wenn es nicht mehr zusammenhängend ist und falls dies der Fall ist, muss ich alles wieder rückgängig machen.
+                    if self.isligit():
+                        return True
+                    else:
+                        self.molekularstruktur = copy.deepcopy(zwischenspeichermolekularstruktur)
+
+
+
+        return False
+
         
         
         
@@ -633,8 +695,7 @@ class individuum():
                 if wertigkeitderverbindung >= 4:
                     raise ValueError("Mehr als eine Dreifachbindung, dies ist nicht möglich")
 
-                print("wertigkeitderVerbindung" + str(wertigkeitderverbindung) +" und noch die Elementnummer"+ str(self.molekularstruktur[verbindendesAtom][0]) )
-                print(self.molekularstruktur)
+
                 outputstring = outputstring[:ortimstringumanzusetzen] + Übersetzung(self.molekularstruktur[verbindendesAtom][0],wertigkeitderverbindung) + outputstring[ortimstringumanzusetzen:]
 
                 ortdergemachtenAtomgruppen = PositionenimStringanpassen(ortdergemachtenAtomgruppen,ortimstringumanzusetzen,LängederÜbersetzung(self.molekularstruktur[verbindendesAtom][0])+längenadditiondurchmehrfachbindung)
@@ -838,7 +899,6 @@ class individuum():
                     for b in range(a+1, len(positionen)):
 
                         if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],positionen[b]) == 0:
-                            print("ich bin hier")
                             molekularsturktur[positionen[a]].append([1, positionen[b]])
                             molekularsturktur[positionen[b]].append([1, positionen[a]])
                             Doppelbindungsequivalenz -= 1
@@ -969,23 +1029,17 @@ test = individuum([2,6 , 2, 2, 2, 2, 2, 0, 0],0)
 
 
 test.SMilestransformator()
-test.DarstellungMolekülinSMI(False, False )
+test.DarstellungMolekülinSMI(False, True )
 
 
-for a in range(1000000):
+for a in range(10000):
     test.Muation()
     if not test.isligit():
         print("FEHLER")
         print(test.molekularstruktur)
         raise ValueError("Ungültige Molekularstruktur")
-    print("hello")
-    print(test.molekularstruktur)
-    print("jdjdjd")
-    test.SMilestransformator()
-    test.DarstellungMolekülinSMI(False, False)
 
 
-test.Muation()
 test.SMilestransformator()
 test.DarstellungMolekülinSMI(False, True)
 #test.testfunktion()
