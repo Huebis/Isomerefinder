@@ -188,9 +188,36 @@ class individuum():
             return False
         return True
 
+    def Iszyklisch(self, elementnummer):
+        #return True wenn in einem zyklischen Verbindung ist und gibt False wenn nicht
+        if self.molekularstruktur[elementnummer][0] >= self.elementgruppengrenzen[3]: #Aufgrund der einfachbindung ist es nicht möglich
+            return False
 
+        if self.molekularstruktur[elementnummer][0] >= self.elementgruppengrenzen[2]:
 
     def CalcHeuristik(self):
+        def AbzugKetonAlkoholverbindungen(): # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
+            #Das Program kann ein Keton an ein Alkohol setzen, dies ist aber nicht möglich, da dies eine Carbonsäure geben wird und diese Anzahl schon genau bestimmt ist.
+            #Abzug von 1 für jede solche KetonAlkoholverbindung
+
+            anzahlKetonAlkoholverbindungen = 0
+
+            for atom in self.molekularstruktur:
+                if atom[0] == self.elementgruppengrenzen[2] +1:
+                    for a in range(1,len(atom)):
+                        if atom[a][1] == self.elementgruppengrenzen[3] + 1:
+                            anzahlKetonAlkoholverbindungen += 1
+            return anzahlKetonAlkoholverbindungen
+
+
+        def MSpeaküberprüfung():
+            # zuerst wird der alpha cleavage untersucht bei Ketonen
+
+            #zuerst muss überprüft werden ob es sich wirklich um ein Keton oder um ein Keten handelt und dann muss noch ausgeschlossen werden, dass es nicht in einer Zyklischen Verbindung ist
+
+
+
+            return
         return False
     def Lokalesuche(self):
         return False
@@ -503,16 +530,24 @@ class individuum():
         if randommutationszeiger < 0.4:
             print("MutationzweiergleichwertigerAtome")
             for a in range(10):
+                zwischenspeichermolekularstruktur = copy.deepcopy(self.molekularstruktur)
                 if MutationzweiergleichwertigerAtome():
-                    return True
+                    if self.isligit():
+                        return True
+                    else:
+                        self.molekularstruktur = copy.deepcopy(zwischenspeichermolekularstruktur)
 
 
 
         elif randommutationszeiger < 0.7:
             print("MutationAtomherausreisenundanderswoneueinsetzen ")
             for a in range(10):
+                zwischenspeichermolekularstruktur = copy.deepcopy(self.molekularstruktur)
                 if MutationAtomherausreisenundanderswoneueinsetzen():
-                    return True
+                    if self.isligit():
+                        return True
+                    else:
+                        self.molekularstruktur = copy.deepcopy(zwischenspeichermolekularstruktur)
         else:
             print("MutationverschiebungMehrfachbindung")
             for a in range(2):
