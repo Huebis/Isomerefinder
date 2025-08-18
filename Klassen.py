@@ -193,7 +193,22 @@ class individuum():
         if self.molekularstruktur[elementnummer][0] >= self.elementgruppengrenzen[3]: #Aufgrund der einfachbindung ist es nicht möglich
             return False
 
-        if self.molekularstruktur[elementnummer][0] >= self.elementgruppengrenzen[2]:
+        for a in range(1,len(self.molekularstruktur[elementnummer])-1,1):
+            wertikeitderverbindung = self.molekularstruktur[elementnummer][a][0]
+            atom2 = self.molekularstruktur[elementnummer][a][1]
+
+            self.Deletverbindung(elementnummer, atom2)
+            bool = self.isligit(True, True, False)
+
+            self.Creatverbindung(elementnummer, atom2, wertikeitderverbindung)
+
+            if bool:
+                return True
+
+        return False
+
+
+
 
     def CalcHeuristik(self):
         def AbzugKetonAlkoholverbindungen(): # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
@@ -211,7 +226,14 @@ class individuum():
 
 
         def MSpeaküberprüfung():
-            # zuerst wird der alpha cleavage untersucht bei Ketonen
+            # zuerst wird der alpha cleavage untersucht bei Ketonen für jede passende Alpha cleavage gibt es einen Minus Punkt und für jede Klivage, die nicht existiert gibt es 1 Punkt
+
+
+            for position,atom in enumerate(self.molekularstruktur):
+                if atom[0] == self.elementgruppengrenzen[2] + 1: # ist ein Keton
+                    if not self.Iszyklisch(position) and len(atom) > 2:
+                        msspektrumdaten
+
 
             #zuerst muss überprüft werden ob es sich wirklich um ein Keton oder um ein Keten handelt und dann muss noch ausgeschlossen werden, dass es nicht in einer Zyklischen Verbindung ist
 
@@ -221,6 +243,8 @@ class individuum():
         return False
     def Lokalesuche(self):
         return False
+
+
     def Muation(self):
         #Alle Mutationsfunktionen returnen True wenn eine Mutation durchgeführt werden konnte und False, wenn keine Mutation durchgeführt wurde. Die Manipulation wird direkt am self.molekularstruktur abgeändert
 
