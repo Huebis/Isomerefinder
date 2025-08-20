@@ -225,7 +225,23 @@ class individuum():
             return anzahlKetonAlkoholverbindungen
 
 
+        def AbzugEthertransformationzuKeton_Aldehyd():
+            anzahlfalscherEther = 0 #für Jeden Ether mit einer Doppelbindung gibt es einen Punkt (darf eigenlich nicht sein
+            for atom in self.molekularstruktur:
+                if atom[0] == self.elementgruppengrenzen[2]+2:
+                    if len(atom) == 2:
+                        anzahlfalscherEther += 1
+
+            return anzahlfalscherEther
+
+
         def MSpeaküberprüfung():
+
+            def MassezählermitStartpunkt(startpunkt):
+
+
+
+
             # zuerst wird der alpha cleavage untersucht bei Ketonen für jede passende Alpha cleavage gibt es einen Minus Punkt und für jede Klivage, die nicht existiert gibt es 1 Punkt
 
 
@@ -1056,6 +1072,8 @@ class individuum():
         self.elemente[7] = gruppenkonfiguration[5]
         self.elemente[8] = gruppenkonfiguration[7]
         self.elementgruppengrenzen = [0,1,2,5]
+
+        self.elementmassen = [12,13,14,28,16,15,17,29,45]
 
         Doppelbindungsequivalenz = (self.elemente[0]*2 + self.elemente[1] -self.elemente[5] - self.elemente[6] -self.elemente[7] -self.elemente[8])/2 + 1
         if not (Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0):
