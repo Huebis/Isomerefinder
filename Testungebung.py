@@ -1,4 +1,4 @@
 
+test = [["hallo", 1], [2,3]]
 
-for a in range(1,5,1):
-    print(a)
+print( any(zei))

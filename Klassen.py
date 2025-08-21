@@ -207,9 +207,6 @@ class individuum():
 
         return False
 
-
-
-
     def CalcHeuristik(self):
         def AbzugKetonAlkoholverbindungen(): # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
             #Das Program kann ein Keton an ein Alkohol setzen, dies ist aber nicht möglich, da dies eine Carbonsäure geben wird und diese Anzahl schon genau bestimmt ist.
@@ -237,7 +234,23 @@ class individuum():
 
         def MSpeaküberprüfung():
 
-            def MassezählermitStartpunkt(startpunkt):
+            def MassezählermitStartpunkt(startpunkt, atomebeidenenegestoptwerdensoll):
+                nochzubearbeitetenelemente = [startpunkt]
+                schonbearbeiteteelemente = atomebeidenenegestoptwerdensoll
+
+                masse = 0
+
+                while nochzubearbeitetenelemente != []:
+                    atom = self.molekularstruktur[nochzubearbeitetenelemente[0]]
+                    schonbearbeiteteelemente.append(nochzubearbeitetenelemente[0])
+                    nochzubearbeitetenelemente.pop(0)
+                    for a in range(1,len(atom),1):
+                        if not (atom[a][1] in schonbearbeiteteelemente):
+                            nochzubearbeitetenelemente.append(atom[a][1])
+                    masse += self.elementmassen[atom[0]]
+
+                return masse
+
 
 
 
@@ -248,7 +261,10 @@ class individuum():
             for position,atom in enumerate(self.molekularstruktur):
                 if atom[0] == self.elementgruppengrenzen[2] + 1: # ist ein Keton
                     if not self.Iszyklisch(position) and len(atom) > 2:
-                        msspektrumdaten
+                        masse1 = MassezählermitStartpunkt(atom[1][1], [position]) + 28 # 28 für das hinzufügen des Ketons
+                        masse2 = MassezählermitStartpunkt(atom[2][1],[position]) + 28  # 28 für das hinzufügen des Ketons
+
+                        if masse1 in Molekuelinfo.msdata:
 
 
             #zuerst muss überprüft werden ob es sich wirklich um ein Keton oder um ein Keten handelt und dann muss noch ausgeschlossen werden, dass es nicht in einer Zyklischen Verbindung ist
