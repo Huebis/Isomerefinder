@@ -1,4 +1,5 @@
 
-test = [["hallo", 1], [2,3]]
+test = [ [] for a in range(5)]
 
-print( any(zei))
+
+print(test)

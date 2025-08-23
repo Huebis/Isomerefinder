@@ -1,6 +1,7 @@
 import subprocess
 import random
 import copy
+import Testcase
 
 import rdkit.Chem.AllChem
 from rdkit import Chem
@@ -256,7 +257,7 @@ class individuum():
 
 
             # zuerst wird der alpha cleavage untersucht bei Ketonen für jede passende Alpha cleavage gibt es einen Minus Punkt und für jede Klivage, die nicht existiert gibt es 1 Punkt
-
+            mstreffer = 0
 
             for position,atom in enumerate(self.molekularstruktur):
                 if atom[0] == self.elementgruppengrenzen[2] + 1: # ist ein Keton
@@ -264,15 +265,41 @@ class individuum():
                         masse1 = MassezählermitStartpunkt(atom[1][1], [position]) + 28 # 28 für das hinzufügen des Ketons
                         masse2 = MassezählermitStartpunkt(atom[2][1],[position]) + 28  # 28 für das hinzufügen des Ketons
 
-                        if masse1 in Molekuelinfo.msdata:
+                        for mswert in Molekuelinfo.msdata:
+                            if mswert[0] == masse1:
+                                mstreffer += 1
+                                masse1 = 0
+                            if mswert[0] == masse2:
+                                mstreffer += 1
+                                masse2 = 0
+                        if masse1 != 0:
+                            mstreffer -= 1
+                        if masse2 != 0:
+                            mstreffer -= 1
+
+
+            return mstreffer
+
+
 
 
             #zuerst muss überprüft werden ob es sich wirklich um ein Keton oder um ein Keten handelt und dann muss noch ausgeschlossen werden, dass es nicht in einer Zyklischen Verbindung ist
 
+        def NMRspektrumAnalyse():
+
+            def BewertungMethylgruppen():
+                methylgruppennummer = self.elementgruppengrenzen[3]
+                
+                if self.elemente[methylgruppennummer] == 0: # Überprüfung ob es überhaupt Methylgruppen hat
+                    return 0
 
 
-            return
-        return False
+
+        heuristikwert = AbzugKetonAlkoholverbindungen()
+        heuristikwert += AbzugEthertransformationzuKeton_Aldehyd()
+        heuristikwert += 3*MSpeaküberprüfung()
+        print(heuristikwert)
+        return heuristikwert
     def Lokalesuche(self):
         return False
 
@@ -1073,6 +1100,10 @@ class individuum():
 
         return False
 
+
+    def ChildauszweiParents(self, molekularstrukturMutter, molekularstrukturVater):
+        return False
+
     def __init__(self, gruppenkonfiguration, anzahlmutationen):
 
         # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
@@ -1118,37 +1149,6 @@ class individuum():
 
 
 
-test = individuum([2,6 , 2, 2, 2, 2, 2, 0, 0],0)
-
-
-test.SMilestransformator()
-test.DarstellungMolekülinSMI(False, True )
-
-
-for a in range(10000):
-    test.Muation()
-    if not test.isligit():
-        print("FEHLER")
-        print(test.molekularstruktur)
-        raise ValueError("Ungültige Molekularstruktur")
-
-
-test.SMilestransformator()
-test.DarstellungMolekülinSMI(False, True)
-#test.testfunktion()
-
-
-
-
-
-
-#for a in range(100000  ):
-    #test = individuum([random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20), random.randint(1,20)], 0)
-        
-print("finish")
-# testfehlschlänge
-
-#[5,0,0,0,0,0,0,0,0]
 
 
 
