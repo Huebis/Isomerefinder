@@ -208,6 +208,41 @@ class individuum():
 
         return False
 
+    def Cyclogrösse(self, position): #Zuerst muss überprüft werden ob es überhaupt Cyclisch ist
+        #Die Funktion gibt zurück wie gross die kleinste Cyclo ist (int)
+        schondurchlofeneAtome = [position]
+        count = 1
+
+        zudurchlaufendeAtome = []
+
+        for a in range(1,len(self.molekularstruktur[position])):
+            zudurchlaufendeAtome.append(self.molekularstruktur[position][a][1])
+
+
+        while (len(schondurchlofeneAtome) < len(self.molekularstruktur) and zudurchlaufendeAtome != []):
+            count += 1
+            neuzudurchlaufendeAtomefüerneueRunde = []
+
+            for atomposition in zudurchlaufendeAtome:
+                atom = self.molekularstruktur[atomposition]
+                schondurchlofeneAtome.append(atomposition)
+
+                for a in range(1,len(atom)):
+                    if atom[a][1] == position:
+                        return count
+
+                    if not atom[a][1] in schondurchlofeneAtome:
+                        neuzudurchlaufendeAtomefüerneueRunde.append(atom[a][1])
+
+            zudurchlaufendeAtome = neuzudurchlaufendeAtomefüerneueRunde
+
+
+        raise Exception("Fehler bei Cyclogrösse, ist gar kein Cyclo")
+
+
+
+
+
     def CalcHeuristik(self):
         def AbzugKetonAlkoholverbindungen(): # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
             #Das Program kann ein Keton an ein Alkohol setzen, dies ist aber nicht möglich, da dies eine Carbonsäure geben wird und diese Anzahl schon genau bestimmt ist.
@@ -289,9 +324,87 @@ class individuum():
 
             def BewertungMethylgruppen():
                 methylgruppennummer = self.elementgruppengrenzen[3]
+                CH2gruppennummer = self.elementgruppengrenzen[2]
+                CH1gruppennummer = self.elementgruppengrenzen[1]
                 
                 if self.elemente[methylgruppennummer] == 0: # Überprüfung ob es überhaupt Methylgruppen hat
                     return 0
+
+
+                # 0 = Singlet / 1 = Doublet / 2 = Triplet
+                methylkopplungen = [0,0,0]
+
+
+                for atom in self.molekularstruktur:
+                    if atom[0] == methylgruppennummer:
+                        if atom[1][1] == CH2gruppennummer:
+                            methylkopplungen[2] += 1
+                        elif atom[1][1] == CH1gruppennummer:
+                            methylkopplungen[1] += 1
+                        else:
+                            methylkopplungen[0] += 1
+
+                nmrmethylgruppen = []
+
+                cvletzerpeakfrequenz = -50
+                for wert in Molekuelinfo.d20nmrdaten:
+                    if wert[1] < 1.2: #Ausschluss, damit es kein CH2 usw. sein kann. Ist nicht wirklich eine fixer Wert, aber eine gute Approximation
+                        if abs(wert[0] - cvletzerpeakfrequenz) >= 25:
+                            nmrmethylgruppen.append(1)
+                        else:
+                            nmrmethylgruppen[-1] += 1
+
+
+                fehlerkorrektur = 0 # Um das Fehlinterpretieren vorzubeigen bei überschneidungen, wird dieser Wert erhöht, wenn eine Wert vorkommt, welcher nicht alleine stehen kann und daher eine Kombination vorliegen muss
+                for nmrgruppe in nmrmethylgruppen:
+                    if nmrgruppe <= 3:
+                        methylkopplungen[nmrgruppe-1] -= 1
+                    elif nmrgruppe == 4 or nmrgruppe == 5:
+                        fehlerkorrektur += 2
+                    else:
+                        fehlerkorrektur += 3
+
+                abweichung = 0
+                for wert in methylkopplungen:
+                    abweichung += abs(wert)
+                abweichung -= fehlerkorrektur
+
+                if abweichung <= 0:
+                    return 0
+                else:
+                    return abweichung
+
+
+            def BewertungvonCH2undCH1gruppenn():
+
+                #
+
+
+
+                CH2gruppennummer = self.elementgruppengrenzen[2]
+                CH1gruppennummer = self.elementgruppengrenzen[1]
+
+
+                # 0 = zweieinfachbindungen / 1 = Olephin / 2 =  3cyclo / 3 = 4cyclo / 4 = 5 Cyclo /  5 = 6 Cyclo / 6 = 7 oder mehr Cyclo
+                CH2varianten = [0 for a in range(7)]
+
+                # 0 = zweieinfachbindungen / 1 = Olephin / 2 =  3cyclo / 3 = 4cyclo / 4 = 5 Cyclo /  5 = 6 Cyclo / 6 = 7 oder mehr Cyclo / 7 = Aromat
+                CH1varianten = [0 for a in range(8)]
+
+
+                for position,atom in enumerate(self.molekularstruktur):
+                    if atom[0] == CH2gruppennummer:
+                        if self.Iszyklisch(position):
+                            print("ddhdh")
+                        else:
+                            if len(atom) == 2: #ist Olephin
+                                CH2varianten[1] += 1
+                            else: # muss eine einfachzweibeindung sein
+                                CH2varianten[0] += 1
+
+
+
+
 
 
 

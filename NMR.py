@@ -1,7 +1,8 @@
 import Klassen
+import copy
 
 def Spektralanalyse_verschwundeD2Opeaks():
-    tempnmr = Klassen.Molekuelinfo.nmrdaten.copy()
+    tempnmr = copy.deepcopy(Klassen.Molekuelinfo.nmrdaten)
 
     for a in Klassen.Molekuelinfo.d20nmrdaten:
         tempnmr.remove(a)
