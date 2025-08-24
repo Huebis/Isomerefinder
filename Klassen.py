@@ -209,36 +209,39 @@ class individuum():
         return False
 
     def Cyclogrösse(self, position): #Zuerst muss überprüft werden ob es überhaupt Cyclisch ist
-        #Die Funktion gibt zurück wie gross die kleinste Cyclo ist (int)
-        schondurchlofeneAtome = [position]
-        count = 1
-
-        zudurchlaufendeAtome = []
-
-        for a in range(1,len(self.molekularstruktur[position])):
-            zudurchlaufendeAtome.append(self.molekularstruktur[position][a][1])
+        #Die Funktion gibt zurück wie gross die grösste Cyclo ist (int)
 
 
-        while (len(schondurchlofeneAtome) < len(self.molekularstruktur) and zudurchlaufendeAtome != []):
-            count += 1
-            neuzudurchlaufendeAtomefüerneueRunde = []
+        entscheidungen = [(1,position)]
+        cyclos = []
+        while entscheidungen != []:
 
-            for atomposition in zudurchlaufendeAtome:
-                atom = self.molekularstruktur[atomposition]
-                schondurchlofeneAtome.append(atomposition)
+            if len(self.molekularstruktur[entscheidungen[-1][1]]) > entscheidungen[-1][0]:
+                positionneuesatom = self.molekularstruktur[entscheidungen[-1][1]][entscheidungen[-1][0]][1]
+                neuesatom = self.molekularstruktur[positionneuesatom]
 
-                for a in range(1,len(atom)):
-                    if atom[a][1] == position:
-                        return count
+                if position == positionneuesatom:
+                    cyclos.append(copy.deepcopy(entscheidungen))
+                    entscheidungen[-1][0] += 1
+                elif len(neuesatom) == 2: # bzw. hat nur Verbindung zu einem Atom
+                    entscheidungen[-1][0] += 1
+                else:
+                    entscheidungen.append((1,))
 
-                    if not atom[a][1] in schondurchlofeneAtome:
-                        neuzudurchlaufendeAtomefüerneueRunde.append(atom[a][1])
-
-            zudurchlaufendeAtome = neuzudurchlaufendeAtomefüerneueRunde
+            else:
+                entscheidungen.pop(-1)
 
 
-        raise Exception("Fehler bei Cyclogrösse, ist gar kein Cyclo")
+        if cyclos == []:
+            raise Exception("Fehler bei Cyclogrösse, ist gar kein Cyclo")
 
+        else:
+            max = 0
+
+            for a in cyclos:
+                if len(a) > max:
+                    max = len(a)
+            return max
 
 
 
@@ -377,10 +380,6 @@ class individuum():
 
             def BewertungvonCH2undCH1gruppenn():
 
-                #
-
-
-
                 CH2gruppennummer = self.elementgruppengrenzen[2]
                 CH1gruppennummer = self.elementgruppengrenzen[1]
 
@@ -395,12 +394,37 @@ class individuum():
                 for position,atom in enumerate(self.molekularstruktur):
                     if atom[0] == CH2gruppennummer:
                         if self.Iszyklisch(position):
-                            print("ddhdh")
+                            cyclogrösse = self.Cyclogrösse(position)
+                            if cyclogrösse <= 6:
+                                CH2varianten[cyclogrösse-1] += 1
+                            else:
+                                CH2varianten[6] += 1
                         else:
                             if len(atom) == 2: #ist Olephin
                                 CH2varianten[1] += 1
                             else: # muss eine einfachzweibeindung sein
                                 CH2varianten[0] += 1
+
+                    if atom[0] == CH1gruppennummer:
+                        if self.Iszyklisch(position):
+                            cyclogrösse = self.Cyclogrösse(position)
+                            if cyclogrösse <= 6:
+                                CH1varianten[cyclogrösse-1] += 1
+                            else:
+                                CH1varianten[6] += 1
+                        else:
+                            if len(atom) == 2: #ist Olephin
+                                CH1varianten[1] += 1
+                            else: # muss eine einfachzweibeindung sein
+                                CH1varianten[0] += 1
+
+
+                                # Aromate müssen noch hinzugefügt werden
+                                #Wichtig
+
+
+
+                #Nun werden diese Werte mit denen verglichen werden, welche auftreten.
 
 
 
