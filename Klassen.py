@@ -132,7 +132,25 @@ class individuum():
             self.molekularstruktur[positionatom1].append([wertigkeitderVerbindung+wertigkeitderaltenVerbindung, positionatom2])
             self.molekularstruktur[positionatom2].append([wertigkeitderVerbindung+wertigkeitderaltenVerbindung, positionatom1])
 
+    def Isindirektverbunden(self,positionatom1, positionatom2):
+        #überprüft ob zwei Atome direkt oder indirket via anderer Atome miteinander verbunden ist
 
+        schondurchlofeneelementepositionen = [positionatom1]
+        nochzudurchlaufendeelementpositionen = [positionatom1]
+
+        while nochzudurchlaufendeelementpositionen != []:
+            atom = self.molekularstruktur[nochzudurchlaufendeelementpositionen[0]]
+            nochzudurchlaufendeelementpositionen.pop(0)
+            for a in (1, len(atom)):
+                if atom[a][1] == positionatom2:
+                    return True
+                if not atom[a][1] in schondurchlofeneelementepositionen:
+                    schondurchlofeneelementepositionen.append(atom[a][1])
+                    nochzudurchlaufendeelementpositionen.append(atom[a][1])
+
+        return False
+
+        return False
 
     def isligit(self, anzahlverbindungenüberspringen = False, anazahlAtomeüberspringen = False, topologischzusammenhängendüberspringen = False):
 
@@ -1385,27 +1403,60 @@ class individuum():
             for atom in molekularstruktur:
                 elemente[atom[0]] -= 1
 
+            anzahlelementewelchemanhinzufügenkann = sum(elemente)
             #zuerst wird versucht 4 wertige elemente zu generieren und zu löschen, damit die Anzahl stimmt
             #danach wird versucht 3 wertige Elemente mit anderen 3 wertigen Elemente zu ersetzen und falls möglich zuletzt noch
+
+
+            #Muss noch auf Spezialfälle überprüft werden
 
             print("ich bin im Loop gefangen Molekularstrukturflicken")
             count = 0
             while count < len(elemente):
                 if elemente[count] == 0:
                     count += 1
+
+                #zuerst muss noch der Spezialfall geklärt werden, wenn count beim hintersten Glied angekommen ist
+
+                elif count == len(elemente) -1:
+                    if elemente[count] > 0:
+                        molekularstruktur.append([count])
+                        elemente[count] -= 1
+                        anzahlelementewelchemanhinzufügenkann -= 1
+                    elif elemente[count] < 0:
+                        for a in range(len(molekularstruktur)):
+                            if molekularstruktur[a][0] == count:
+                                molekularstruktur.pop(a)
+                                break
+                        elemente[count] += 1
+                        anzahlelementewelchemanhinzufügenkann += 1
+
+                #Normalfall
                 elif elemente[count] > 0:
                     for position,wert in enumerate(elemente):
                         if wert < 0:
-                            for atom in molekularstruktur:
-                                if atom[0] == wert:
-                                    atom[0] = count
-                                    elemente[count] -= 1
-                                    elemente[wert] += 1
-                                    break
+                            if self.Anzahlverbindungen(wert) < self.Anzahlverbindungen(count) and anzahlelementewelchemanhinzufügenkann > 0:
+                                molekularstruktur.append([count])
+                                elemente[count] -= 1
+                                anzahlelementewelchemanhinzufügenkann -= 1
+                            else:
+                                for atom in molekularstruktur:
+                                    if atom[0] == wert:
+                                        atom[0] = count
+                                        elemente[count] -= 1
+                                        elemente[wert] += 1
+                                        break
                             break
                 elif elemente[count] < 0:
                     for position,wert in enumerate(elemente):
                         if wert > 0:
+                            if self.Anzahlverbindungen(wert) < self.Anzahlverbindungen(count) and anzahlelementewelchemanhinzufügenkann < 0:
+                                for a in range(len(molekularstruktur)):
+                                    if molekularstruktur[a][0] == count:
+                                        molekularstruktur.pop(a)
+                                        break
+                                elemente[count] += 1
+                                anzahlelementewelchemanhinzufügenkann += 1
                             for atom in molekularstruktur:
                                 if atom[0] == count:
                                     atom[0] = wert
@@ -1414,7 +1465,251 @@ class individuum():
                                     break
                             break
 
-            #nun kann es aber sein, dass ich element, welches eigenlich nur
+
+            #Nun müssen die offenen Verbindungen wieder geflickt werden
+
+            # um die anderen Funktionen zu nutzen muss die molekularstruktur zuerst in self.molekularstruktur umgewandelt werden
+
+            self.molekularstruktur = molekularstruktur
+
+
+            #Zu aller erst muss geaschaut werden, dass die DBÄ nicht zu hoch ist, andernfalls müssen solange Mehrfachbindungen gesplitet werden, bis es aufgeht.
+            anzahlübrigerDoppelbindungsen = (self.elemente[0] * 2 + self.elemente[1] - self.elemente[5] - self.elemente[6] - self.elemente[7] - self.elemente[8]) / 2 + 1
+
+            for atom in self.molekularstruktur:
+                for a in range(1,len(atom)):
+                    anzahlübrigerDoppelbindungsen -= (atom[a][0]-1)/2
+
+            if anzahlübrigerDoppelbindungsen % 1 != 0:
+                raise Exception("anzahlübrigeDoppelbindungen ist nicht eine ganze Zahl")
+
+            while anzahlübrigerDoppelbindungsen < 0:
+                for position,atom in enumerate(self.molekularstruktur):
+                    for a in range(1, len(atom)):
+                        if atom[a][0] > 1 and anzahlübrigerDoppelbindungsen < 0:
+                            wertigkeit = atom[a][0]
+                            position2 = atom[a][1]
+                            self.Deletverbindung(position,position2)
+                            self.Creatverbindung(position,position2,wertigkeit-1)
+                            anzahlübrigerDoppelbindungsen += 1
+                            break
+
+
+
+            # Es kann nun sein, dass die molekularstruktur in vielen verschiedenen einzelstücke fragmentiert ist, diese Einzelstücke müssen wieder miteinander Verbunden werden
+
+            offenestellen = []
+            for position,atom in enumerate(self.molekularstruktur):
+                if self.Anzahloffeneverbindungen(atom) != 0:
+                    offenestellen.append([self.Anzahloffeneverbindungen(atom),position])
+
+
+
+            # untersucht ob zwei Teile nicht miteinander verbunden sind und verbindet sie dann
+            for a in range(len(offenestellen)):
+                for b in range(a+1,len(offenestellen)):
+                    if offenestellen[a][0] > 0 and offenestellen[b][0] > 0:
+                        if not self.Isindirektverbunden(offenestellen[a][1],offenestellen[b][1]):
+                            self.Creatverbindung(offenestellen[a][1],offenestellen[b][1],1)
+                            offenestellen[a][0] -= 1
+                            offenestellen[b][0] -= 1
+
+            # Alle werden gelöscht, welche keine offene Stellen mehr haben
+
+            for a in range(len(offenestellen)-1,-1,-1):
+                if offenestellen[a][0] == 0:
+                    offenestellen.pop(a)
+
+
+
+
+            """
+            # Nun werden versucht die restlichen 3fach Verbindungenen zu füllen
+            if anzahlübrigerDoppelbindungsen > 1:
+                for a in range(len(offenestellen)):
+                    for b in range(a+1,len(offenestellen)):
+                        if offenestellen[a][0] > 2 and offenestellen[b][0] > 2 and anzahlübrigerDoppelbindungsen >= 2 and self.AnzahlverbindungenzwischenzweiAtomen(self.molekularstruktur[offenestellen[a][1]],offenestellen[b][1]) == 0:
+                            self.Creatverbindung(offenestellen[a][1],offenestellen[b][1],3)
+                            offenestellen[a][0] -= 3
+                            offenestellen[b][0] -= 3
+                            anzahlübrigerDoppelbindungsen -= 2
+            
+            # Nun werden versucht die doppelbindungen zu füllen
+            
+            if anzahlübrigerDoppelbindungsen >= 1:
+                for a in range(len(offenestellen)):
+                    for b in range(a+1,len(offenestellen)):
+                        if offenestellen[a][0] > 1 and offenestellen[b][0] > 1 and anzahlübrigerDoppelbindungsen >= 1 and self.AnzahlverbindungenzwischenzweiAtomen(self.molekularstruktur[offenestellen[a][1]],offenestellen[b][1]) < 2:
+                            self.Creatverbindung(offenestellen[a][1],offenestellen[b][1],2)
+                            offenestellen[a][0] -= 2
+                            offenestellen[b][0] -= 2
+                            anzahlübrigerDoppelbindungsen -= 1
+            
+            #  nun werden versucht die restlichen einfachbindungen zu füllen
+            for a in range(len(offenestellen)):
+                for b in range(a + 1, len(offenestellen)):
+                    if offenestellen[a][0] > 1 and offenestellen[b][0] > 1 and anzahlübrigerDoppelbindungsen >= 1 and self.AnzahlverbindungenzwischenzweiAtomen(self.molekularstrukturolekularstruktur[offenestellen[a][1]], offenestellen[b][1]) < 2:
+                        self.Creatverbindung(offenestellen[a][1], offenestellen[b][1], 2)
+                        offenestellen[a][0] -= 2
+                        offenestellen[b][0] -= 2
+                        anzahlübrigerDoppelbindungsen -= 1
+            
+            """
+
+            #Kopie von Strukturinitalisierung
+
+            # Um nicht den ganzen Code neu zu schreiben muss der Name des anzahlübrigenDoppelbindungsen in Doppelbindungsequivalenz umgewandelt werden und self.molekularstruktur zurück zu molekularstruktur
+
+            molekularsturktur = self.molekularstruktur
+            Doppelbindungsequivalenz = anzahlübrigerDoppelbindungsen
+
+            if Doppelbindungsequivalenz > 0:
+
+                restlicheoffenestellen = []
+                for atom in molekularsturktur:
+                    restlicheoffenestellen.append(self.Anzahloffeneverbindungen(atom))
+
+                # zuerst dreifachoffene stellen werden gesucht
+                positionen = []
+
+                for count, wert in enumerate(restlicheoffenestellen):
+                    if wert == 3:
+                        positionen.append(count)
+
+                if positionen != []:
+
+                    a = 0
+                    while a < len(positionen):
+                        for b in range(a + 1, len(positionen)):
+                            if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],
+                                                                         positionen[b]) == 0:
+                                molekularsturktur[positionen[a]].append([3, positionen[b]])
+                                molekularsturktur[positionen[b]].append([3, positionen[a]])
+                                Doppelbindungsequivalenz -= 3
+                                positionen.pop(b)
+                                break
+                        if self.Anzahloffeneverbindungen(molekularsturktur[positionen[a]]) == 0:
+                            positionen.pop(a)
+                        else:
+                            a += 1
+
+                # zweifachoffene Stellen versuchen zu schliessen
+                for count, wert in enumerate(restlicheoffenestellen):
+                    if wert == 2:
+                        positionen.append(count)
+
+                if positionen != []:
+                    a = 0
+                    while a < len(positionen):
+                        for b in range(a + 1, len(positionen)):
+                            if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],
+                                                                         positionen[b]) == 0:
+                                molekularsturktur[positionen[a]].append([2, positionen[b]])
+                                molekularsturktur[positionen[b]].append([2, positionen[a]])
+                                Doppelbindungsequivalenz -= 2
+                                positionen.pop(b)
+                                break
+                        if self.Anzahloffeneverbindungen(molekularsturktur[positionen[a]]) <= 1:
+                            positionen.pop(a)
+                        else:
+                            a += 1
+
+                # die einfachen STellen werden am schluss auch noch versucht zu schliessen
+                positionen = []
+                for count, wert in enumerate(restlicheoffenestellen):
+                    if wert >= 1:
+                        positionen.append(count)
+
+                if positionen != []:
+
+                    a = 0
+                    while a < len(positionen):
+                        for b in range(a + 1, len(positionen)):
+
+                            if self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],
+                                                                         positionen[b]) == 0:
+                                molekularsturktur[positionen[a]].append([1, positionen[b]])
+                                molekularsturktur[positionen[b]].append([1, positionen[a]])
+                                Doppelbindungsequivalenz -= 1
+                                if self.Anzahloffeneverbindungen(molekularsturktur[positionen[b]]) == 0:
+                                    positionen.pop(b)
+                                break
+                            elif self.AnzahlverbindungenzwischenzweiAtomen(molekularsturktur[positionen[a]],
+                                                                           positionen[b]) <= 2:
+
+                                for c in range(1, len(molekularsturktur[positionen[a]])):
+                                    if molekularsturktur[positionen[a]][c][1] == positionen[b]:
+                                        molekularsturktur[positionen[a]][c][0] += 1
+
+                                for c in range(1, len(molekularsturktur[positionen[b]])):
+                                    if molekularsturktur[positionen[b]][c][1] == positionen[a]:
+                                        molekularsturktur[positionen[b]][c][0] += 1
+
+                                if self.Anzahloffeneverbindungen(molekularsturktur[positionen[b]]) == 0:
+                                    positionen.pop(b)
+                                break
+
+                        if self.Anzahloffeneverbindungen(molekularsturktur[positionen[a]]) == 0:
+                            positionen.pop(a)
+                        else:
+                            a += 1
+
+                # es kann leider am Schluss noch sein, dass eine Molekül noch zwei freie Verbindungen hat, diese werden jetzt noch mit einer Art der Elektophilen Additon geschlossen
+                for count, atom in enumerate(molekularsturktur):
+                    if (self.Anzahloffeneverbindungen(atom)) == 2:
+                        # Nun wird versucht eine Doppelbindung oder dreifachbindung um eins zu reduzieren und dann mit den neuen zwei offnene stellen das Atom damit zu verbinden
+                        breakbool = False
+                        for a in range(len(molekularsturktur)):
+                            for b in range(1, len(molekularsturktur[a])):
+                                if molekularsturktur[a][b][0] >= 2 and a != count:
+                                    breakbool = True
+                                    molekularsturktur[a][b][0] -= 1
+                                    for c in range(1, len(molekularsturktur[molekularsturktur[a][b][1]])):
+                                        if molekularsturktur[molekularsturktur[a][b][1]][c][1] == a:
+                                            molekularsturktur[molekularsturktur[a][b][1]][c][0] -= 1
+                                            break
+                                    Doppelbindungsequivalenz -= 1
+
+                                    if self.AnzahlverbindungenzwischenzweiAtomen(atom, a) == 0:
+                                        molekularsturktur[count].append([1, a])
+                                        molekularsturktur[a].append([1, count])
+                                    else:
+                                        for c in range(1, len(molekularsturktur[a])):
+                                            if molekularsturktur[a][c][1] == count:
+                                                molekularsturktur[a][c][0] += 1
+                                                break
+                                    if self.AnzahlverbindungenzwischenzweiAtomen(atom, molekularsturktur[a][b][1]) == 0:
+                                        molekularsturktur[count].append([1, molekularsturktur[a][b][1]])
+                                        molekularsturktur[molekularsturktur[a][b][1]].append([1, count])
+
+                                    else:
+                                        for c in range(1, len(molekularsturktur[molekularsturktur[a][b][1]])):
+                                            if molekularsturktur[a][c][1] == count:
+                                                molekularsturktur[a][c][0] += 1
+                                                break
+
+                            if breakbool:
+                                break
+
+            if Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0:
+                for atom in molekularsturktur:
+                    if self.Anzahloffeneverbindungen(atom) != 0:
+                        print("Fehler bei Molekularstrukturflicken")
+
+            return molekularsturktur
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1463,8 +1758,38 @@ class individuum():
             neuemolekularstrukturen.append(childs[0])
             neuemolekularstrukturen.append(childs[1])
 
+
+
+        # Alle childs werden jetzt geflickt und dann anschliessend noch geschaut ob sie wirkliches Molekül sind und falls nicht, wird es nicht gespeichert
+        children = []
         for molekularstruktur in neuemolekularstrukturen:
-            molekularstruktur = Molekularstrukturflicken((molekularstruktur))
+            child = Molekularstrukturflicken((molekularstruktur))
+            self.molekularstruktur = child
+            if self.isligit():
+                children.append(child)
+
+
+        if children == []:
+            self.molekularstruktur = None
+            return False
+
+
+
+
+        # Mithilfe der Heurist wird jetzt das beste Kind ausgewählt und wird zur neuen molekularstruktur
+        kleinstepunktzahl = 100000000000000
+        positionchild = 0
+        for a,child in enumerate(children):
+            heuristikwert = self.CalcHeuristik()
+            if heuristikwert < kleinstepunktzahl:
+                kleinstepunktzahl = heuristikwert
+                positionchild = a
+
+        self.molekularstruktur = copy.deepcopy(children[positionchild])
+        return True
+
+
+
 
 
 

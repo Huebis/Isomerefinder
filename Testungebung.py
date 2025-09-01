@@ -28,4 +28,13 @@ for a in test:
 
 print(test)
 
+hallo = [[0]]
+
+print(hallo[0][0])
+hallo[0].append([3,2])
+print(hallo[0])
+
+
+for a in range(2,10,1):
+    print(a)
 
