@@ -1269,7 +1269,7 @@ class individuum():
                 atom = molekularstruktur[nochzudurchlaufendeelementpositionen[0]]
                 nochzudurchlaufendeelementpositionen.pop(0)
                 anzahlelemente += 1
-                for a in (1, len(atom)):
+                for a in range(1, len(atom)):
                     if not atom[a][1] in schondurchlofeneelementepositionen:
                         schondurchlofeneelementepositionen.append(atom[a][1])
                         nochzudurchlaufendeelementpositionen.append(atom[a][1])
@@ -1280,6 +1280,9 @@ class individuum():
             #die Molekülstruktur wird bis zu 3 mal zerschnitten und sobald es zwei einzelne Stücke gibt es return Molekularstruktur
             #Es wird genau maximal 3 mal derschnitten, dass egal wie die Molekularstruktur aussieht es zerschnitten werden kann (Problem wegen Cycloverbindungen)
 
+            print("funktion Molekularstrukturuerschneiden")
+            print(molekularstruktur)
+            testcopy = copy.deepcopy(molekularstruktur)
             anzahlelemente = sum(self.elemente)
 
             for a in range(3):
@@ -1298,25 +1301,39 @@ class individuum():
                             break
 
                     if anzahlelemente != Anzahlverbundeneelemente(molekularstruktur):
-                        return molekularstruktur,anzahlelemente
-
+                        print(molekularstruktur)
+                        self.testfunktion(testcopy,molekularstruktur)
+                        return molekularstruktur,Anzahlverbundeneelemente(molekularstruktur)
+            print(molekularstruktur)
             return False
 
         def Molekularstrukturzusammenfügen(zerschnittenemolekularstrukturMutter, zerschnittenemolekularstrukturVater):
             molekularstruktur1 = [] # kommt alles was mit [0] bei der Molekularstruktur des Vaters verbunden ist und der rest der Mutter
-            molekularstruktur1übersetzungsaltepositionen = [None for a in range(sum(self.elemente))]
+            molekularstruktur1übersetzungsaltepositionen = ["None" for a in range(sum(self.elemente))]
             molekularstruktur2 = [] # kommt alles WAS mit [0] bei der Molekularstruktur der Mutter verbunden ist und der Rest des Vater
-            molekularstruktur2übersetzungsaltepositionen = [None for a in range(sum(self.elemente))]
+            molekularstruktur2übersetzungsaltepositionen = ["None" for a in range(sum(self.elemente))]
+
+            print("Begin der Funktion Molekularstruktur zusammenfügen")
+            print(zerschnittenemolekularstrukturVater)
+            print(Anzahlverbundeneelemente(zerschnittenemolekularstrukturVater))
+            print(zerschnittenemolekularstrukturMutter)
+
+            print("hdhdhdh")
+            print(zerschnittenemolekularstrukturMutter)
 
             schondurchlofeneelementepositionen = [0]
             nochzudurchlaufendeelementpositionen = [0]
+
+
+
 
             while nochzudurchlaufendeelementpositionen != []:
                 atom = zerschnittenemolekularstrukturVater[nochzudurchlaufendeelementpositionen[0]]
                 molekularstruktur1.append(atom)
                 molekularstruktur1übersetzungsaltepositionen[nochzudurchlaufendeelementpositionen[0]] = len(molekularstruktur1)-1
                 nochzudurchlaufendeelementpositionen.pop(0)
-                for a in (1, len(atom)):
+                for a in range(1, len(atom)):
+                    print(atom)
                     if not atom[a][1] in schondurchlofeneelementepositionen:
                         schondurchlofeneelementepositionen.append(atom[a][1])
                         nochzudurchlaufendeelementpositionen.append(atom[a][1])
@@ -1339,6 +1356,10 @@ class individuum():
 
             for atom in molekularstruktur2:
                 for a in range(1,len(atom)):
+                    print("Atom")
+                    print(atom)
+                    print("zerschnittene Molekularstrukut Vater irgend ein problem")
+                    print(zerschnittenemolekularstrukturVater)
                     atom[a][1] = molekularstruktur2übersetzungsaltepositionen[atom[a][1]]
 
             längemolekularstruktur1 = len(molekularstruktur1)
@@ -1355,7 +1376,7 @@ class individuum():
                 molekularstruktur2.append(atom)
                 molekularstruktur2übersetzungsaltepositionen[nochzudurchlaufendeelementpositionen[0]] = len(molekularstruktur2)-1
                 nochzudurchlaufendeelementpositionen.pop(0)
-                for a in (1, len(atom)):
+                for a in range(1, len(atom)):
                     if not atom[a][1] in schondurchlofeneelementepositionen:
                         schondurchlofeneelementepositionen.append(atom[a][1])
                         nochzudurchlaufendeelementpositionen.append(atom[a][1])
@@ -1728,7 +1749,7 @@ class individuum():
         for a in range(1000):
             manipuliertemolekularstruktur = Molekularstrukturzerschneider(molekularstrukturVater)
             if  manipuliertemolekularstruktur != False:
-                zerschnittenemolekularstrukturenVater.append(manipuliertemolekularstruktur)
+                zerschnittenemolekularstrukturenVater.append(copy.deepcopy(manipuliertemolekularstruktur))
                 count += 1
                 if count == 5:
                     break
@@ -1737,10 +1758,16 @@ class individuum():
         for a in range(1000):
             manipuliertemolekularstruktur = Molekularstrukturzerschneider(molekularstrukturMutter)
             if manipuliertemolekularstruktur != False:
-                zerschnittenemolekularstrukturenMutter.append(manipuliertemolekularstruktur)
+                zerschnittenemolekularstrukturenMutter.append(copy.deepcopy(manipuliertemolekularstruktur))
                 count += 1
                 if count == 5:
                     break
+
+        print("anschauung zerschnittenemolekularstrukturne Mutter")
+        print(zerschnittenemolekularstrukturenMutter)
+        print("anschauung zerschnittenenemolekularstrukturenVater")
+        print(zerschnittenemolekularstrukturenVater)
+
 
         #die beiden Vater und Mutter Listen werden gleich lang gemacht
         while(len(zerschnittenemolekularstrukturenVater) != len(zerschnittenemolekularstrukturenMutter)):
@@ -1749,12 +1776,16 @@ class individuum():
             else:
                 zerschnittenemolekularstrukturenMutter.pop(0)
 
+
+
         zerschnittenemolekularstrukturenVater.sort(key=lambda x: x[1])
         zerschnittenemolekularstrukturenMutter.sort(key=lambda x: x[1])
 
+
+
         neuemolekularstrukturen = []
         for a in range(len(zerschnittenemolekularstrukturenVater)):
-            childs = Molekularstrukturzusammenfügen(zerschnittenemolekularstrukturenMutter[a],zerschnittenemolekularstrukturenVater[a] )
+            childs = Molekularstrukturzusammenfügen(zerschnittenemolekularstrukturenMutter[a][0],zerschnittenemolekularstrukturenVater[a][0])
             neuemolekularstrukturen.append(childs[0])
             neuemolekularstrukturen.append(childs[1])
 
@@ -1795,44 +1826,54 @@ class individuum():
 
 
 
-    def __init__(self, gruppenkonfiguration, anzahlmutationen):
+    def __init__(self, gruppenkonfiguration = None, anzahlmutationen = 0, molekularstrukturvater = None, molekularstrukturmutter = None, elemente = None):
 
+        if molekularstrukturmutter == None and molekularstrukturvater == None:
         # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
-        self.gruppenkonfiguration = gruppenkonfiguration
-        self.elemente = [0] * len(gruppenkonfiguration)
-        self.elemente[0] = gruppenkonfiguration[0]
-        self.elemente[1] = gruppenkonfiguration[1]
-        self.elemente[2] = gruppenkonfiguration[2]
-        self.elemente[3] = gruppenkonfiguration[6]
-        self.elemente[4] = gruppenkonfiguration[8]
-        self.elemente[5] = gruppenkonfiguration[3]
-        self.elemente[6] = gruppenkonfiguration[4]
-        self.elemente[7] = gruppenkonfiguration[5]
-        self.elemente[8] = gruppenkonfiguration[7]
-        self.elementgruppengrenzen = [0,1,2,5]
-        self.elementmassen = [12,13,14,28,16,15,17,29,45]
+            self.gruppenkonfiguration = gruppenkonfiguration
+            self.elemente = [0] * len(gruppenkonfiguration)
+            self.elemente[0] = gruppenkonfiguration[0]
+            self.elemente[1] = gruppenkonfiguration[1]
+            self.elemente[2] = gruppenkonfiguration[2]
+            self.elemente[3] = gruppenkonfiguration[6]
+            self.elemente[4] = gruppenkonfiguration[8]
+            self.elemente[5] = gruppenkonfiguration[3]
+            self.elemente[6] = gruppenkonfiguration[4]
+            self.elemente[7] = gruppenkonfiguration[5]
+            self.elemente[8] = gruppenkonfiguration[7]
+            self.elementgruppengrenzen = [0,1,2,5]
+            self.elementmassen = [12,13,14,28,16,15,17,29,45]
 
-        Doppelbindungsequivalenz = (self.elemente[0]*2 + self.elemente[1] -self.elemente[5] - self.elemente[6] -self.elemente[7] -self.elemente[8])/2 + 1
-        if not (Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0):
-            print(self.elemente)
-            print("FEHLERMELDUNG, dieses Molekül exisistiert aufgrund einer nicht möglichen Doppelbindungswquivalenz nicht.")
-            return
+            Doppelbindungsequivalenz = (self.elemente[0]*2 + self.elemente[1] -self.elemente[5] - self.elemente[6] -self.elemente[7] -self.elemente[8])/2 + 1
+            if not (Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0):
+                print(self.elemente)
+                print("FEHLERMELDUNG, dieses Molekül exisistiert aufgrund einer nicht möglichen Doppelbindungswquivalenz nicht.")
+                return
 
 
-        self.molekularstruktur = self.Strukturintertialgenerator(anzahlmutationen)
+            self.molekularstruktur = self.Strukturintertialgenerator(anzahlmutationen)
+
+        else:
+            self.elemente = elemente
+            self.elementgruppengrenzen = [0, 1, 2, 5]
+            self.elementmassen = [12, 13, 14, 28, 16, 15, 17, 29, 45]
+            self.ChildauszweiParents(molekularstrukturvater, molekularstrukturmutter)
+
         self.smistring = None
 
 
 
-        print("überprüfung :" +str(self.isligit()))
-        print(self.molekularstruktur)
+        #print("überprüfung :" +str(self.isligit()))
+        #print(self.molekularstruktur)
 
-    def testfunktion(self):
-        for atom in self.molekularstruktur:
-            wertigkeitatom = self.Anzahlverbindungen(atom[0])
+    def testfunktion(self, molekularstruktur1, molekularstruktur2):
+        for a in range(len(molekularstruktur1)):
+            if molekularstruktur1[a] != molekularstruktur2[a]:
+                print("nichtgleich")
+                print(a)
+                print(molekularstruktur1[a])
+                print(molekularstruktur2[a])
 
-            if wertigkeitatom == 3:
-                print(len(atom))
 
 
 
