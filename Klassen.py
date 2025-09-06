@@ -1,6 +1,8 @@
 import subprocess
 import random
 import copy
+from logging import raiseExceptions
+
 import Testcase
 
 import rdkit.Chem.AllChem
@@ -141,7 +143,7 @@ class individuum():
         while nochzudurchlaufendeelementpositionen != []:
             atom = self.molekularstruktur[nochzudurchlaufendeelementpositionen[0]]
             nochzudurchlaufendeelementpositionen.pop(0)
-            for a in (1, len(atom)):
+            for a in range(1, len(atom)):
                 if atom[a][1] == positionatom2:
                     return True
                 if not atom[a][1] in schondurchlofeneelementepositionen:
@@ -1299,7 +1301,7 @@ class individuum():
                             break
 
                     if anzahlelemente != Anzahlverbundeneelemente(molekularstruktur):
-                        self.testfunktion(testcopy,molekularstruktur)
+                        #self.testfunktion(testcopy,molekularstruktur)
                         return molekularstruktur,Anzahlverbundeneelemente(molekularstruktur)
             return False
 
@@ -1323,7 +1325,6 @@ class individuum():
                 molekularstruktur1übersetzungsaltepositionen[nochzudurchlaufendeelementpositionen[0]] = len(molekularstruktur1)-1
                 nochzudurchlaufendeelementpositionen.pop(0)
                 for a in range(1, len(atom)):
-                    print(atom)
                     if not atom[a][1] in schondurchlofeneelementepositionen:
                         schondurchlofeneelementepositionen.append(atom[a][1])
                         nochzudurchlaufendeelementpositionen.append(atom[a][1])
@@ -1376,7 +1377,7 @@ class individuum():
             for position, atom in enumerate(zerschnittenemolekularstrukturMutter):
                 if not position in schondurchlofeneelementepositionen:
                     molekularstruktur1.append(atom)
-                    molekularstruktur1übersetzungsaltepositionen[position] = len(molekularstruktur2)-1
+                    molekularstruktur1übersetzungsaltepositionen[position] = len(molekularstruktur1)-1
 
 
             for a in range(längemolekularstruktur1,len(molekularstruktur1)):
@@ -1404,8 +1405,22 @@ class individuum():
 
         def Molekularstrukturflicken(molekularstruktur):
 
+            def AtomausMolekularstrukturlöschen(molekularstruktur,position):
+                molekularstruktur.pop(position)
+                for atom in molekularstruktur:
+                    for a in range(len(atom)-1,0,-1):
+                        if atom[a][1] == position:
+                            atom.pop(a)
+                        elif atom[a][1] > position:
+                            atom[a][1] -= 1
+                return molekularstruktur
+
+
+
             #zuerst muss geschaut werden, dass alle Elemente in der richtigen Häufigkeit auftritt.
             elemente = self.elemente.copy()
+            if not self.testfunktiondersymetriebeidenBindungen(molekularstruktur):
+                raise Exception("Bindungsymetrie ist nicht gegeben")
 
 
 
@@ -1413,15 +1428,14 @@ class individuum():
             for atom in molekularstruktur:
                 elemente[atom[0]] -= 1
 
+            print(elemente)
+
             anzahlelementewelchemanhinzufügenkann = sum(elemente)
             #zuerst wird versucht 4 wertige elemente zu generieren und zu löschen, damit die Anzahl stimmt
             #danach wird versucht 3 wertige Elemente mit anderen 3 wertigen Elemente zu ersetzen und falls möglich zuletzt noch
 
 
             #Muss noch auf Spezialfälle überprüft werden
-            print("Molekularstruktur")
-            print(molekularstruktur)
-            print(self.elemente)
 
             print("ich bin im Loop gefangen Molekularstrukturflicken")
             count = 0
@@ -1442,7 +1456,7 @@ class individuum():
                     elif elemente[count] < 0:
                         for a in range(len(molekularstruktur)):
                             if molekularstruktur[a][0] == count:
-                                molekularstruktur.pop(a)
+                                molekularstruktur = AtomausMolekularstrukturlöschen(molekularstruktur,a)
                                 break
                         elemente[count] += 1
                         anzahlelementewelchemanhinzufügenkann += 1
@@ -1452,16 +1466,13 @@ class individuum():
                     elemente[count] -= 1
                     anzahlelementewelchemanhinzufügenkann -= 1
 
-                elif all(a < 0 for a in elemente): # wenn man nichts mehr tauschen kann, sondern nur noch löschen kann
+                elif all(a <= 0 for a in elemente): # wenn man nichts mehr tauschen kann, sondern nur noch löschen kann
                     for a in range(len(molekularstruktur)):
                         if molekularstruktur[a][0] == count:
-                            molekularstruktur.pop(a)
+                            molekularstruktur = AtomausMolekularstrukturlöschen(molekularstruktur,a)
                             break
                     elemente[count] += 1
                     anzahlelementewelchemanhinzufügenkann += 1
-
-
-
 
                 #Normalfall
                 elif elemente[count] > 0:
@@ -1485,7 +1496,7 @@ class individuum():
                             if self.Anzahlverbindungen(position) < self.Anzahlverbindungen(count) and anzahlelementewelchemanhinzufügenkann < 0:
                                 for a in range(len(molekularstruktur)):
                                     if molekularstruktur[a][0] == count:
-                                        molekularstruktur.pop(a)
+                                        molekularstruktur = AtomausMolekularstrukturlöschen(molekularstruktur,a)
                                         break
                                 elemente[count] += 1
                                 anzahlelementewelchemanhinzufügenkann += 1
@@ -1502,9 +1513,10 @@ class individuum():
 
             # um die anderen Funktionen zu nutzen muss die molekularstruktur zuerst in self.molekularstruktur umgewandelt werden
 
-            print("Molekularstruktur")
-            print(molekularstruktur)
-            print(self.elemente)
+
+            if not self.testfunktiondersymetriebeidenBindungen(molekularstruktur):
+                raise Exception("Bindungsymetrie ist nicht gegeben2")
+
 
 
             self.molekularstruktur = molekularstruktur
@@ -1540,9 +1552,9 @@ class individuum():
                 if self.Anzahloffeneverbindungen(atom) != 0:
                     offenestellen.append([self.Anzahloffeneverbindungen(atom),position])
 
-            print("Molekularstruktur")
-            print(molekularstruktur)
-            print(self.elemente)
+            #print("Molekularstruktur")
+            #print(molekularstruktur)
+            #print(self.elemente)
 
             # untersucht ob zwei Teile nicht miteinander verbunden sind und verbindet sie dann
             """
@@ -1766,8 +1778,11 @@ class individuum():
 
             return molekularstruktur
 
+        anzahlversuchteKinder = 20 #Es gibt immer die doppelte Anzahl an Kinder, als der Wert dieses Integer
 
         anzahlelemente = sum(self.elemente)
+
+
 
         zerschnittenemolekularstrukturenMutter = []
         zerschnittenemolekularstrukturenVater = []
@@ -1775,10 +1790,12 @@ class individuum():
         count = 0
         for a in range(1000):
             manipuliertemolekularstruktur = Molekularstrukturzerschneider(molekularstrukturVater)
+
+
             if  manipuliertemolekularstruktur != False:
                 zerschnittenemolekularstrukturenVater.append(copy.deepcopy(manipuliertemolekularstruktur))
                 count += 1
-                if count == 5:
+                if count == anzahlversuchteKinder:
                     break
 
         count = 0
@@ -1787,7 +1804,7 @@ class individuum():
             if manipuliertemolekularstruktur != False:
                 zerschnittenemolekularstrukturenMutter.append(copy.deepcopy(manipuliertemolekularstruktur))
                 count += 1
-                if count == 5:
+                if count == anzahlversuchteKinder:
                     break
 
 
@@ -1803,6 +1820,11 @@ class individuum():
         zerschnittenemolekularstrukturenVater.sort(key=lambda x: x[1])
         zerschnittenemolekularstrukturenMutter.sort(key=lambda x: x[1])
 
+        for test in zerschnittenemolekularstrukturenVater:
+            print(test[1])
+
+        for test in zerschnittenemolekularstrukturenMutter:
+            print(test[1])
 
 
         neuemolekularstrukturen = []
@@ -1810,6 +1832,10 @@ class individuum():
             childs = Molekularstrukturzusammenfügen(zerschnittenemolekularstrukturenMutter[a][0],zerschnittenemolekularstrukturenVater[a][0])
             neuemolekularstrukturen.append(childs[0])
             neuemolekularstrukturen.append(childs[1])
+            print("länge Child 1 = " + str(len(childs[0])))
+            print("länge Child 2 = " + str(len(childs[1])))
+
+
 
 
 
@@ -1824,6 +1850,7 @@ class individuum():
 
         if children == []:
             self.molekularstruktur = None
+            print("es gab kein Child")
             return False
 
 
@@ -1839,6 +1866,10 @@ class individuum():
                 positionchild = a
 
         self.molekularstruktur = copy.deepcopy(children[positionchild])
+
+        print("endgültige Molekularstruktur")
+        print(self.molekularstruktur)
+
         return True
 
 
@@ -1895,6 +1926,22 @@ class individuum():
                 print(a)
                 print(molekularstruktur1[a])
                 print(molekularstruktur2[a])
+
+    def testfunktiondersymetriebeidenBindungen(self,molekularstruktur):
+
+        exist = False
+
+        for position,atom in enumerate(molekularstruktur):
+            for a in range(1,len(atom)):
+                atom2 = molekularstruktur[atom[a][1]]
+                for b in range(1,len(atom2)):
+                    if position == atom2[b][1] and atom[a][0] == atom2[b][0]:
+                        exist = True
+                        break
+                if not exist:
+                    return False
+                exist = False
+        return True
 
 
 
