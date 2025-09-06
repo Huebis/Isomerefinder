@@ -150,7 +150,6 @@ class individuum():
 
         return False
 
-        return False
 
     def isligit(self, anzahlverbindungenüberspringen = False, anazahlAtomeüberspringen = False, topologischzusammenhängendüberspringen = False):
 
@@ -1280,8 +1279,7 @@ class individuum():
             #die Molekülstruktur wird bis zu 3 mal zerschnitten und sobald es zwei einzelne Stücke gibt es return Molekularstruktur
             #Es wird genau maximal 3 mal derschnitten, dass egal wie die Molekularstruktur aussieht es zerschnitten werden kann (Problem wegen Cycloverbindungen)
 
-            print("funktion Molekularstrukturuerschneiden")
-            print(molekularstruktur)
+
             testcopy = copy.deepcopy(molekularstruktur)
             anzahlelemente = sum(self.elemente)
 
@@ -1301,10 +1299,8 @@ class individuum():
                             break
 
                     if anzahlelemente != Anzahlverbundeneelemente(molekularstruktur):
-                        print(molekularstruktur)
                         self.testfunktion(testcopy,molekularstruktur)
                         return molekularstruktur,Anzahlverbundeneelemente(molekularstruktur)
-            print(molekularstruktur)
             return False
 
         def Molekularstrukturzusammenfügen(zerschnittenemolekularstrukturMutter, zerschnittenemolekularstrukturVater):
@@ -1313,13 +1309,7 @@ class individuum():
             molekularstruktur2 = [] # kommt alles WAS mit [0] bei der Molekularstruktur der Mutter verbunden ist und der Rest des Vater
             molekularstruktur2übersetzungsaltepositionen = ["None" for a in range(sum(self.elemente))]
 
-            print("Begin der Funktion Molekularstruktur zusammenfügen")
-            print(zerschnittenemolekularstrukturVater)
-            print(Anzahlverbundeneelemente(zerschnittenemolekularstrukturVater))
-            print(zerschnittenemolekularstrukturMutter)
 
-            print("hdhdhdh")
-            print(zerschnittenemolekularstrukturMutter)
 
             schondurchlofeneelementepositionen = [0]
             nochzudurchlaufendeelementpositionen = [0]
@@ -1356,10 +1346,6 @@ class individuum():
 
             for atom in molekularstruktur2:
                 for a in range(1,len(atom)):
-                    print("Atom")
-                    print(atom)
-                    print("zerschnittene Molekularstrukut Vater irgend ein problem")
-                    print(zerschnittenemolekularstrukturVater)
                     atom[a][1] = molekularstruktur2übersetzungsaltepositionen[atom[a][1]]
 
             längemolekularstruktur1 = len(molekularstruktur1)
@@ -1421,6 +1407,9 @@ class individuum():
             #zuerst muss geschaut werden, dass alle Elemente in der richtigen Häufigkeit auftritt.
             elemente = self.elemente.copy()
 
+
+
+
             for atom in molekularstruktur:
                 elemente[atom[0]] -= 1
 
@@ -1430,10 +1419,16 @@ class individuum():
 
 
             #Muss noch auf Spezialfälle überprüft werden
+            print("Molekularstruktur")
+            print(molekularstruktur)
+            print(self.elemente)
 
             print("ich bin im Loop gefangen Molekularstrukturflicken")
             count = 0
             while count < len(elemente):
+                #print(elemente)
+                #print(count)
+                #print("Elementewelche man hinzufügen kann : " + str(anzahlelementewelchemanhinzufügenkann))
                 if elemente[count] == 0:
                     count += 1
 
@@ -1452,26 +1447,42 @@ class individuum():
                         elemente[count] += 1
                         anzahlelementewelchemanhinzufügenkann += 1
 
+                elif all(a >= 0 for a in elemente): # WEnn man nichts mehr tauschen kann, sondern nur noch hinzufügen
+                    molekularstruktur.append([count])
+                    elemente[count] -= 1
+                    anzahlelementewelchemanhinzufügenkann -= 1
+
+                elif all(a < 0 for a in elemente): # wenn man nichts mehr tauschen kann, sondern nur noch löschen kann
+                    for a in range(len(molekularstruktur)):
+                        if molekularstruktur[a][0] == count:
+                            molekularstruktur.pop(a)
+                            break
+                    elemente[count] += 1
+                    anzahlelementewelchemanhinzufügenkann += 1
+
+
+
+
                 #Normalfall
                 elif elemente[count] > 0:
                     for position,wert in enumerate(elemente):
                         if wert < 0:
-                            if self.Anzahlverbindungen(wert) < self.Anzahlverbindungen(count) and anzahlelementewelchemanhinzufügenkann > 0:
+                            if self.Anzahlverbindungen(position) < self.Anzahlverbindungen(count) and anzahlelementewelchemanhinzufügenkann > 0:
                                 molekularstruktur.append([count])
                                 elemente[count] -= 1
                                 anzahlelementewelchemanhinzufügenkann -= 1
                             else:
                                 for atom in molekularstruktur:
-                                    if atom[0] == wert:
+                                    if atom[0] == position:
                                         atom[0] = count
                                         elemente[count] -= 1
-                                        elemente[wert] += 1
+                                        elemente[position] += 1
                                         break
                             break
                 elif elemente[count] < 0:
                     for position,wert in enumerate(elemente):
                         if wert > 0:
-                            if self.Anzahlverbindungen(wert) < self.Anzahlverbindungen(count) and anzahlelementewelchemanhinzufügenkann < 0:
+                            if self.Anzahlverbindungen(position) < self.Anzahlverbindungen(count) and anzahlelementewelchemanhinzufügenkann < 0:
                                 for a in range(len(molekularstruktur)):
                                     if molekularstruktur[a][0] == count:
                                         molekularstruktur.pop(a)
@@ -1480,9 +1491,9 @@ class individuum():
                                 anzahlelementewelchemanhinzufügenkann += 1
                             for atom in molekularstruktur:
                                 if atom[0] == count:
-                                    atom[0] = wert
+                                    atom[0] = position
                                     elemente[count] += 1
-                                    elemente[wert] -= 1
+                                    elemente[position] -= 1
                                     break
                             break
 
@@ -1490,6 +1501,11 @@ class individuum():
             #Nun müssen die offenen Verbindungen wieder geflickt werden
 
             # um die anderen Funktionen zu nutzen muss die molekularstruktur zuerst in self.molekularstruktur umgewandelt werden
+
+            print("Molekularstruktur")
+            print(molekularstruktur)
+            print(self.elemente)
+
 
             self.molekularstruktur = molekularstruktur
 
@@ -1524,9 +1540,20 @@ class individuum():
                 if self.Anzahloffeneverbindungen(atom) != 0:
                     offenestellen.append([self.Anzahloffeneverbindungen(atom),position])
 
-
+            print("Molekularstruktur")
+            print(molekularstruktur)
+            print(self.elemente)
 
             # untersucht ob zwei Teile nicht miteinander verbunden sind und verbindet sie dann
+            """
+            print("offene Stellen")
+            print(offenestellen)
+            print("Molekularstruktur")
+            print(molekularstruktur)
+            print(self.molekularstruktur)
+            
+            """
+
             for a in range(len(offenestellen)):
                 for b in range(a+1,len(offenestellen)):
                     if offenestellen[a][0] > 0 and offenestellen[b][0] > 0:
@@ -1762,11 +1789,6 @@ class individuum():
                 count += 1
                 if count == 5:
                     break
-
-        print("anschauung zerschnittenemolekularstrukturne Mutter")
-        print(zerschnittenemolekularstrukturenMutter)
-        print("anschauung zerschnittenenemolekularstrukturenVater")
-        print(zerschnittenemolekularstrukturenVater)
 
 
         #die beiden Vater und Mutter Listen werden gleich lang gemacht
