@@ -455,6 +455,8 @@ class individuum():
         heuristikwert += AbzugEthertransformationzuKeton_Aldehyd()
         heuristikwert += 3*MSpeaküberprüfung()
         print(heuristikwert)
+
+        self.heuristikwert = heuristikwert
         return heuristikwert
     def Lokalesuche(self):
         return False
