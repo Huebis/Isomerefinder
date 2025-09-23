@@ -1,7 +1,7 @@
 # https://sdbs.db.aist.go.jp/SearchInformation.aspx
 import Klassen
 
-#https://sdbs.db.aist.go.jp/CompoundView.aspx?sdbsno=83
+#b
 def Case1():
     #Id = 83
     #Summenformel C10H14O4

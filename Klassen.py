@@ -52,10 +52,61 @@ class Molekuelinfo():
         print("Carbonsubstitutionsgrad:", cls.Carbonsubstitutionsgrad)
         print("Csymetry:", cls.cSymetrie)
 
+    @classmethod
+    def VorbereitungNMRdatenfürCalcheuristik(cls):
+        nmrsignalbundel = []
+
+
+        daten = copy.deepcopy(cls.d20nmrdaten)
+
+        temp = [daten[0]]
+        daten.pop(0)
+
+        while daten != []:
+            if temp[-1][0] - daten[0][0] > 25:
+                temp.append(daten[0])
+                daten.pop(0)
+            else:
+                nmrsignalbundel.append(temp)
+                temp = [daten[0]]
+                daten.pop(0)
+
+
+        herzunterschiedeinbundels = []
+
+        for nmrbundel in nmrsignalbundel:
+            temp = []
+            for a in range(len(nmrbundel)):
+                for b in range(a+1,len(nmrbundel)):
+                    if abs(nmrbundel[a][0] -nmrbundel[b][0]) < 25:
+                        temp.append(abs(nmrbundel[a][0] -nmrbundel[b][0]))
+
+            herzunterschiedeinbundels.append(temp)
+
+        cls.gruppierted20nmrdaten = [[None] for a in range(len(nmrbundel))]
+
+        #zuerst bekommt jede Gruppe die passende Chemsiche Verschiebung
+
+        for a in range(len(nmrsignalbundel)):
+            cls.gruppierted20nmrdaten[a] = nmrsignalbundel[a][round(len(nmrsignalbundel[a]))][1]
+
+        #jetzt wird noch geschaut welche Signale sich mit welchen Koppeln lassen
+        for a in range(len(nmrsignalbundel)):
+            for b in range(len(nmrsignalbundel)):
+                if b != a:
+                    if any(abs(a - b) <= 0.2 for x in herzunterschiedeinbundels[a]  for y in herzunterschiedeinbundels[b]):
+                        cls.gruppierted20nmrdaten[a].append(b)
+
+
+
+
+
+
     def __init__(self):
         # Ein mutables Objekt wie eine Liste wird in allen Instanzen geteilt, wenn es im Konstruktor nicht explizit initialisiert wird
         # self.CarbonID = [0] * 5
         self.gruppenkonfiguration = None
+        self.gruppierted20nmrdaten = None
 
     def EntwicklungIsomerelist(self):
 
@@ -487,6 +538,10 @@ class individuum():
                         approximation.pop(a)
 
                 #nun werden die NMR daten Analysiert
+                nmrwerte = copy.deepcopy(Molekuelinfo.gruppierted20nmrdaten)
+
+
+
 
 
 
