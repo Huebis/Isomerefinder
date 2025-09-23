@@ -253,14 +253,63 @@ class individuum():
 
         if cyclos == []:
             raise Exception("Fehler bei Cyclogrösse, ist gar kein Cyclo")
-
+        # Da bei entscheidungen alles abgelaufen wird, werden pro Cyclo auch zwei Einträge gemacht (einmal von der einen Seite her und einmal von der anderen)
+        # es kann sein, dass ein Atom in mehr als einem Cyclo ist, dann muss der wichtigste genommen werden.
+        #da ein Aromat das wichtigste ist, wird dies zuerst mal herausgefiltert
         else:
+            for möglichkeiten in cyclos:
+                if len(möglichkeiten) == 6:
+                    #abklären ob es ein Aromat ist
+                    bool = True
+                    nächsteverbindung = 2
+                    for tuple in möglichkeiten:
+                        if not self.molekularstruktur[tuple[1]][tuple[0]][0] == nächsteverbindung:
+                            bool = False
+                            break
+                        if nächsteverbindung == 2:
+                            nächsteverbindung -= 1
+                        else:
+                            nächsteverbindung += 1
+                    if bool:
+                        return 0
+
+            # Falls es kein Aromat ist, wird einfach die höchte Cyclo verbindung genommen für eine möglichst genaue aproximation
+
             max = 0
 
             for a in cyclos:
                 if len(a) > max:
                     max = len(a)
             return max
+
+
+    def PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(self,position):
+        # Die Funktion gibt wieder welche Positionen bzw. Atome eine H-Kopplung haben müssen mit dem inputAtom und dies immer als Tuple. Der zweite Wert gibt an, wie oft die Kopplung im NMR mindestens vorkommen muss
+
+        kopplungen = []
+
+
+        """
+        #zuerst muss überprüft werden ob es sich bei der Position um ein Atom in einem Aromat handelt, da der Weg dann ein bisschen spezieller ist
+        if self.Iszyklisch(position):
+            if self.Cyclogrösse(position) == 0: # Bedeutung es ist ein Aromat
+
+        """
+        # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
+        # self.elementgruppengrenzen = [0,1,2,5]
+
+        #Normallfall falls es kein Aromat ist
+        atom = self.molekularstruktur[position]
+        for a in range(1,len(atom)):
+            if self.molekularstruktur[atom[a][1]] == self.elementgruppengrenzen[3]: # ist ein CH3
+                kopplungen.append(atom[a][1],3)
+            elif self.molekularstruktur[atom[a][1]] == self.elementgruppengrenzen[2]: # ist ein CH2
+                kopplungen.append(atom[a][1],1) # Aufgrund von Stereoisomer
+            elif self.molekularstruktur[atom[a][1]] == self.elementgruppengrenzen[1]: # ist ein CH
+                kopplungen.append(atom[a][1],1)
+            elif self.molekularstruktur[atom[a][1]] == self.elementgruppengrenzen[3] + 2: # ist ein C=O(H)
+                kopplungen.append(atom[a][1],1)
+        return kopplungen
 
 
 
@@ -398,52 +447,46 @@ class individuum():
 
 
             def BewertungvonCH2undCH1gruppenn():
+                approximation = [None for a in range(len(self.molekularstruktur))]
 
-                CH2gruppennummer = self.elementgruppengrenzen[2]
-                CH1gruppennummer = self.elementgruppengrenzen[1]
-
-
-                # 0 = zweieinfachbindungen / 1 = Olephin / 2 =  3cyclo / 3 = 4cyclo / 4 = 5 Cyclo /  5 = 6 Cyclo / 6 = 7 oder mehr Cyclo
-                CH2varianten = [0 for a in range(7)]
-
-                # 0 = zweieinfachbindungen / 1 = Olephin / 2 =  3cyclo / 3 = 4cyclo / 4 = 5 Cyclo /  5 = 6 Cyclo / 6 = 7 oder mehr Cyclo / 7 = Aromat
-                CH1varianten = [0 for a in range(8)]
-
-
-                for position,atom in enumerate(self.molekularstruktur):
-                    if atom[0] == CH2gruppennummer:
-                        if self.Iszyklisch(position):
-                            cyclogrösse = self.Cyclogrösse(position)
-                            if cyclogrösse <= 6:
-                                CH2varianten[cyclogrösse-1] += 1
-                            else:
-                                CH2varianten[6] += 1
+                for atom,position in enumerate(self.molekularstruktur):
+                    if atom[0] == self.elementgruppengrenzen[3]:  # ist ein CH3
+                        approximation[position] = [1]
+                        approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
+                    elif atom[0] == self.elementgruppengrenzen[2]:  # ist ein CH2
+                        if len(atom) == 2: # es ist ein Olephin
+                            approximation[position] = [5.5]
                         else:
-                            if len(atom) == 2: #ist Olephin
-                                CH2varianten[1] += 1
-                            else: # muss eine einfachzweibeindung sein
-                                CH2varianten[0] += 1
+                            approximation[position] = [2]
+                        approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
 
-                    if atom[0] == CH1gruppennummer:
+                    elif atom[0] == self.elementgruppengrenzen[1]:  # ist ein CH
                         if self.Iszyklisch(position):
-                            cyclogrösse = self.Cyclogrösse(position)
-                            if cyclogrösse <= 6:
-                                CH1varianten[cyclogrösse-1] += 1
+                            if self.Cyclogrösse(position) == 0: # Spezialfall wenn es ein Aromat ist, ansonsten hat es ca den wert 2.3
+                                approximation[position] = [7.3]
+                                approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
                             else:
-                                CH1varianten[6] += 1
+                                approximation[position] = [2.3]
+                                approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
                         else:
-                            if len(atom) == 2: #ist Olephin
-                                CH1varianten[1] += 1
-                            else: # muss eine einfachzweibeindung sein
-                                CH1varianten[0] += 1
+                            approximation[position] = [2.3]
+                            approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
 
+                    elif atom[0] == self.elementgruppengrenzen[3] + 2:  # ist ein C=O(H)
+                        approximation[position] = [9.5]
+                        approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
 
-                                # Aromate müssen noch hinzugefügt werden
-                                #Wichtig
+                #Nun hat es in der Liste noch gewisse Stellen mit None. Diese Müssen jetzt gelöscht werden und alle Positionen müssen angepasst werden
 
+                for a in range(len(approximation)-1,-1,-1):
+                    if approximation[a] == None:
+                        for b in range(len(approximation)):
+                            for c in range(1,len(approximation[b])):
+                                if approximation[b][c][0] > a:
+                                    approximation[b][c][0] -= 1
+                        approximation.pop(a)
 
-
-                #Nun werden diese Werte mit denen verglichen werden, welche auftreten.
+                #nun werden die NMR daten Analysiert
 
 
 
