@@ -5,6 +5,7 @@ import Klassen
 import NMR
 import Math
 import Testcase
+import GenetischerAlgorythmus
 isomerearray = Formatumwandler.Readfile()
 
 #Formatumwandler.AddWasserstoff2("test")
@@ -55,7 +56,8 @@ Klassen.Molekuelinfo.cNRMdaten = [172.77, 133.83, 130.28, 129.44, 128.49]
 Klassen.Molekuelinfo.cdeptdaten = [[133.83, 1],[130.28, 1],[129.44, 1],[128.49, 1]]
 
 
-Testcase.Case1()
+Testcase.Case2()
+Klassen.Molekuelinfo.VorbereitungNMRdatenfürCalcheuristik()
 
 
 # Programm startet
@@ -84,7 +86,10 @@ isomergruppen = Math.FunktionelleGruppensubstitution()
 print("Isomere werden gebildet")
 
 for gruppe in isomergruppen:
-    gruppe.test()
+    print(gruppe.gruppenkonfiguration)
+    individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,200,100000,240)
+    individum.SMilestransformator()
+    individum.DarstellungMolekülinSMI(False,True)
     #gruppe.EntwicklungIsomerelist()
 
 print(len(isomergruppen))

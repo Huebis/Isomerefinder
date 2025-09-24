@@ -1,15 +1,15 @@
 import Klassen
 import Testcase
 import random
-
+"""
 Testcase.Case1()
 test = Klassen.individuum([2, 6, 2, 2, 2, 2, 2, 0, 0], 0)
 
 test.SMilestransformator()
-test.DarstellungMolekülinSMI(False, True)
+test.DarstellungMolekülinSMI(False, False)
 test.CalcHeuristik()
 
-"""
+
 for a in range(10):
     test.Muation()
     if not test.isligit():
@@ -31,9 +31,9 @@ child = Klassen.individuum(None,0,test.molekularstruktur,test2.molekularstruktur
 
 #child.SMilestransformator()
 #child.DarstellungMolekülinSMI(False,True)
-"""
-print("finish")
 
+print("finish")
+"""
 
 def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahlpopulationenzuwachchs_bis_schlechte_sterben):
     # Die grösse der Population muss mindestens 4 sein, aber mindestens 50 sind empfohlen
@@ -63,16 +63,14 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
 
         if individuen[positionVater1].heuristikwert > individuen[positionVater2].heuristikwert:
             if individuen[positionMutter1].heuristikwert > individuen[positionMutter2].heuristikwert:
-                individuen.append(Klassen.individuum(None,None,individuen[positionVater2].molekularstruktur,individuen[positionMutter2].molekularstruktur))
+                individuen.append(Klassen.individuum(None,None,individuen[positionVater2].molekularstruktur,individuen[positionMutter2].molekularstruktur,individuen[positionMutter1].elemente))
             else:
-                individuen.append(Klassen.individuum(None, None, individuen[positionVater2].molekularstruktur,individuen[positionMutter1].molekularstruktur))
+                individuen.append(Klassen.individuum(None, None, individuen[positionVater2].molekularstruktur,individuen[positionMutter1].molekularstruktur,individuen[positionMutter1].elemente))
         else:
             if individuen[positionMutter1].heuristikwert > individuen[positionMutter2].heuristikwert:
-                individuen.append(Klassen.individuum(None, None, individuen[positionVater1].molekularstruktur,
-                                                     individuen[positionMutter2].molekularstruktur))
+                individuen.append(Klassen.individuum(None, None, individuen[positionVater1].molekularstruktur,individuen[positionMutter2].molekularstruktur,individuen[positionMutter1].elemente))
             else:
-                individuen.append(Klassen.individuum(None, None, individuen[positionVater1].molekularstruktur,
-                                                     individuen[positionMutter1].molekularstruktur))
+                individuen.append(Klassen.individuum(None, None, individuen[positionVater1].molekularstruktur,individuen[positionMutter1].molekularstruktur,individuen[positionMutter1].elemente))
 
 
         #überprüfen ob es wirklich ein Kind gegeben hat
@@ -80,7 +78,7 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
         if individuen[-1].molekularstruktur == None:
             individuen.pop(-1)
         else:
-            individuen[-1].Calcheuristik()
+            individuen[-1].CalcHeuristik()
             populationszuwachs += 1
 
 

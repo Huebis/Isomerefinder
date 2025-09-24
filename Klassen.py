@@ -62,17 +62,19 @@ class Molekuelinfo():
 
         temp = [daten[0]]
         daten.pop(0)
-
         while daten != []:
-            if temp[-1][0] - daten[0][0] > 25:
+            if abs(temp[-1][0] - daten[0][0]) < 25: #Wert anpassen falls nötig
                 temp.append(daten[0])
                 daten.pop(0)
             else:
                 nmrsignalbundel.append(temp)
                 temp = [daten[0]]
                 daten.pop(0)
+        nmrsignalbundel.append(temp)
 
 
+        print("NMRBunde")
+        print(nmrsignalbundel)
         herzunterschiedeinbundels = []
 
         for nmrbundel in nmrsignalbundel:
@@ -84,19 +86,22 @@ class Molekuelinfo():
 
             herzunterschiedeinbundels.append(temp)
 
-        cls.gruppierted20nmrdaten = [[None] for a in range(len(nmrbundel))]
+        cls.gruppierted20nmrdaten = [[None] for a in range(len(nmrsignalbundel))]
 
         #zuerst bekommt jede Gruppe die passende Chemsiche Verschiebung
 
         for a in range(len(nmrsignalbundel)):
-            cls.gruppierted20nmrdaten[a] = nmrsignalbundel[a][round(len(nmrsignalbundel[a]))][1]
+            cls.gruppierted20nmrdaten[a][0] = nmrsignalbundel[a][round(len(nmrsignalbundel[a])/2)][1]
 
         #jetzt wird noch geschaut welche Signale sich mit welchen Koppeln lassen
         for a in range(len(nmrsignalbundel)):
             for b in range(len(nmrsignalbundel)):
                 if b != a:
-                    if any(abs(a - b) <= 0.2 for x in herzunterschiedeinbundels[a]  for y in herzunterschiedeinbundels[b]):
+                    if any(abs(x-y) <= 0.11 for x in herzunterschiedeinbundels[a]  for y in herzunterschiedeinbundels[b]): #wert noch anpassen falls nötig
                         cls.gruppierted20nmrdaten[a].append(b)
+
+
+
 
 
 
@@ -366,10 +371,7 @@ class individuum():
 
 
         if kopplungen != []:
-            print("Kopplungen")
-            print(kopplungen)
-            print(kopplungen[0])
-            return kopplungen[0]
+            return kopplungen
         return None
 
 
@@ -513,39 +515,41 @@ class individuum():
                 for position,atom in enumerate(self.molekularstruktur):
                     if atom[0] == self.elementgruppengrenzen[3]:  # ist ein CH3
                         approximation[position] = [1]
-                        approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
+
                     elif atom[0] == self.elementgruppengrenzen[2]:  # ist ein CH2
                         if len(atom) == 2: # es ist ein Olephin
                             approximation[position] = [5.5]
                         else:
                             approximation[position] = [2]
-                        approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
+
 
                     elif atom[0] == self.elementgruppengrenzen[1]:  # ist ein CH
                         if self.Iszyklisch(position):
                             if self.Cyclogrösse(position) == 0: # Spezialfall wenn es ein Aromat ist, ansonsten hat es ca den wert 2.3
                                 approximation[position] = [7.3]
-                                approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
+
                             else:
                                 approximation[position] = [2.3]
-                                approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
+
                         else:
                             approximation[position] = [2.3]
-                            approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
+
 
                     elif atom[0] == self.elementgruppengrenzen[3] + 2:  # ist ein C=O(H)
                         approximation[position] = [9.5]
-                        approximation[position].append(self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(position))
+
+
+                for a in range(len(approximation)):
+                    if approximation[a] != None:
+                        kopplungen = self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen(a)
+                        if kopplungen != None:
+                            for kopplung in kopplungen:
+                                approximation[a].append(kopplung)
 
                 #Nun hat es in der Liste noch gewisse Stellen mit None. Diese Müssen jetzt gelöscht werden und alle Positionen müssen angepasst werden
 
                 #zuerst müssen noch lehre [] gelöscht werden, welche wege self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen
-                print("approximation")
-                print(approximation)
-                for a in range(len(approximation) - 1, -1, -1):
-                    if approximation[a] != None:
-                        if approximation[a][1] == None:
-                            approximation[a].pop(1)
+
 
                 print("approximation")
                 print(approximation)
@@ -587,44 +591,59 @@ class individuum():
                 transformation = [None for a in range(len(approximation))] # jeder approximationswert bekommt ein NMRwert zugewisen
 
                 #Es darf auch mehrfachbelegungen geben (aber in einer genau bestimmen Anzahl)
-                anzahlmehrfachbelegungen = len(nmrwerte) - len(approximation)
+                anzahlmehrfachbelegungen =  len(approximation) - len(nmrwerte)
 
                 for temp in range(len(approximation)):
                     # da der Wert möglichst klein sein soll , wird jetzt das Atom ausgewält, bei welchem das beste, das schlechteste ist
                     besterwertjederspalte = [None for a in range(len(approximation))]
                     for a in range(len(approximation)):
                         spalenwerte = []
-                        for b in range(1,len(nmrwerte)):
+                        for b in range(len(nmrwerte)):
                             if vergleiche[a][b] != None:
                                 spalenwerte.append(vergleiche[a][b])
                         if spalenwerte != []:
                             besterwertjederspalte[a] = min(spalenwerte)
-
-                    schlechtesterWert = max(besterwertjederspalte)
+                            """
+                    print("besterwertjederspalte")
+                    print(besterwertjederspalte)
+                    print("vergleiche")
+                    print(vergleiche)
+                    print("Transformation")
+                    print(transformation)
+                    print("Übrige mehrfachbelegungen")
+                    print(anzahlmehrfachbelegungen)
+                    """
+                    schlechtesterWert = max([wert for wert in besterwertjederspalte if wert is not None])
 
                     breakbool = False
-                    for a,wert in besterwertjederspalte:
+                    for a,wert in enumerate(besterwertjederspalte):
+
                         if wert == schlechtesterWert:
-                            for b in range(nmrwerte):
+                            for b in range(len(nmrwerte)):
                                 if vergleiche[a][b] == wert:
-                                    transformation[a] = b
                                     if b in transformation:
                                         anzahlmehrfachbelegungen -= 1
+
+                                    transformation[a] = b
+                                    for c in range(len(nmrwerte)):
+                                        vergleiche[a][c] = None
+
                                     if anzahlmehrfachbelegungen <= 0:
                                         for spalte in vergleiche:
                                             spalte[b] = None
+
                                     breakbool = True
+                                    break
                         if breakbool:
                             break
 
 
+                # Noch nicht final aber jetzt kann mal alles getestet werden
+                summe = 0
+                for a in range(len(approximation)):
+                    summe += nmrwertemitapproximationvergleich(nmrwerte[transformation[a]], approximation[a])
 
-                    #Noch nicht final aber jetzt kann mal alles getestet werden
-                    summe = 0
-                    for a in range(len(approximation)):
-                        summe += nmrwertemitapproximationvergleich(nmrwerte[transformation[a]],approximation[a])
-
-                    return summe
+                return summe
 
 
             return BewertungMethylgruppen() + BewertungvonCH2undCH1gruppenn()
@@ -1976,6 +1995,8 @@ class individuum():
 
         anzahlversuchteKinder = 20 #Es gibt immer die doppelte Anzahl an Kinder, als der Wert dieses Integer
 
+        print("elemente")
+        print(self.elemente)
         anzahlelemente = sum(self.elemente)
 
 

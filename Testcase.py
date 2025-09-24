@@ -127,6 +127,7 @@ def Case1():
         [407.44, 4.550, 135],
         [239.19, 2.671, 1000]
     ]
+    Klassen.Molekuelinfo.VorbereitungNMRdatenfürCalcheuristik()
 
 
 def Case2():
