@@ -6,8 +6,10 @@ Testcase.Case1()
 test = Klassen.individuum([2, 6, 2, 2, 2, 2, 2, 0, 0], 0)
 
 test.SMilestransformator()
-#test.DarstellungMolekülinSMI(False, True)
+test.DarstellungMolekülinSMI(False, True)
+test.CalcHeuristik()
 
+"""
 for a in range(10):
     test.Muation()
     if not test.isligit():
@@ -29,7 +31,7 @@ child = Klassen.individuum(None,0,test.molekularstruktur,test2.molekularstruktur
 
 #child.SMilestransformator()
 #child.DarstellungMolekülinSMI(False,True)
-
+"""
 print("finish")
 
 
