@@ -1,3 +1,5 @@
+import copy
+
 import Klassen
 import Testcase
 import random
@@ -63,14 +65,14 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
 
         if individuen[positionVater1].heuristikwert > individuen[positionVater2].heuristikwert:
             if individuen[positionMutter1].heuristikwert > individuen[positionMutter2].heuristikwert:
-                individuen.append(Klassen.individuum(None,None,individuen[positionVater2].molekularstruktur,individuen[positionMutter2].molekularstruktur,individuen[positionMutter1].elemente))
+                individuen.append(Klassen.individuum(None,None,copy.deepcopy(individuen[positionVater2].molekularstruktur),copy.deepcopy(individuen[positionMutter2].molekularstruktur),copy.deepcopy(individuen[positionMutter1].elemente)))
             else:
-                individuen.append(Klassen.individuum(None, None, individuen[positionVater2].molekularstruktur,individuen[positionMutter1].molekularstruktur,individuen[positionMutter1].elemente))
+                individuen.append(Klassen.individuum(None, None, copy.deepcopy(individuen[positionVater2].molekularstruktur),copy.deepcopy(individuen[positionMutter1].molekularstruktur),copy.deepcopy(individuen[positionMutter1].elemente)))
         else:
             if individuen[positionMutter1].heuristikwert > individuen[positionMutter2].heuristikwert:
-                individuen.append(Klassen.individuum(None, None, individuen[positionVater1].molekularstruktur,individuen[positionMutter2].molekularstruktur,individuen[positionMutter1].elemente))
+                individuen.append(Klassen.individuum(None, None, copy.deepcopy(individuen[positionVater1].molekularstruktur),copy.deepcopy(individuen[positionMutter2].molekularstruktur),copy.deepcopy(individuen[positionMutter1].elemente)))
             else:
-                individuen.append(Klassen.individuum(None, None, individuen[positionVater1].molekularstruktur,individuen[positionMutter1].molekularstruktur,individuen[positionMutter1].elemente))
+                individuen.append(Klassen.individuum(None, None, copy.deepcopy(individuen[positionVater1].molekularstruktur),copy.deepcopy(individuen[positionMutter1].molekularstruktur),copy.deepcopy(individuen[positionMutter1].elemente)))
 
 
         #überprüfen ob es wirklich ein Kind gegeben hat

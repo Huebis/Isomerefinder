@@ -72,9 +72,11 @@ class Molekuelinfo():
                 daten.pop(0)
         nmrsignalbundel.append(temp)
 
-
+        """
         print("NMRBunde")
         print(nmrsignalbundel)
+        """
+
         herzunterschiedeinbundels = []
 
         for nmrbundel in nmrsignalbundel:
@@ -288,10 +290,11 @@ class individuum():
         #Die Funktion gibt zurück wie gross die grösste Cyclo ist (int)
 
 
-        entscheidungen = [(1,position)]
+        entscheidungen = [[1,position]]
         cyclos = []
         while entscheidungen != []:
-
+            #print("Entscheidungen")
+            #print(entscheidungen)
             if len(self.molekularstruktur[entscheidungen[-1][1]]) > entscheidungen[-1][0]:
                 positionneuesatom = self.molekularstruktur[entscheidungen[-1][1]][entscheidungen[-1][0]][1]
                 neuesatom = self.molekularstruktur[positionneuesatom]
@@ -301,11 +304,15 @@ class individuum():
                     entscheidungen[-1][0] += 1
                 elif len(neuesatom) == 2: # bzw. hat nur Verbindung zu einem Atom
                     entscheidungen[-1][0] += 1
+                elif not ([1,positionneuesatom] in entscheidungen or [2,positionneuesatom] in entscheidungen or [3,positionneuesatom] in entscheidungen or [4,positionneuesatom] in entscheidungen):
+                    entscheidungen.append([1,positionneuesatom])
                 else:
-                    entscheidungen.append((1,))
+                    entscheidungen[-1][0] += 1
 
             else:
                 entscheidungen.pop(-1)
+                if entscheidungen != []:
+                    entscheidungen[-1][0] += 1
 
 
         if cyclos == []:
@@ -357,8 +364,7 @@ class individuum():
 
         #Normallfall falls es kein Aromat ist
         atom = self.molekularstruktur[position]
-        print("Atom")
-        print(atom)
+
         for a in range(1,len(atom)):
             if self.molekularstruktur[atom[a][1]][0] == self.elementgruppengrenzen[3]: # ist ein CH3
                 kopplungen.append([atom[a][1],3])
@@ -551,8 +557,7 @@ class individuum():
                 #zuerst müssen noch lehre [] gelöscht werden, welche wege self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen
 
 
-                print("approximation")
-                print(approximation)
+
 
                 for a in range(len(approximation)-1,-1,-1):
                     if approximation[a] == None:
@@ -562,9 +567,11 @@ class individuum():
                                     if approximation[b][c][0] > a:
                                         approximation[b][c][0] -= 1
                         approximation.pop(a)
+                """
                 print("approximation")
                 print(approximation)
                 print(self.molekularstruktur)
+                """
 
                 #nun werden die NMR daten Analysiert
                 nmrwerte = copy.deepcopy(Molekuelinfo.gruppierted20nmrdaten)
@@ -667,7 +674,7 @@ class individuum():
         heuristikwert += AbzugEthertransformationzuKeton_Aldehyd()
         heuristikwert += 3*MSpeaküberprüfung()
         heuristikwert += NMRspektrumAnalyse()
-        print(heuristikwert)
+        #print(heuristikwert)
 
         self.heuristikwert = heuristikwert
         return heuristikwert
@@ -715,8 +722,8 @@ class individuum():
             if listeallerMehrfachbindungen == []:
                 return False
 
-            print("liste aller möglichkeiten")
-            print(listeallerMehrfachbindungen)
+            #print("liste aller möglichkeiten")
+            #print(listeallerMehrfachbindungen)
             #Jetzt müssen alle einfach oder Doppelbindungen gesucht werden, an welchem an beiden Atomen davon zwei Einzelbindungen sind, welche mann dann "herübernehmen kann"
             substitutionsmöglichkeiten = [] # Immer Viereinträge einfachbindung mit Atom1, Atom1, Atom2 (Atom1 und Atom2 sind der Ort bei dem die Verbindung erhöht wird), einfachbindung mit Atom2
 
@@ -759,8 +766,8 @@ class individuum():
             reduzierdesAtom1 = listeallerMehrfachbindungen[randommehrfachbindung][0]
             reduzierdesAtom2 = listeallerMehrfachbindungen[randommehrfachbindung][1]
 
-            print("Substitutionsmöglichkeiten")
-            print(substitutionsmöglichkeiten)
+            #print("Substitutionsmöglichkeiten")
+            #print(substitutionsmöglichkeiten)
 
             # die Substitutionsmöglichkeiten werden jetzt noch gefiltert
             for a in range(len(substitutionsmöglichkeiten)-1,-1,-1):
@@ -779,7 +786,7 @@ class individuum():
 
             if substitutionsmöglichkeiten == []:
                 return False
-            print(substitutionsmöglichkeiten)
+            #print(substitutionsmöglichkeiten)
 
 
 
@@ -1994,12 +2001,11 @@ class individuum():
             return molekularstruktur
 
         anzahlversuchteKinder = 20 #Es gibt immer die doppelte Anzahl an Kinder, als der Wert dieses Integer
-
-        print("elemente")
-        print(self.elemente)
-        anzahlelemente = sum(self.elemente)
-
-
+        """
+        print("Molekularstrukturen der Eltern")
+        print(molekularstrukturVater)
+        print(molekularstrukturMutter)
+        """
 
         zerschnittenemolekularstrukturenMutter = []
         zerschnittenemolekularstrukturenVater = []
@@ -2036,21 +2042,20 @@ class individuum():
 
         zerschnittenemolekularstrukturenVater.sort(key=lambda x: x[1])
         zerschnittenemolekularstrukturenMutter.sort(key=lambda x: x[1])
-
+        """
         for test in zerschnittenemolekularstrukturenVater:
             print(test[1])
 
         for test in zerschnittenemolekularstrukturenMutter:
             print(test[1])
-
+        """
 
         neuemolekularstrukturen = []
         for a in range(len(zerschnittenemolekularstrukturenVater)):
             childs = Molekularstrukturzusammenfügen(zerschnittenemolekularstrukturenMutter[a][0],zerschnittenemolekularstrukturenVater[a][0])
             neuemolekularstrukturen.append(childs[0])
             neuemolekularstrukturen.append(childs[1])
-            print("länge Child 1 = " + str(len(childs[0])))
-            print("länge Child 2 = " + str(len(childs[1])))
+
 
 
 
@@ -2070,7 +2075,7 @@ class individuum():
             print("es gab kein Child")
             return False
 
-
+        print("Es gibt ein Kind")
 
 
         # Mithilfe der Heurist wird jetzt das beste Kind ausgewählt und wird zur neuen molekularstruktur
@@ -2083,10 +2088,10 @@ class individuum():
                 positionchild = a
 
         self.molekularstruktur = copy.deepcopy(children[positionchild])
-
+        """
         print("endgültige Molekularstruktur")
         print(self.molekularstruktur)
-
+        """
         return True
 
 
