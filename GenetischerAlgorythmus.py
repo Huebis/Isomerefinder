@@ -1,5 +1,5 @@
 import copy
-
+import time
 import Klassen
 import Testcase
 import random
@@ -53,6 +53,8 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
 
     while anzahlgenerationen != 0:
         anzahlgenerationen -= 1
+        if anzahlgenerationen % 16 == 0:
+            print(anzahlgenerationen)
 
         #vier Eltern werden aus gewählt und je zwei "kämpfen" gegeneinander
         # Es ist beabsichtigt, dass es auch überschneidungen geben kann

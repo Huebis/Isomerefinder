@@ -87,7 +87,7 @@ print("Isomere werden gebildet")
 
 for gruppe in isomergruppen:
     print(gruppe.gruppenkonfiguration)
-    individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,200,100000,240)
+    individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,200,100,240)
     individum.SMilestransformator()
     individum.DarstellungMolekülinSMI(False,True)
     #gruppe.EntwicklungIsomerelist()

@@ -217,7 +217,7 @@ class individuum():
         def AlleAtomehabenalleverbindungenverbraucht():
             for atom in self.molekularstruktur:
                 if self.Anzahloffeneverbindungen(atom) != 0:
-                    print("Error nicht alle Atome haben die richtige Anzahl an Verbindungen" + str(atom))
+                    #print("Error nicht alle Atome haben die richtige Anzahl an Verbindungen" + str(atom))
                     return False
             return True
 
@@ -228,7 +228,7 @@ class individuum():
             if elemente == self.elemente:
                 return True
 
-            print("Error es kommen nicht alle Atome in der richtigen Anzahl vor")
+            #print("Error es kommen nicht alle Atome in der richtigen Anzahl vor")
             return False
 
 
@@ -250,7 +250,7 @@ class individuum():
 
             for a in überprüfteatome:
                 if not a:
-                    print("Error das Atom ist nicht zusammenhängend")
+                    #print("Error das Atom ist nicht zusammenhängend")
                     return False
 
             return True
@@ -295,6 +295,7 @@ class individuum():
         while entscheidungen != []:
             #print("Entscheidungen")
             #print(entscheidungen)
+            #print(len(entscheidungen))
             if len(self.molekularstruktur[entscheidungen[-1][1]]) > entscheidungen[-1][0]:
                 positionneuesatom = self.molekularstruktur[entscheidungen[-1][1]][entscheidungen[-1][0]][1]
                 neuesatom = self.molekularstruktur[positionneuesatom]
@@ -304,7 +305,7 @@ class individuum():
                     entscheidungen[-1][0] += 1
                 elif len(neuesatom) == 2: # bzw. hat nur Verbindung zu einem Atom
                     entscheidungen[-1][0] += 1
-                elif not ([1,positionneuesatom] in entscheidungen or [2,positionneuesatom] in entscheidungen or [3,positionneuesatom] in entscheidungen or [4,positionneuesatom] in entscheidungen):
+                elif not any(entscheidung[1] == positionneuesatom for entscheidung in entscheidungen):
                     entscheidungen.append([1,positionneuesatom])
                 else:
                     entscheidungen[-1][0] += 1
@@ -1650,7 +1651,7 @@ class individuum():
             for atom in molekularstruktur:
                 elemente[atom[0]] -= 1
 
-            print(elemente)
+            #print(elemente)
 
             anzahlelementewelchemanhinzufügenkann = sum(elemente)
             #zuerst wird versucht 4 wertige elemente zu generieren und zu löschen, damit die Anzahl stimmt
@@ -1659,7 +1660,7 @@ class individuum():
 
             #Muss noch auf Spezialfälle überprüft werden
 
-            print("ich bin im Loop gefangen Molekularstrukturflicken")
+            #print("ich bin im Loop gefangen Molekularstrukturflicken")
             count = 0
             while count < len(elemente):
                 #print(elemente)
@@ -1973,10 +1974,10 @@ class individuum():
                             if breakbool:
                                 break
 
-            if Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0:
-                for atom in molekularsturktur:
-                    if self.Anzahloffeneverbindungen(atom) != 0:
-                        print("Fehler bei Molekularstrukturflicken")
+            #if Doppelbindungsequivalenz // 1 == Doppelbindungsequivalenz and Doppelbindungsequivalenz >= 0:
+                #for atom in molekularsturktur:
+                    #if self.Anzahloffeneverbindungen(atom) != 0:
+                        #print("Fehler bei Molekularstrukturflicken")
 
             return molekularsturktur
 
@@ -2075,7 +2076,7 @@ class individuum():
             print("es gab kein Child")
             return False
 
-        print("Es gibt ein Kind")
+        #print("Es gibt ein Kind")
 
 
         # Mithilfe der Heurist wird jetzt das beste Kind ausgewählt und wird zur neuen molekularstruktur
