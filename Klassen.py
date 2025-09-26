@@ -581,11 +581,15 @@ class individuum():
                 def nmrwertemitapproximationvergleich(nmrwert,aproximierterwert):
                     unterschied = (nmrwert[0]-aproximierterwert[0])**2
                     unterschied += abs(len(nmrwert) - len(aproximierterwert))*2
+                    """ #Idee ob es ohne besser funktionert
                     if len(nmrwert) > len(aproximierterwert):
                         unterschied -= len(aproximierterwert)*4
                     else:
                         unterschied -= len(nmrwert) * 4
+                    """
                     return unterschied
+
+
 
                 vergleiche = []
 
@@ -645,14 +649,20 @@ class individuum():
                         if breakbool:
                             break
 
-
+                print("nmrwerte")
+                print(nmrwerte)
+                print("approximationen")
+                print(approximation)
                 # Noch nicht final aber jetzt kann mal alles getestet werden
                 summe = 0
                 for a in range(len(approximation)):
                     summe += nmrwertemitapproximationvergleich(nmrwerte[transformation[a]], approximation[a])
 
                 return summe
-
+            print("Methylgruppen")
+            print(BewertungMethylgruppen())
+            print("NMR ALLES")
+            print(BewertungvonCH2undCH1gruppenn())
 
             return BewertungMethylgruppen() + BewertungvonCH2undCH1gruppenn()
 
@@ -669,8 +679,15 @@ class individuum():
 
 
 
-
-
+        if True:
+            print("AbzugKetonAlkoholverbindungen")
+            print(AbzugKetonAlkoholverbindungen())
+            print("AbzugEthertransformationzuKeton_Aldehyd")
+            print(AbzugEthertransformationzuKeton_Aldehyd())
+            print("MSpeaküberprüfung")
+            print(MSpeaküberprüfung())
+            print("NMRspektrumAnalyse")
+            print(NMRspektrumAnalyse())
         heuristikwert = AbzugKetonAlkoholverbindungen()
         heuristikwert += AbzugEthertransformationzuKeton_Aldehyd()
         heuristikwert += 3*MSpeaküberprüfung()

@@ -65,6 +65,8 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
 
         #vier Eltern werden aus gewählt und je zwei "kämpfen" gegeneinander
 
+        #start = time.time()
+
         if individuen[positionVater1].heuristikwert > individuen[positionVater2].heuristikwert:
             if individuen[positionMutter1].heuristikwert > individuen[positionMutter2].heuristikwert:
                 individuen.append(Klassen.individuum(None,None,copy.deepcopy(individuen[positionVater2].molekularstruktur),copy.deepcopy(individuen[positionMutter2].molekularstruktur),copy.deepcopy(individuen[positionMutter1].elemente)))
@@ -76,15 +78,22 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
             else:
                 individuen.append(Klassen.individuum(None, None, copy.deepcopy(individuen[positionVater1].molekularstruktur),copy.deepcopy(individuen[positionMutter1].molekularstruktur),copy.deepcopy(individuen[positionMutter1].elemente)))
 
+        #ende = time.time()
 
+        #print("Zeit für das genrieren eines Kindes: " + str(ende - start))
         #überprüfen ob es wirklich ein Kind gegeben hat
+
 
         if individuen[-1].molekularstruktur == None:
             individuen.pop(-1)
         else:
+            #start = time.time()
             individuen[-1].CalcHeuristik()
             populationszuwachs += 1
+            print(individuen[-1].heuristikwert)
 
+            #ende = time.time()
+            #print("Zeit zum berechnen der Heuristik " + str(ende - start))
 
         if anzahlpopulationenzuwachchs_bis_schlechte_sterben == populationszuwachs:
             individuen.sort(key=lambda a: a.heuristikwert)
