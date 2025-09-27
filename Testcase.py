@@ -44,7 +44,7 @@ def Case1():
     118.20,
     65.38,
     29.11,
-]
+    ]
     Klassen.Molekuelinfo.cdeptdaten = [
     [132.21, 1],
     [118.20, -1],
@@ -128,11 +128,13 @@ def Case1():
         [239.19, 2.671, 1000]
     ]
     Klassen.Molekuelinfo.VorbereitungNMRdatenfürCalcheuristik()
+    Klassen.Molekuelinfo.isomere = [10, 14, 4]
 
 
 def Case2():
     # Id = 6755
     # Summenformel C10H14O4
+    Klassen.Molekuelinfo.isomere = [10, 14, 4]
     Klassen.Molekuelinfo.msdata = [
     [15.0, 1.1],
     [18.0, 1.2],
@@ -238,11 +240,60 @@ def Case2():
     Klassen.Molekuelinfo.gruppierted20nmrdaten = [[6.862,3, 1], [3.798,7, 0]]
 
 def Case3():
-    Klassen.Molekuelinfo.msdata = []
-    Klassen.Molekuelinfo.msmainpeak = None
-    Klassen.Molekuelinfo.cNRMdaten = []
-    Klassen.Molekuelinfo.cdeptdaten = []
-    Klassen.Molekuelinfo.nmrdaten = []
+    #Einfacher Testcase um zu sehen ob die Heuristik gut funktioniert
+    #Id = 888
+    # Summenformel C4H8O
+    Klassen.Molekuelinfo.msdata = [
+    [15.0, 2.9],
+    [26.0, 2.5],
+    [27.0, 8.7],
+    [28.0, 11.6],
+    [29.0, 13.4],
+    [32.0, 3.1],
+    [39.0, 2.4],
+    [41.0, 1.3],
+    [42.0, 5.3],
+    [43.0, 100.0],
+    [44.0, 2.5],
+    [57.0, 9.5],
+    [71.0, 1.4],
+    [72.0, 34.2],
+    [73.0, 1.7]
+]
+    Klassen.Molekuelinfo.msmainpeak = 72
+    Klassen.Molekuelinfo.cNRMdaten = [
+        206.28,
+        36.87,
+        29.43,
+        7.87
+    ]
+    Klassen.Molekuelinfo.cdeptdaten = [
+        [36.87,-1],
+        [29.43,1],
+        [7.87,1]
+    ]
+    Klassen.Molekuelinfo.nmrdaten = [
+    [231.00, 2.580, 45],
+    [223.69, 2.498, 148],
+    [216.38, 2.417, 169],
+    [209.06, 2.335, 66],
+    [191.56, 2.139, 1000],
+    [101.69, 1.136, 269],
+    [94.63, 1.057, 545],
+    [87.06, 0.973, 206]
+    ]
+    Klassen.Molekuelinfo.d20nmrdaten = [
+    [231.00, 2.580, 45],
+    [223.69, 2.498, 148],
+    [216.38, 2.417, 169],
+    [209.06, 2.335, 66],
+    [191.56, 2.139, 1000],
+    [101.69, 1.136, 269],
+    [94.63, 1.057, 545],
+    [87.06, 0.973, 206]
+    ]
+    Klassen.Molekuelinfo.isomere = [4, 8, 1]
+    Klassen.Molekuelinfo.VorbereitungNMRdatenfürCalcheuristik()
 
 
 def Case4():
@@ -251,6 +302,7 @@ def Case4():
     Klassen.Molekuelinfo.cNRMdaten = []
     Klassen.Molekuelinfo.cdeptdaten = []
     Klassen.Molekuelinfo.nmrdaten = []
+
 
 
 def Case5():

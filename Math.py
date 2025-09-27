@@ -155,10 +155,14 @@ def Plausibilitaetskontrolle(C,O,H,gruppenkonfiguration):
         if Klassen.Molekuelinfo.cdeptdaten != None:
             if gruppenkonfiguration[2] != Klassen.Molekuelinfo.Carbonsubstitutionsgrad[2]:
                 return False
+
             if gruppenkonfiguration[1] + gruppenkonfiguration[3] +gruppenkonfiguration[5] != Klassen.Molekuelinfo.Carbonsubstitutionsgrad[4]:
                 return False
-            if gruppenkonfiguration[0] != Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0]:
+            if gruppenkonfiguration[0] + gruppenkonfiguration[6] + gruppenkonfiguration[7] != Klassen.Molekuelinfo.Carbonsubstitutionsgrad[0]:
                 return False
+
+
+
 
     elif Klassen.Molekuelinfo.cSymetrie == True:
         if Klassen.Molekuelinfo.cdeptdaten != None:
@@ -202,12 +206,12 @@ def FunktionelleGruppensubstitution():
     obergrenze = [C,C,round(H/2), round(H/3)+1, NMR.MaximalanzahlOH(), Cdept.maximalAldehyde(),Cdept.maximalKetone(),NMR.MaximalanzahlCOOH(),O,round(O/2)]
     untergrenze = [0,0,0,0,0,Cdept.mindestanzahlAldehyde(),Cdept.mindestanzahlKetone(),0,0,0] # Muss modifiziert werden
 
-
+#[0,0,1,2,0,0,1
 
 
     while gruppenkonfiguration[-1] <= obergrenze[-1]:
         for a in range(len(gruppenkonfiguration)-1):
-            if gruppenkonfiguration[a] < obergrenze[a]:
+            if gruppenkonfiguration[a] <= obergrenze[a]:
                 break
             else:
                 gruppenkonfiguration[a] = untergrenze[a]
@@ -215,8 +219,8 @@ def FunktionelleGruppensubstitution():
 
 
         # Plausibilitätskontrolle
-
         if Plausibilitaetskontrolle(C,O,H,gruppenkonfiguration):
+            print("ich habe es geschaft")
             möglichkeiten.append(gruppenkonfiguration.copy())
 
         gruppenkonfiguration[0] += 1

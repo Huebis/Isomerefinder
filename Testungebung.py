@@ -1,9 +1,18 @@
 import Testcase
 import random
 import Klassen
+import Math
+
+
+output = Math.Plausibilitaetskontrolle(4,1,8,[0, 0, 1, 2, 0, 0, 1, 0, 0, 0])
 
 
 
+print(output)
+
+
+
+"""
 
 
 
@@ -53,7 +62,7 @@ print("finish")
 
 
 
-
+"""
 
 
 #Versuch um zu erkennen ob Cyclogrösse Aromate wirklich erkennt (er erkennts)
