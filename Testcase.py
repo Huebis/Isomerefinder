@@ -234,6 +234,8 @@ def Case2():
         [338.13, 3.776, 100],
         [338.00, 3.775, 100],
     ]
+    Klassen.Molekuelinfo.VorbereitungNMRdatenfürCalcheuristik()
+    Klassen.Molekuelinfo.gruppierted20nmrdaten = [[6.862,3, 1], [3.798,7, 0]]
 
 def Case3():
     Klassen.Molekuelinfo.msdata = []

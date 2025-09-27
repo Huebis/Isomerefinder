@@ -90,6 +90,7 @@ for gruppe in isomergruppen:
     individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,200,100,240)
     individum.SMilestransformator()
     individum.DarstellungMolekülinSMI(False,True)
+    print(individum.CalcHeuristik())
     #gruppe.EntwicklungIsomerelist()
 
 print(len(isomergruppen))

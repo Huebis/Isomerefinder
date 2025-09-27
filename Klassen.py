@@ -522,6 +522,9 @@ class individuum():
                 for position,atom in enumerate(self.molekularstruktur):
                     if atom[0] == self.elementgruppengrenzen[3]:  # ist ein CH3
                         approximation[position] = [1]
+                        #spezifikationen
+                        if atom[1][1] == self.elementgruppengrenzen[2] + 2:
+                            approximation[position][0] += 2
 
                     elif atom[0] == self.elementgruppengrenzen[2]:  # ist ein CH2
                         if len(atom) == 2: # es ist ein Olephin
@@ -531,12 +534,14 @@ class individuum():
 
 
                     elif atom[0] == self.elementgruppengrenzen[1]:  # ist ein CH
-                        if self.Iszyklisch(position):
-                            if self.Cyclogrösse(position) == 0: # Spezialfall wenn es ein Aromat ist, ansonsten hat es ca den wert 2.3
-                                approximation[position] = [7.3]
-
+                        if len(atom) < 3:
+                            if self.Iszyklisch(position):
+                                if self.Cyclogrösse(position) == 0: # Spezialfall wenn es ein Aromat ist, ansonsten hat es ca den wert 2.3
+                                    approximation[position] = [7.3]
+                                else:
+                                    approximation[position] = [5.2]
                             else:
-                                approximation[position] = [2.3]
+                                approximation[position] = [5.2]
 
                         else:
                             approximation[position] = [2.3]
@@ -696,8 +701,7 @@ class individuum():
 
         self.heuristikwert = heuristikwert
         return heuristikwert
-    def Lokalesuche(self):
-        return False
+
 
 
     def Muation(self):
