@@ -150,6 +150,7 @@ def Plausibilitaetskontrolle(C,O,H,gruppenkonfiguration):
         return False
     # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / 7 = Carbonsäure / 8 = Ether / 9 = Ester
 
+
     # Überprüfung ob die Mindestanzahl an OH bzw. Carboxylgruppe erfüllt ist
 
     if gruppenkonfiguration[4] + gruppenkonfiguration[7] < Klassen.Molekuelinfo.oxygeniumsubstitution[5]:

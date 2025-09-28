@@ -521,34 +521,34 @@ class individuum():
 
                 for position,atom in enumerate(self.molekularstruktur):
                     if atom[0] == self.elementgruppengrenzen[3]:  # ist ein CH3
-                        approximation[position] = [1]
+                        approximation[position] = [1,3]
                         #spezifikationen
                         if atom[1][1] == self.elementgruppengrenzen[2] + 2:
                             approximation[position][0] += 2
 
                     elif atom[0] == self.elementgruppengrenzen[2]:  # ist ein CH2
                         if len(atom) == 2: # es ist ein Olephin
-                            approximation[position] = [5.5]
+                            approximation[position] = [5.5,2]
                         else:
-                            approximation[position] = [2]
+                            approximation[position] = [2,2]
 
 
                     elif atom[0] == self.elementgruppengrenzen[1]:  # ist ein CH
                         if len(atom) < 3:
                             if self.Iszyklisch(position):
                                 if self.Cyclogrösse(position) == 0: # Spezialfall wenn es ein Aromat ist, ansonsten hat es ca den wert 2.3
-                                    approximation[position] = [7.3]
+                                    approximation[position] = [7.3,1]
                                 else:
-                                    approximation[position] = [5.2]
+                                    approximation[position] = [5.2,1]
                             else:
-                                approximation[position] = [5.2]
+                                approximation[position] = [5.2,1]
 
                         else:
-                            approximation[position] = [2.3]
+                            approximation[position] = [2.3,1]
 
 
                     elif atom[0] == self.elementgruppengrenzen[3] + 2:  # ist ein C=O(H)
-                        approximation[position] = [9.5]
+                        approximation[position] = [9.5,1]
 
 
                 for a in range(len(approximation)):
@@ -562,53 +562,60 @@ class individuum():
 
                 #zuerst müssen noch lehre [] gelöscht werden, welche wege self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen
 
-
-
-
                 for a in range(len(approximation)-1,-1,-1):
                     if approximation[a] == None:
                         for b in range(len(approximation)):
                             if approximation[b] != None:
-                                for c in range(1,len(approximation[b])):
+                                for c in range(2,len(approximation[b])):
                                     if approximation[b][c][0] > a:
                                         approximation[b][c][0] -= 1
                         approximation.pop(a)
-                """
-                print("approximation")
-                print(approximation)
-                print(self.molekularstruktur)
-                """
+
 
                 #nun werden die NMR daten Analysiert
                 nmrwerte = copy.deepcopy(Molekuelinfo.gruppierted20nmrdaten)
 
-                #jeder approximationswert wird mit jedem nmrwert ausprobiert und verglichen
-                def nmrwertemitapproximationvergleich(nmrwert,aproximierterwert):
-                    unterschied = (nmrwert[0]-aproximierterwert[0])**2
-                    unterschied += abs(len(nmrwert) - len(aproximierterwert))*2
-                    """ #Idee ob es ohne besser funktionert
-                    if len(nmrwert) > len(aproximierterwert):
-                        unterschied -= len(aproximierterwert)*4
-                    else:
-                        unterschied -= len(nmrwert) * 4
-                    """
-                    return unterschied
-
-
-
-                vergleiche = []
-
-                for a in range(len(approximation)):
-                    vergleiche.append([])
-                    for b in range(len(nmrwerte)):
-                        vergleiche[a].append(nmrwertemitapproximationvergleich(nmrwerte[b],approximation[a]))
-
-
+                print("Heuristikwerte")
+                print(nmrwerte)
+                print(approximation)
 
                 transformation = [None for a in range(len(approximation))] # jeder approximationswert bekommt ein NMRwert zugewisen
 
                 #Es darf auch mehrfachbelegungen geben (aber in einer genau bestimmen Anzahl)
-                anzahlmehrfachbelegungen =  len(approximation) - len(nmrwerte)
+                zugeordnet = 0
+
+
+                möglichewerte =  sorted(set(daten[0] for daten in approximation))
+                count = 0
+
+                änderungbool = False
+                while zugeordnet < len(approximation):
+                    for a in range(len(approximation)):
+                        if approximation[a][0] == möglichewerte[count] and transformation[a] == None:
+                            for b in range(len(nmrwerte)-1,-1,-1):
+                                if nmrwerte[b][1] > 0:
+                                    transformation[a] = b
+                                    nmrwerte[b][1] -= approximation[a][1]
+                                    zugeordnet += 1
+                                    änderungbool = True
+                                    break
+
+                    if not änderungbool:
+                        count += 1
+
+                    else:
+                        änderungbool = False
+
+                    "jetzt muss reparitert werden"
+
+                print(transformation)
+                print(nmrwerte)
+
+
+
+
+
+                summe = 0
 
                 return summe
             """
@@ -1090,13 +1097,11 @@ class individuum():
 
         outputstring = "|" + outputstring[1:-1] + "|"
 
-        print("Outputstring")
-        print(outputstring)
+
         molekularstrukturcopy = copy.deepcopy(self.molekularstruktur) # Da im prozess die molekularstruktur verändern bzw. gelöscht wird, wird sie hier in einer anderen Variabel gespeichert und am Schluss wieder zum originalzustand zurückgeführt
 
         while verbindungennochüberprüfen != []:
-            print(outputstring)
-            print(ortdergemachtenAtomgruppen)
+
 
 
             momentanesAtom = verbindungennochüberprüfen[0]
