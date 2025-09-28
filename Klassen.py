@@ -610,60 +610,6 @@ class individuum():
                 #Es darf auch mehrfachbelegungen geben (aber in einer genau bestimmen Anzahl)
                 anzahlmehrfachbelegungen =  len(approximation) - len(nmrwerte)
 
-                for temp in range(len(approximation)):
-                    # da der Wert möglichst klein sein soll , wird jetzt das Atom ausgewält, bei welchem das beste, das schlechteste ist
-                    besterwertjederspalte = [None for a in range(len(approximation))]
-                    for a in range(len(approximation)):
-                        spalenwerte = []
-                        for b in range(len(nmrwerte)):
-                            if vergleiche[a][b] != None:
-                                spalenwerte.append(vergleiche[a][b])
-                        if spalenwerte != []:
-                            besterwertjederspalte[a] = min(spalenwerte)
-                            """
-                    print("besterwertjederspalte")
-                    print(besterwertjederspalte)
-                    print("vergleiche")
-                    print(vergleiche)
-                    print("Transformation")
-                    print(transformation)
-                    print("Übrige mehrfachbelegungen")
-                    print(anzahlmehrfachbelegungen)
-                    """
-                    schlechtesterWert = max([wert for wert in besterwertjederspalte if wert is not None])
-
-                    breakbool = False
-                    for a,wert in enumerate(besterwertjederspalte):
-
-                        if wert == schlechtesterWert:
-                            for b in range(len(nmrwerte)):
-                                if vergleiche[a][b] == wert:
-                                    if b in transformation:
-                                        anzahlmehrfachbelegungen -= 1
-
-                                    transformation[a] = b
-                                    for c in range(len(nmrwerte)):
-                                        vergleiche[a][c] = None
-
-                                    if anzahlmehrfachbelegungen <= 0:
-                                        for spalte in vergleiche:
-                                            spalte[b] = None
-
-                                    breakbool = True
-                                    break
-                        if breakbool:
-                            break
-                """
-                print("nmrwerte")
-                print(nmrwerte)
-                print("approximationen")
-                print(approximation)
-                """
-                # Noch nicht final aber jetzt kann mal alles getestet werden
-                summe = 0
-                for a in range(len(approximation)):
-                    summe += nmrwertemitapproximationvergleich(nmrwerte[transformation[a]], approximation[a])
-
                 return summe
             """
             print("Methylgruppen")
