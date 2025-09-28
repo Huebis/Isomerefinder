@@ -653,21 +653,24 @@ class individuum():
                                     break
                         if breakbool:
                             break
-
+                """
                 print("nmrwerte")
                 print(nmrwerte)
                 print("approximationen")
                 print(approximation)
+                """
                 # Noch nicht final aber jetzt kann mal alles getestet werden
                 summe = 0
                 for a in range(len(approximation)):
                     summe += nmrwertemitapproximationvergleich(nmrwerte[transformation[a]], approximation[a])
 
                 return summe
+            """
             print("Methylgruppen")
             print(BewertungMethylgruppen())
             print("NMR ALLES")
             print(BewertungvonCH2undCH1gruppenn())
+            """
 
             return BewertungMethylgruppen() + BewertungvonCH2undCH1gruppenn()
 
@@ -684,7 +687,7 @@ class individuum():
 
 
 
-        if True:
+        if False:
             print("AbzugKetonAlkoholverbindungen")
             print(AbzugKetonAlkoholverbindungen())
             print("AbzugEthertransformationzuKeton_Aldehyd")
@@ -1072,7 +1075,7 @@ class individuum():
                 if atomnummer == 7:
                     return "(C(=O))"
                 if atomnummer == 8:
-                    return "(C(O))"
+                    return "(C(=O)(O))"
             if wertigkeit == 2:
                 if atomnummer == 0:
                     return "(=C)"
@@ -1109,7 +1112,7 @@ class individuum():
             if atomnummer == 7:
                 return 7
             if atomnummer == 8:
-                return 6
+                return 10
 
         def PositionenimStringanpassen(liste, ortderänderung, anzahlzeichen):
 
@@ -1134,16 +1137,20 @@ class individuum():
         #ich fange immer mit dem ersten an
 
         gemachteAtomgruppen[0] = True
-        ortdergemachtenAtomgruppen[0] = [0,LängederÜbersetzung(0)]
+        ortdergemachtenAtomgruppen[0] = [0,2]
         verbindungennochüberprüfen.append(0)
 
         outputstring = Übersetzung(self.molekularstruktur[0][0],1)
 
         outputstring = "|" + outputstring[1:-1] + "|"
 
+        print("Outputstring")
+        print(outputstring)
         molekularstrukturcopy = copy.deepcopy(self.molekularstruktur) # Da im prozess die molekularstruktur verändern bzw. gelöscht wird, wird sie hier in einer anderen Variabel gespeichert und am Schluss wieder zum originalzustand zurückgeführt
 
         while verbindungennochüberprüfen != []:
+            print(outputstring)
+            print(ortdergemachtenAtomgruppen)
 
 
             momentanesAtom = verbindungennochüberprüfen[0]

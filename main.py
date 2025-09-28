@@ -8,7 +8,7 @@ import Testcase
 import GenetischerAlgorythmus
 
 
-Testcase.Case3()
+Testcase.Case2()
 
 
 
@@ -40,12 +40,16 @@ print(isomergruppen)
 
 for gruppe in isomergruppen:
     print(gruppe.gruppenkonfiguration)
-    individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,200,100,240)
+    individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,10,100,240)
+    print(individum.molekularstruktur)
     individum.SMilestransformator()
     individum.DarstellungMolekülinSMI(False,True)
     print(individum.CalcHeuristik())
     #gruppe.EntwicklungIsomerelist()
 
+
+for gruppe in isomergruppen:
+    print(gruppe.gruppenkonfiguration)
 print(len(isomergruppen))
 print("HAllo")
 

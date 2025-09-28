@@ -42,6 +42,8 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
     individuen = []
     populationszuwachs = 0
 
+    print("Gruppenkonfiguration")
+    print(gruppenkonfiguration)
     individuen.append(Klassen.individuum(gruppenkonfiguration,0))
     individuen[0].CalcHeuristik()
 
@@ -87,13 +89,13 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
         if individuen[-1].molekularstruktur == None:
             individuen.pop(-1)
         else:
-            #start = time.time()
+            start = time.time()
             individuen[-1].CalcHeuristik()
             populationszuwachs += 1
             print(individuen[-1].heuristikwert)
 
-            #ende = time.time()
-            #print("Zeit zum berechnen der Heuristik " + str(ende - start))
+            ende = time.time()
+            print("Zeit zum berechnen der Heuristik " + str(ende - start))
 
         if anzahlpopulationenzuwachchs_bis_schlechte_sterben == populationszuwachs:
             individuen.sort(key=lambda a: a.heuristikwert)

@@ -137,10 +137,18 @@ def SatzderCsymetrie(gruppenkonfiguration):
 def Plausibilitaetskontrolle(C,O,H,gruppenkonfiguration):
     if sum(gruppenkonfiguration) - gruppenkonfiguration[4] - gruppenkonfiguration[8] != C:
         return False
-    if gruppenkonfiguration[4] + gruppenkonfiguration[5] + gruppenkonfiguration[6] + gruppenkonfiguration[7] * 2 +gruppenkonfiguration[8] +2*gruppenkonfiguration[9] != O:
+    if gruppenkonfiguration[4] + gruppenkonfiguration[5] + gruppenkonfiguration[6] + gruppenkonfiguration[7] * 2 +gruppenkonfiguration[8] != O:
         return False
     if gruppenkonfiguration[1] + gruppenkonfiguration[2] * 2 + 3 * gruppenkonfiguration[3] + gruppenkonfiguration[4] +gruppenkonfiguration[5] + 2 * gruppenkonfiguration[7] != H:
         return False
+
+    #Das Molekül muss eine ganzzahlige DBÄ haben, ansonsten ist es nicht möglich (Formel : https://de.wikipedia.org/wiki/Doppelbindungs%C3%A4quivalent).
+    DBÄ = (gruppenkonfiguration[0]*2 - gruppenkonfiguration[3] - gruppenkonfiguration[4] - gruppenkonfiguration[5] - gruppenkonfiguration[7] + gruppenkonfiguration[1])/2
+    if DBÄ < 0:
+        return False
+    if DBÄ % 1 != 0:
+        return False
+    # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / 7 = Carbonsäure / 8 = Ether / 9 = Ester
 
     # Überprüfung ob die Mindestanzahl an OH bzw. Carboxylgruppe erfüllt ist
 
@@ -201,10 +209,10 @@ def FunktionelleGruppensubstitution():
 
     möglichkeiten = []
 
-    # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / 7 = Carbonsäure / 8 = Ether / 9 = Ester
-    gruppenkonfiguration = [0]*10
-    obergrenze = [C,C,round(H/2), round(H/3)+1, NMR.MaximalanzahlOH(), Cdept.maximalAldehyde(),Cdept.maximalKetone(),NMR.MaximalanzahlCOOH(),O,round(O/2)]
-    untergrenze = [0,0,0,0,0,Cdept.mindestanzahlAldehyde(),Cdept.mindestanzahlKetone(),0,0,0] # Muss modifiziert werden
+    # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / 7 = Carbonsäure / 8 = Ether
+    gruppenkonfiguration = [0]*9
+    obergrenze = [C,C,round(H/2), round(H/3)+1, NMR.MaximalanzahlOH(), Cdept.maximalAldehyde(),Cdept.maximalKetone(),NMR.MaximalanzahlCOOH(),O]
+    untergrenze = [0,0,0,0,0,Cdept.mindestanzahlAldehyde(),Cdept.mindestanzahlKetone(),0,0] # Muss modifiziert werden
 
 #[0,0,1,2,0,0,1
 
