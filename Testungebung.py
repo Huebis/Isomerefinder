@@ -1,14 +1,14 @@
+from itertools import repeat
+
 import Testcase
 import random
 import Klassen
 import Math
 import itertools
 
-
-test = list(itertools.permutations(list(range(10)),10))
-
-print(list(range(7)))
-print(len(test))
+zusatz = list(itertools.product([0,1], repeat=2))
+print(list())
+Math.allemöglichenKombinationenundjedermussmindestenseinalvorkommen(8,5)
 """
 hallo = [[2.3, 1, [1, 1]], [2.3, 1, [0, 1], [4, 1]], [2.3, 1, [3, 1]], [2.3, 1, [2, 1], [7, 1]], [2.3, 1, [1, 1], [5, 1]], [2.3, 1, [4, 1], [6, 1]], [2, 2, [5, 1]], [2, 2, [3, 1]]]
 
@@ -39,8 +39,8 @@ test.SMilestransformator()
 #child.DarstellungMolekülinSMI(False,True)
 
 print("finish")
-
 """
+
 
 """               #nun werden die NMR daten Analysiert
                 nmrwerte = copy.deepcopy(Molekuelinfo.gruppierted20nmrdaten)

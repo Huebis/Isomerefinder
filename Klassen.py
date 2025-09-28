@@ -3,6 +3,7 @@ import random
 import copy
 from logging import raiseExceptions
 import math
+import itertools
 
 import Testcase
 
@@ -579,37 +580,25 @@ class individuum():
                 print(nmrwerte)
                 print(approximation)
 
-                transformation = [None for a in range(len(approximation))] # jeder approximationswert bekommt ein NMRwert zugewisen
+                überschneidung = len(approximation) - len(nmrwerte)
+                auswahlpoolfürtransformationen = []
+                zahlenwelchevorkommenmüssen = list(range(len(nmrwerte)))
 
-                #Es darf auch mehrfachbelegungen geben (aber in einer genau bestimmen Anzahl)
-                zugeordnet = 0
+                for a in range(len(nmrwerte)):
+                    auswahlpoolfürtransformationen.extend([a]* (überschneidung + 1))
+                transformationen = list(itertools.permutations(auswahlpoolfürtransformationen,len(approximation)))
+
+                #jetzt müssen alle schlechten varianten gelöscht werden
+
+                for a in range(len(transformationen)-1,-1,-1):
+                    if not all(zahl in transformationen[a] for zahl in zahlenwelchevorkommenmüssen):
+                        transformationen.pop(a)
+
+                print("längedertransformationen")
+                print(len(transformationen))
 
 
-                möglichewerte =  sorted(set(daten[0] for daten in approximation))
-                count = 0
 
-                änderungbool = False
-                while zugeordnet < len(approximation):
-                    for a in range(len(approximation)):
-                        if approximation[a][0] == möglichewerte[count] and transformation[a] == None:
-                            for b in range(len(nmrwerte)-1,-1,-1):
-                                if nmrwerte[b][1] > 0:
-                                    transformation[a] = b
-                                    nmrwerte[b][1] -= approximation[a][1]
-                                    zugeordnet += 1
-                                    änderungbool = True
-                                    break
-
-                    if not änderungbool:
-                        count += 1
-
-                    else:
-                        änderungbool = False
-
-                    "jetzt muss reparitert werden"
-
-                print(transformation)
-                print(nmrwerte)
 
 
 

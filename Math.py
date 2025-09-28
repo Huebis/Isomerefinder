@@ -1,6 +1,9 @@
+from timeit import repeat
+
 import Klassen
 import Cdept
 import NMR
+import itertools
 def FunktionelleGruppensubstitutionVERSUCH1GESCHEITERTEINFACHEREIDEE():
     if Klassen.Molekuelinfo.cSymetrie == False:
 
@@ -243,5 +246,23 @@ def FunktionelleGruppensubstitution():
     for a in range(len(möglichkeiten)):
         isomergruppen[a].gruppenkonfiguration = möglichkeiten[a]
     return isomergruppen
+
+
+
+
+
+def allemöglichenKombinationenundjedermussmindestenseinalvorkommen(approximationslänge,längenmr):
+    #Es gibt alle möglichkeiten wieder bei welchem alle Zahlen mindestes einmal vorkommen
+
+    möglichezahlen = list(range(längenmr))
+    print(möglichezahlen)
+
+
+    ortedermöglichenzahlen = list(itertools.permutations(list(range(approximationslänge)),längenmr))
+
+    zusatz = list(itertools.product(möglichezahlen, repeat=(approximationslänge-längenmr)))
+
+    print(len(ortedermöglichenzahlen)* len(zusatz))
+
 
 
