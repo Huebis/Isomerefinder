@@ -1,14 +1,21 @@
+from itertools import repeat
+
 import Testcase
 import random
 import Klassen
 import Math
+import itertools
 
-
+zusatz = list(itertools.product([0,1], repeat=2))
+print(list())
+Math.allemöglichenKombinationenundjedermussmindestenseinalvorkommen(8,5)
+"""
+hallo = [[2.3, 1, [1, 1]], [2.3, 1, [0, 1], [4, 1]], [2.3, 1, [3, 1]], [2.3, 1, [2, 1], [7, 1]], [2.3, 1, [1, 1], [5, 1]], [2.3, 1, [4, 1], [6, 1]], [2, 2, [5, 1]], [2, 2, [3, 1]]]
 
 test = Klassen.individuum([2, 6, 2, 2, 2, 2, 2, 0, 0], 0)
 test.molekularstruktur = [[8, [1, 2]], [1, [2, 2], [1, 3]], [1, [2, 1], [1, 0]], [1, [1, 1], [1, 4], [1, 5]], [1, [2, 6], [1, 3]], [1, [2, 7], [1, 3]], [1, [2, 4], [1, 8]], [2, [2, 5]], [2, [1, 6], [1, 9]], [8, [1, 8]]]
 test.SMilestransformator()
-test.DarstellungMolekülinSMI(False, True, True)
+test.DarstellungMolekülinSMI(False, True)
 """
 hallo = C((C(C(=C(C(=C))))(C(=C(C(C(=O))))))=O)
 
@@ -18,14 +25,14 @@ print(Klassen.Molekuelinfo.gruppierted20nmrdaten)
 
 
 Testcase.Case2()
-test = Klassen.individuum([2, 6, 2, 2, 2, 2, 2, 0, 0], 0)
+test = Klassen.individuum([2, 6, 2, 0, 4, 0, 0, 0, 0], 0)
 
 test.SMilestransformator()
-test.DarstellungMolekülinSMI(False, True)
+test.DarstellungMolekülinSMI(False, False)
 test.CalcHeuristik()
 
 
-print("Heuristkwert" + str(test.heuristikwert))
+print("Heuristkwert: " + str(test.heuristikwert))
 
 
 
@@ -37,10 +44,93 @@ test.SMilestransformator()
 #child.DarstellungMolekülinSMI(False,True)
 
 print("finish")
-
 """
 
 
+"""               #nun werden die NMR daten Analysiert
+                nmrwerte = copy.deepcopy(Molekuelinfo.gruppierted20nmrdaten)
+
+                #jeder approximationswert wird mit jedem nmrwert ausprobiert und verglichen
+                def nmrwertemitapproximationvergleich(nmrwert,aproximierterwert):
+                    unterschied = (nmrwert[0]-aproximierterwert[0])**2
+                    unterschied += abs(len(nmrwert) - len(aproximierterwert))*2
+                    #Idee ob es ohne besser funktionert
+                    if len(nmrwert) > len(aproximierterwert):
+                        unterschied -= len(aproximierterwert)*4
+                    else:
+                        unterschied -= len(nmrwert) * 4
+
+                    return unterschied
+
+
+
+                vergleiche = []
+
+                for a in range(len(approximation)):
+                    vergleiche.append([])
+                    for b in range(len(nmrwerte)):
+                        vergleiche[a].append(nmrwertemitapproximationvergleich(nmrwerte[b],approximation[a]))
+
+
+
+                transformation = [None for a in range(len(approximation))] # jeder approximationswert bekommt ein NMRwert zugewisen
+
+                #Es darf auch mehrfachbelegungen geben (aber in einer genau bestimmen Anzahl)
+                anzahlmehrfachbelegungen =  len(approximation) - len(nmrwerte)
+
+                for temp in range(len(approximation)):
+                    # da der Wert möglichst klein sein soll , wird jetzt das Atom ausgewält, bei welchem das beste, das schlechteste ist
+                    besterwertjederspalte = [None for a in range(len(approximation))]
+                    for a in range(len(approximation)):
+                        spalenwerte = []
+                        for b in range(len(nmrwerte)):
+                            if vergleiche[a][b] != None:
+                                spalenwerte.append(vergleiche[a][b])
+                        if spalenwerte != []:
+                            besterwertjederspalte[a] = min(spalenwerte)
+
+                    print("besterwertjederspalte")
+                    print(besterwertjederspalte)
+                    print("vergleiche")
+                    print(vergleiche)
+                    print("Transformation")
+                    print(transformation)
+                    print("Übrige mehrfachbelegungen")
+                    print(anzahlmehrfachbelegungen)
+
+                    schlechtesterWert = max([wert for wert in besterwertjederspalte if wert is not None])
+
+                    breakbool = False
+                    for a,wert in enumerate(besterwertjederspalte):
+
+                        if wert == schlechtesterWert:
+                            for b in range(len(nmrwerte)):
+                                if vergleiche[a][b] == wert:
+                                    if b in transformation:
+                                        anzahlmehrfachbelegungen -= 1
+
+                                    transformation[a] = b
+                                    for c in range(len(nmrwerte)):
+                                        vergleiche[a][c] = None
+
+                                    if anzahlmehrfachbelegungen <= 0:
+                                        for spalte in vergleiche:
+                                            spalte[b] = None
+
+                                    breakbool = True
+                                    break
+                        if breakbool:
+                            break
+
+                print("nmrwerte")
+                print(nmrwerte)
+                print("approximationen")
+                print(approximation)
+
+                # Noch nicht final aber jetzt kann mal alles getestet werden
+                summe = 0
+                for a in range(len(approximation)):
+                    summe += nmrwertemitapproximationvergleich(nmrwerte[transformation[a]], approximation[a])"""
 
 
 
