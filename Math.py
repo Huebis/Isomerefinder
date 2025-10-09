@@ -211,11 +211,8 @@ def FunktionelleGruppensubstitution():
 
     # 0 = C / 1 = CH / 2 = CH2 / 3 = CH3 / 4 = OH / 5 = Aldheyd / 6 = Keton / 7 = Carbonsäure / 8 = Ether
     gruppenkonfiguration = [0]*9
-    obergrenze = [C,C,round(H/2), round(H/3)+1, NMR.MaximalanzahlOH(), Cdept.maximalAldehyde(),Cdept.maximalKetone(),NMR.MaximalanzahlCOOH(),O]
-    untergrenze = [0,0,0,0,0,Cdept.mindestanzahlAldehyde(),Cdept.mindestanzahlKetone(),0,0] # Muss modifiziert werden
-
-#[0,0,1,2,0,0,1
-
+    obergrenze = [C,C,round(H/2), round(H/3)+1, NMR.MaximalanzahlOH(), Cdept.MaximalAldehyde(),Cdept.MaximalKetone(),NMR.MaximalanzahlCOOH(),O]
+    untergrenze = [0,0,0,0,0,Cdept.MindestanzahlAldehyde(),Cdept.MindestanzahlKetone(),0,0] # Muss modifiziert werden
 
     while gruppenkonfiguration[-1] <= obergrenze[-1]:
         for a in range(len(gruppenkonfiguration)-1):

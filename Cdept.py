@@ -28,7 +28,7 @@ def plusminus(messwert, wert , abweichung,):
 
 
 # Bei weitem noch nicht fertig. Ich möchte, dass das Programm erst nach der MS analyse laufen kann, damit ich mithilfe der genauen Anzahl an C atomen nie CO und C1 und C2 besser bestimmen kann und hoffentlich auch aus dem Gleichungssystem (mit natürlichen Lösugen) alle Möglichkeiten entnehmen kann.
-def CdeptIDanalyse():
+def CdeptundSymetrieIDanalyse():
 
     for a in range(len(Klassen.Molekuelinfo.Carbonsubstitutionsgrad)):
         Klassen.Molekuelinfo.Carbonsubstitutionsgrad[a] = 0
@@ -65,7 +65,7 @@ def CdeptIDanalyse():
     #Anzahl C / Anzahl CH / Anzahl CH2 / Anzahl CH3 / Anzahl an CH + CH3 welche noch nicht klar sind / Anzahl Benzol weitere CHX gruppen, welche man aber noch nicht zugeordnet hat
     Carbonsubstitutionsgrad= [0,0,0,0,0,0]
 
-def mindestanzahlAldehyde():
+def MindestanzahlAldehyde():
     if Klassen.Molekuelinfo.cdeptdaten == None:
         return 0
     anzahlAldehyde = 0
@@ -73,18 +73,12 @@ def mindestanzahlAldehyde():
         if a[0] >= 190:
             if a[0] <= 250:
                 anzahlAldehyde += 1
-
-    if Klassen.Molekuelinfo.cSymetrie == False :
-        return anzahlAldehyde
-    else:
-        if anzahlAldehyde >= 1:
-            return 1
-        else:
-            return 0
+    return anzahlAldehyde
 
 
 
-def maximalAldehyde():
+
+def MaximalAldehyde():
     if Klassen.Molekuelinfo.cdeptdaten == None:
         return round(Klassen.Molekuelinfo.isomere[2]/2)
 
@@ -103,7 +97,7 @@ def maximalAldehyde():
             return round(Klassen.Molekuelinfo.isomere[2]/2)
 
 
-def mindestanzahlKetone():
+def MindestanzahlKetone():
     if Klassen.Molekuelinfo.cdeptdaten == None:
         return 0
     anzahlKetone = 0
@@ -118,15 +112,9 @@ def mindestanzahlKetone():
             if a <= 250:
                 anzahlKetone += 1
 
-    if Klassen.Molekuelinfo.cSymetrie == False:
-        return anzahlKetone
-    else:
-        if anzahlKetone >= 1:
-            return 1
-        else:
-            return 0
+    return anzahlKetone
 
-def maximalKetone():
+def MaximalKetone():
     if Klassen.Molekuelinfo.cdeptdaten == None:
         return round(Klassen.Molekuelinfo.isomere[2] / 2)
 

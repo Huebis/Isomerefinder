@@ -1015,7 +1015,7 @@ class individuum():
 
         if randommutationszeiger < 0.4:
             print("MutationzweiergleichwertigerAtome")
-            for a in range(10):
+            for a in range(10): # Wird mehrmals gemacht, da es nicht immer funktionert. Wenn es funktioniert, wird abgebrochen
                 zwischenspeichermolekularstruktur = copy.deepcopy(self.molekularstruktur)
                 if MutationzweiergleichwertigerAtome():
                     if self.isligit():
@@ -1047,7 +1047,7 @@ class individuum():
 
 
 
-        return False
+        return False # Mutation hat nicht funktioniert.
 
         
         
@@ -1249,7 +1249,7 @@ class individuum():
         return
 
 
-    def DarstellungMolekülinSMI(self, mitWasserstoff = False, mitBild = True):
+    def DarstellungMolekülinSMI(self, mitWasserstoff = False, mitBild = True, printSMLIESstring = False):
         if self.smistring != None:
 
             mol = Chem.MolFromSmiles(self.smistring)
@@ -1259,6 +1259,9 @@ class individuum():
             if mitBild:
                 img = Draw.MolToImage(mol, size=(2000, 2000), kekulize=True, bgcolor=(255, 255, 255))
                 img.show()
+            self.smistring = Chem.MolToSmiles(mol)
+            if printSMLIESstring:
+                print(self.smistring)
         return
 
 
@@ -1502,10 +1505,12 @@ class individuum():
             print("Doppelbindungsequivalenz:" + str(Doppelbindungsequivalenz))
             print(molekularsturktur)
 
+        self.molekularstruktur = molekularsturktur
+        for a in range(anzahlmutationen):
+            self.Muation()
 
-        return molekularsturktur
 
-        return False
+        return
 
 
     def ChildauszweiParents(self, molekularstrukturMutter, molekularstrukturVater):
@@ -2040,7 +2045,7 @@ class individuum():
         zerschnittenemolekularstrukturenVater = []
 
         count = 0
-        for a in range(1000):
+        for a in range(1000): # Molekülstrukturzerschneiden() liefert nicht immer ein Resultat, muss man es manchmal mehrmals durchlaufen lassen für eine zerschnittene Molekülstruktur. Es funktioniert etwa in 80% der fällen
             manipuliertemolekularstruktur = Molekularstrukturzerschneider(molekularstrukturVater)
 
 
@@ -2155,7 +2160,7 @@ class individuum():
                 return
 
 
-            self.molekularstruktur = self.Strukturintertialgenerator(anzahlmutationen)
+            self.Strukturintertialgenerator(anzahlmutationen)
 
         else:
             self.elemente = elemente

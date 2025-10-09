@@ -30,7 +30,7 @@ def MaximalanzahlOH():
 
 def MaximalanzahlCOOH():
     if Klassen.Molekuelinfo.nmrdaten == None or Klassen.Molekuelinfo.d20nmrdaten == None:
-        return round(Klassen.Molekuelinfo.isomere[2]/2)
+        return round(Klassen.Molekuelinfo.isomere[2]/2 -0.1)
     elif Klassen.Molekuelinfo.oxygeniumsubstitution[5] == 0:
         return 0
     else:

@@ -8,7 +8,7 @@ import Math
 test = Klassen.individuum([2, 6, 2, 2, 2, 2, 2, 0, 0], 0)
 test.molekularstruktur = [[8, [1, 2]], [1, [2, 2], [1, 3]], [1, [2, 1], [1, 0]], [1, [1, 1], [1, 4], [1, 5]], [1, [2, 6], [1, 3]], [1, [2, 7], [1, 3]], [1, [2, 4], [1, 8]], [2, [2, 5]], [2, [1, 6], [1, 9]], [8, [1, 8]]]
 test.SMilestransformator()
-test.DarstellungMolekülinSMI(False, True)
+test.DarstellungMolekülinSMI(False, True, True)
 """
 hallo = C((C(C(=C(C(=C))))(C(=C(C(C(=O))))))=O)
 

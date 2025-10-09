@@ -28,29 +28,29 @@ Klassen.Molekuelinfo.Printinfo()
 
 
 
-Cdept.CdeptIDanalyse()
+Cdept.CdeptundSymetrieIDanalyse()
 
 Klassen.Molekuelinfo.Printinfo()
 
-isomergruppen = Math.FunktionelleGruppensubstitution()
+Gruppenkonfigurationen = Math.FunktionelleGruppensubstitution()
 
 print("Isomere werden gebildet")
 
-print(isomergruppen)
-
-for gruppe in isomergruppen:
+print(Gruppenkonfigurationen)
+gewinner = []
+for gruppe in Gruppenkonfigurationen:
     print(gruppe.gruppenkonfiguration)
-    individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,10,100,240)
-    print(individum.molekularstruktur)
-    individum.SMilestransformator()
-    individum.DarstellungMolekülinSMI(False,True)
-    print(individum.CalcHeuristik())
+    gewinner_individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,10,100,240)
+    print(gewinner_individum.molekularstruktur)
+    gewinner_individum.SMilestransformator()
+    gewinner_individum.DarstellungMolekülinSMI(False,True)
+    print(gewinner_individum.CalcHeuristik())
     #gruppe.EntwicklungIsomerelist()
 
 
-for gruppe in isomergruppen:
+for gruppe in Gruppenkonfigurationen:
     print(gruppe.gruppenkonfiguration)
-print(len(isomergruppen))
+print(len(Gruppenkonfigurationen))
 print("HAllo")
 
 #isomergruppen[0].EntwicklungIsomerelist()
