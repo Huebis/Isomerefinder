@@ -516,41 +516,38 @@ class individuum():
                 else:
                     return abweichung
 
-
             def BewertungvonCH2undCH1gruppenn():
                 approximation = [None for a in range(len(self.molekularstruktur))]
 
-                for position,atom in enumerate(self.molekularstruktur):
+                for position, atom in enumerate(self.molekularstruktur):
                     if atom[0] == self.elementgruppengrenzen[3]:  # ist ein CH3
-                        approximation[position] = [1,3]
-                        #spezifikationen
+                        approximation[position] = [1]
+                        # spezifikationen
                         if atom[1][1] == self.elementgruppengrenzen[2] + 2:
                             approximation[position][0] += 2
 
                     elif atom[0] == self.elementgruppengrenzen[2]:  # ist ein CH2
-                        if len(atom) == 2: # es ist ein Olephin
-                            approximation[position] = [5.5,2]
+                        if len(atom) == 2:  # es ist ein Olephin
+                            approximation[position] = [5.5]
                         else:
-                            approximation[position] = [2,2]
+                            approximation[position] = [2]
 
 
                     elif atom[0] == self.elementgruppengrenzen[1]:  # ist ein CH
-                        if len(atom) < 3:
-                            if self.Iszyklisch(position):
-                                if self.Cyclogrösse(position) == 0: # Spezialfall wenn es ein Aromat ist, ansonsten hat es ca den wert 2.3
-                                    approximation[position] = [7.3,1]
-                                else:
-                                    approximation[position] = [5.2,1]
+                        if self.Iszyklisch(position):
+                            if self.Cyclogrösse(
+                                    position) == 0:  # Spezialfall wenn es ein Aromat ist, ansonsten hat es ca den wert 2.3
+                                approximation[position] = [7.3]
+
                             else:
-                                approximation[position] = [5.2,1]
+                                approximation[position] = [2.3]
 
                         else:
-                            approximation[position] = [2.3,1]
+                            approximation[position] = [2.3]
 
 
                     elif atom[0] == self.elementgruppengrenzen[3] + 2:  # ist ein C=O(H)
-                        approximation[position] = [9.5,1]
-
+                        approximation[position] = [9.5]
 
                 for a in range(len(approximation)):
                     if approximation[a] != None:
@@ -559,54 +556,110 @@ class individuum():
                             for kopplung in kopplungen:
                                 approximation[a].append(kopplung)
 
-                #Nun hat es in der Liste noch gewisse Stellen mit None. Diese Müssen jetzt gelöscht werden und alle Positionen müssen angepasst werden
+                # Nun hat es in der Liste noch gewisse Stellen mit None. Diese Müssen jetzt gelöscht werden und alle Positionen müssen angepasst werden
 
-                #zuerst müssen noch lehre [] gelöscht werden, welche wege self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen
+                # zuerst müssen noch lehre [] gelöscht werden, welche wege self.PositionendernachbarnwelcheeineWasserstoffkopplungeingehen
 
-                for a in range(len(approximation)-1,-1,-1):
+                for a in range(len(approximation) - 1, -1, -1):
                     if approximation[a] == None:
                         for b in range(len(approximation)):
                             if approximation[b] != None:
-                                for c in range(2,len(approximation[b])):
+                                for c in range(1, len(approximation[b])):
                                     if approximation[b][c][0] > a:
                                         approximation[b][c][0] -= 1
                         approximation.pop(a)
+                """
+                print("approximation")
+                print(approximation)
+                print(self.molekularstruktur)
+                """
 
 
-                #nun werden die NMR daten Analysiert
+                # nun werden die NMR daten Analysiert
                 nmrwerte = copy.deepcopy(Molekuelinfo.gruppierted20nmrdaten)
 
-                print("Heuristikwerte")
+                # jeder approximationswert wird mit jedem nmrwert ausprobiert und verglichen
+                def nmrwertemitapproximationvergleich(nmrwert, aproximierterwert):
+                    unterschied = (nmrwert[0] - aproximierterwert[0]) ** 2
+                    unterschied += abs(len(nmrwert) - len(aproximierterwert)) * 2
+                    # Idee ob es ohne besser funktionert
+                    if len(nmrwert) > len(aproximierterwert):
+                        unterschied -= len(aproximierterwert) * 4
+                    else:
+                        unterschied -= len(nmrwert) * 4
+
+                    return unterschied
+
+                vergleiche = []
+
+                for a in range(len(approximation)):
+                    vergleiche.append([])
+                    for b in range(len(nmrwerte)):
+                        vergleiche[a].append(nmrwertemitapproximationvergleich(nmrwerte[b], approximation[a]))
+
+                transformation = [None for a in
+                                  range(len(approximation))]  # jeder approximationswert bekommt ein NMRwert zugewisen
+
+                # Es darf auch mehrfachbelegungen geben (aber in einer genau bestimmen Anzahl)
+                anzahlmehrfachbelegungen = len(approximation) - len(nmrwerte)
+
+                for temp in range(len(approximation)):
+                    # da der Wert möglichst klein sein soll , wird jetzt das Atom ausgewält, bei welchem das beste, das schlechteste ist
+                    besterwertjederspalte = [None for a in range(len(approximation))]
+                    for a in range(len(approximation)):
+                        spalenwerte = []
+                        for b in range(len(nmrwerte)):
+                            if vergleiche[a][b] != None:
+                                spalenwerte.append(vergleiche[a][b])
+                        if spalenwerte != []:
+                            besterwertjederspalte[a] = min(spalenwerte)
+                    """
+                    print("besterwertjederspalte")
+                    print(besterwertjederspalte)
+                    print("vergleiche")
+                    print(vergleiche)
+                    print("Transformation")
+                    print(transformation)
+                    print("Übrige mehrfachbelegungen")
+                    print(anzahlmehrfachbelegungen)
+                    """
+                    schlechtesterWert = max([wert for wert in besterwertjederspalte if wert is not None])
+
+                    breakbool = False
+                    for a, wert in enumerate(besterwertjederspalte):
+
+                        if wert == schlechtesterWert:
+                            for b in range(len(nmrwerte)):
+                                if vergleiche[a][b] == wert:
+                                    if b in transformation:
+                                        anzahlmehrfachbelegungen -= 1
+
+                                    transformation[a] = b
+                                    for c in range(len(nmrwerte)):
+                                        vergleiche[a][c] = None
+
+                                    if anzahlmehrfachbelegungen <= 0:
+                                        for spalte in vergleiche:
+                                            spalte[b] = None
+
+                                    breakbool = True
+                                    break
+                        if breakbool:
+                            break
+                """
+                print("nmrwerte")
                 print(nmrwerte)
+                print("approximationen")
                 print(approximation)
-
-                überschneidung = len(approximation) - len(nmrwerte)
-                auswahlpoolfürtransformationen = []
-                zahlenwelchevorkommenmüssen = list(range(len(nmrwerte)))
-
-                for a in range(len(nmrwerte)):
-                    auswahlpoolfürtransformationen.extend([a]* (überschneidung + 1))
-                transformationen = list(itertools.permutations(auswahlpoolfürtransformationen,len(approximation)))
-
-                #jetzt müssen alle schlechten varianten gelöscht werden
-
-                for a in range(len(transformationen)-1,-1,-1):
-                    if not all(zahl in transformationen[a] for zahl in zahlenwelchevorkommenmüssen):
-                        transformationen.pop(a)
-
-                print("längedertransformationen")
-                print(len(transformationen))
-
-
-
-
-
-
-
-
+                """
+                # Noch nicht final aber jetzt kann mal alles getestet werden
                 summe = 0
+                for a in range(len(approximation)):
+                    summe += nmrwertemitapproximationvergleich(nmrwerte[transformation[a]], approximation[a])
 
                 return summe
+
+            #print("Methylgruppen")
             """
             print("Methylgruppen")
             print(BewertungMethylgruppen())
@@ -905,6 +958,9 @@ class individuum():
                         positionatomeinfachbindung = self.molekularstruktur[positionatom][2][1]
                         positionatomdoppelbindung = self.molekularstruktur[positionatom][1][1]
 
+                    positionsubstitiontsatom1 = möglichesubstitutionen[substitutionsverbindung][0]
+                    positionsubstitiontsatom2 = self.molekularstruktur[positionsubstitiontsatom1][möglichesubstitutionen[substitutionsverbindung][1]][1]
+
                     self.Deletverbindung(positionatom, positionatomeinfachbindung)
                     self.Deletverbindung(positionatom, positionatomdoppelbindung)
                     self.Creatverbindung(positionatomeinfachbindung, positionatomdoppelbindung, 1)
@@ -914,8 +970,6 @@ class individuum():
                         1]  # es kann sein, dass mit diesem Atom eine neue Bindung eingeganen werden soll, dann muss es aber anstatt einer neuer einfachbindung eine doppelbindung geben
 
                     # das herausgelöste Atom wird nun wieder an bestimmten ort wieder eingesetzt
-                    positionsubstitiontsatom1 = möglichesubstitutionen[substitutionsverbindung][0]
-                    positionsubstitiontsatom2 = self.molekularstruktur[positionsubstitiontsatom1][möglichesubstitutionen[substitutionsverbindung][1]][1]
                     self.Deletverbindung(positionsubstitiontsatom1, positionsubstitiontsatom2)
 
                     # neue verbindungen werden erstellt
@@ -956,11 +1010,13 @@ class individuum():
         randommutationszeiger = random.random()
 
         if randommutationszeiger < 0.4:
-            print("MutationzweiergleichwertigerAtome")
+            #print("MutationzweiergleichwertigerAtome")
             for a in range(10): # Wird mehrmals gemacht, da es nicht immer funktionert. Wenn es funktioniert, wird abgebrochen
                 zwischenspeichermolekularstruktur = copy.deepcopy(self.molekularstruktur)
                 if MutationzweiergleichwertigerAtome():
                     if self.isligit():
+                        if not self.testfunktiondersymetriebeidenBindungen(self.molekularstruktur):
+                            raise Exception("Bindungsymetrie ist nicht gegeben")
                         return True
                     else:
                         self.molekularstruktur = copy.deepcopy(zwischenspeichermolekularstruktur)
@@ -968,21 +1024,25 @@ class individuum():
 
 
         elif randommutationszeiger < 0.7:
-            print("MutationAtomherausreisenundanderswoneueinsetzen ")
+            #print("MutationAtomherausreisenundanderswoneueinsetzen ")
             for a in range(10):
                 zwischenspeichermolekularstruktur = copy.deepcopy(self.molekularstruktur)
                 if MutationAtomherausreisenundanderswoneueinsetzen():
                     if self.isligit():
+                        if not self.testfunktiondersymetriebeidenBindungen(self.molekularstruktur):
+                            raise Exception("Bindungsymetrie ist nicht gegeben")
                         return True
                     else:
                         self.molekularstruktur = copy.deepcopy(zwischenspeichermolekularstruktur)
         else:
-            print("MutationverschiebungMehrfachbindung")
+            #print("MutationverschiebungMehrfachbindung")
             for a in range(2):
                 zwischenspeichermolekularstruktur = copy.deepcopy(self.molekularstruktur)
                 if MutationreduzierungMehrfachbindungzuanderemOrt():
                     # Es gibt leider sehr viele Spezialfälle, bei welchem diese Mutation nicht geht. Diese sind aber meistens so speziel, dass es sich nicht lohnt, diese manuel einzelt herauszufiltern. Daher überprüfe ich das Molekül und wenn es nicht mehr zusammenhängend ist und falls dies der Fall ist, muss ich alles wieder rückgängig machen.
                     if self.isligit():
+                        if not self.testfunktiondersymetriebeidenBindungen(self.molekularstruktur):
+                            raise Exception("Bindungsymetrie ist nicht gegeben")
                         return True
                     else:
                         self.molekularstruktur = copy.deepcopy(zwischenspeichermolekularstruktur)
@@ -1974,7 +2034,7 @@ class individuum():
 
             return molekularstruktur
 
-        anzahlversuchteKinder = 20 #Es gibt immer die doppelte Anzahl an Kinder, als der Wert dieses Integer
+        anzahlversuchteKinder = 15 #Es gibt immer die doppelte Anzahl an Kinder, als der Wert dieses Integer
         """
         print("Molekularstrukturen der Eltern")
         print(molekularstrukturVater)
@@ -2075,9 +2135,17 @@ class individuum():
 
 
 
-    def __init__(self, gruppenkonfiguration = None, anzahlmutationen = 0, molekularstrukturvater = None, molekularstrukturmutter = None, elemente = None):
+    def __init__(self, gruppenkonfiguration = None, anzahlmutationen = 0, molekularstrukturvater = None, molekularstrukturmutter = None, elemente = None,molekularstruktur = None):
+        if molekularstrukturvater == None and molekularstrukturvater == None and gruppenkonfiguration == None: # Erschaffung eines Dublikanten und Mutation desen
+            self.molekularstruktur = molekularstruktur
+            self.elemente = elemente
+            self.elementgruppengrenzen = [0, 1, 2, 5]
+            self.elementmassen = [12, 13, 14, 28, 16, 15, 17, 29, 45]
+            for a in range(anzahlmutationen):
+                self.Muation()
 
-        if molekularstrukturmutter == None and molekularstrukturvater == None:
+
+        elif molekularstrukturmutter == None and molekularstrukturvater == None: # Startinitialisation
         # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
             self.gruppenkonfiguration = gruppenkonfiguration
             self.elemente = [0] * len(gruppenkonfiguration)
@@ -2102,7 +2170,7 @@ class individuum():
 
             self.Strukturintertialgenerator(anzahlmutationen)
 
-        else:
+        else: # Erschaffung durch zwei Eltern
             self.elemente = elemente
             self.elementgruppengrenzen = [0, 1, 2, 5]
             self.elementmassen = [12, 13, 14, 28, 16, 15, 17, 29, 45]

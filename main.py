@@ -40,7 +40,7 @@ print(Gruppenkonfigurationen)
 gewinner = []
 for gruppe in Gruppenkonfigurationen:
     print(gruppe.gruppenkonfiguration)
-    gewinner_individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,10,100,240)
+    gewinner_individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,60,10000,60)
     print(gewinner_individum.molekularstruktur)
     gewinner_individum.SMilestransformator()
     gewinner_individum.DarstellungMolekülinSMI(False,True)

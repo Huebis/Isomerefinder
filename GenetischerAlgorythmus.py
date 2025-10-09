@@ -89,21 +89,40 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
         if individuen[-1].molekularstruktur == None:
             individuen.pop(-1)
         else:
-            start = time.time()
+            #start = time.time()
             individuen[-1].CalcHeuristik()
             populationszuwachs += 1
-            print(individuen[-1].heuristikwert)
+            #print(individuen[-1].heuristikwert)
 
-            ende = time.time()
-            print("Zeit zum berechnen der Heuristik " + str(ende - start))
+            #ende = time.time()
+            #print("Zeit zum berechnen der Heuristik " + str(ende - start))
 
+        #eine gewisse Anzahl an Individuen wird dubliziert und durch Mutationen verändert und der Population hinzugefügt.
+        #start = time.time()
+
+        """
+        sum = 0
+        for a in range(10):
+            pos_ausgewähltes_Individuum = random.randint(0,len(individuen)-1)
+            #print(individuen[pos_ausgewähltes_Individuum].molekularstruktur)
+            individuen.append(Klassen.individuum(None,2,None,None,copy.deepcopy(individuen[pos_ausgewähltes_Individuum].elemente),copy.deepcopy(individuen[pos_ausgewähltes_Individuum].molekularstruktur)))
+            individuen[-1].CalcHeuristik()
+            populationszuwachs += 1
+        #ende = time.time()
+        """
+        #print("Zeit zur Mutationen" + str(ende - start))
+
+        #start = time.time()
         if anzahlpopulationenzuwachchs_bis_schlechte_sterben == populationszuwachs:
             individuen.sort(key=lambda a: a.heuristikwert)
             while populationszuwachs != 0:
                 individuen.pop(-1)
                 populationszuwachs -= 1
 
-    individuen.sort(key=lambda a: a.heuristikwert)
+        #individuen.sort(key=lambda a: a.heuristikwert)
+        # ende = time.time()
+        # print("Zeit zum dezimieren der Population" + str(ende - start))
+        #print("Anzahl Moleküle :" +str(len(individuen)))
     return individuen[0]
 
 

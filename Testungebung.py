@@ -17,7 +17,7 @@ test.molekularstruktur = [[8, [1, 2]], [1, [2, 2], [1, 3]], [1, [2, 1], [1, 0]],
 test.SMilestransformator()
 test.DarstellungMolekülinSMI(False, True)
 """
-hallo = C((C(C(=C(C(=C))))(C(=C(C(C(=O))))))=O)
+hallo = "C((C(C(=C(C(=C))))(C(=C(C(C(=O))))))=O)"
 
 Testcase.Case2()
 print(Klassen.Molekuelinfo.gruppierted20nmrdaten)
@@ -44,7 +44,7 @@ test.SMilestransformator()
 #child.DarstellungMolekülinSMI(False,True)
 
 print("finish")
-"""
+
 
 
 """               #nun werden die NMR daten Analysiert
@@ -158,7 +158,8 @@ print(test.Cyclogrösse(0))
 """
 
 
-""" Abgespeichert, falls nochmals gebraucht
+""" Abgespeichert, falls nochmals gebraucht 
+
  def BewertungvonCH2undCH1gruppenn():
                 approximation = [None for a in range(len(self.molekularstruktur))]
 
@@ -232,7 +233,7 @@ print(test.Cyclogrösse(0))
                         unterschied -= len(aproximierterwert)*4
                     else:
                         unterschied -= len(nmrwert) * 4
-""
+
                     return unterschied
 
 
