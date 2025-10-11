@@ -87,15 +87,16 @@ def MaximalAldehyde():
         if a[0] >= 190:
             if a[0] <= 250:
                 anzahlAldehyde += 1
-
+    if anzahlAldehyde == 0 and Klassen.Molekuelinfo.cdeptdaten[0][0] < 160:
+        return 0
+    else:
+        return round(Klassen.Molekuelinfo.isomere[2] / 2) + 1
+"""
     if Klassen.Molekuelinfo.cSymetrie == False:
         return anzahlAldehyde
     else:
-        if anzahlAldehyde == 0:
-            return 0
-        else:
-            return round(Klassen.Molekuelinfo.isomere[2]/2)
-
+       
+"""
 
 def MindestanzahlKetone():
     if Klassen.Molekuelinfo.cdeptdaten == None:
@@ -116,7 +117,7 @@ def MindestanzahlKetone():
 
 def MaximalKetone():
     if Klassen.Molekuelinfo.cdeptdaten == None:
-        return round(Klassen.Molekuelinfo.isomere[2] / 2)
+        return round(Klassen.Molekuelinfo.isomere[2] / 2) + 1
 
     tempnmr = Klassen.Molekuelinfo.cNRMdaten.copy()
 
@@ -129,14 +130,17 @@ def MaximalKetone():
             if a <= 250:
                 anzahlKetone += 1
 
+    if anzahlKetone == 0 and tempnmr[0] < 160:
+        return 0
+    else:
+        return round(Klassen.Molekuelinfo.isomere[2] / 2) + 1
+"""
+
     if Klassen.Molekuelinfo.cSymetrie == False:
         return anzahlKetone
     else:
-        if anzahlKetone == 0:
-            return 0
-        else:
-            return round(Klassen.Molekuelinfo.isomere[2] / 2)
 
+"""
 def ElementeimBereich(cNMR,anfang,ende):
     sum = 0
 

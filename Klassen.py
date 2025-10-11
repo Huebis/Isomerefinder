@@ -386,7 +386,7 @@ class individuum():
 
 
     def CalcHeuristik(self):
-        def AbzugKetonAlkoholverbindungen(): # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
+        def BestrafungKetonAlkoholverbindungen(): # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
             #Das Program kann ein Keton an ein Alkohol setzen, dies ist aber nicht möglich, da dies eine Carbonsäure geben wird und diese Anzahl schon genau bestimmt ist.
             #Abzug von 1 für jede solche KetonAlkoholverbindung
 
@@ -400,7 +400,7 @@ class individuum():
             return anzahlKetonAlkoholverbindungen
 
 
-        def AbzugEthertransformationzuKeton_Aldehyd():
+        def BestrafungEthertransformationzuKeton_Aldehyd():
             anzahlfalscherEther = 0 #für Jeden Ether mit einer Doppelbindung gibt es einen Punkt (darf eigenlich nicht sein
             for atom in self.molekularstruktur:
                 if atom[0] == self.elementgruppengrenzen[2]+2:
@@ -444,15 +444,15 @@ class individuum():
 
                         for mswert in Molekuelinfo.msdata:
                             if mswert[0] == masse1:
-                                mstreffer += 1
+                                mstreffer -= 5
                                 masse1 = 0
                             if mswert[0] == masse2:
-                                mstreffer += 1
+                                mstreffer -= 5
                                 masse2 = 0
                         if masse1 != 0:
-                            mstreffer -= 1
+                            mstreffer += 5
                         if masse2 != 0:
-                            mstreffer -= 1
+                            mstreffer += 5
 
 
             return mstreffer
@@ -583,11 +583,12 @@ class individuum():
                     unterschied = (nmrwert[0] - aproximierterwert[0]) ** 2
                     unterschied += abs(len(nmrwert) - len(aproximierterwert)) * 2
                     # Idee ob es ohne besser funktionert
+                    """
                     if len(nmrwert) > len(aproximierterwert):
                         unterschied -= len(aproximierterwert) * 4
                     else:
                         unterschied -= len(nmrwert) * 4
-
+                    """
                     return unterschied
 
                 vergleiche = []
@@ -667,7 +668,7 @@ class individuum():
             print(BewertungvonCH2undCH1gruppenn())
             """
 
-            return BewertungMethylgruppen() + BewertungvonCH2undCH1gruppenn()
+            return  BewertungvonCH2undCH1gruppenn() # + BewertungMethylgruppen() wirkt mehr als Störfaktor, als es hilft
 
 
 
@@ -691,14 +692,13 @@ class individuum():
             print(MSpeaküberprüfung())
             print("NMRspektrumAnalyse")
             print(NMRspektrumAnalyse())
-        heuristikwert = AbzugKetonAlkoholverbindungen()
-        heuristikwert += AbzugEthertransformationzuKeton_Aldehyd()
-        heuristikwert += 3*MSpeaküberprüfung()
-        heuristikwert += NMRspektrumAnalyse()
+        self.heuristikwert = BestrafungKetonAlkoholverbindungen()
+        self.heuristikwert += BestrafungEthertransformationzuKeton_Aldehyd()
+        self.heuristikwert += 3*MSpeaküberprüfung()
+        self.heuristikwert += 1.5*NMRspektrumAnalyse()
         #print(heuristikwert)
 
-        self.heuristikwert = heuristikwert
-        return heuristikwert
+        return #heuristikwert
 
 
 
@@ -2116,9 +2116,9 @@ class individuum():
         kleinstepunktzahl = 100000000000000
         positionchild = 0
         for a,child in enumerate(children):
-            heuristikwert = self.CalcHeuristik()
-            if heuristikwert < kleinstepunktzahl:
-                kleinstepunktzahl = heuristikwert
+            self.CalcHeuristik()
+            if self.heuristikwert < kleinstepunktzahl:
+                kleinstepunktzahl = self.heuristikwert
                 positionchild = a
 
         self.molekularstruktur = copy.deepcopy(children[positionchild])

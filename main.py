@@ -8,7 +8,7 @@ import Testcase
 import GenetischerAlgorythmus
 
 
-Testcase.Case2()
+Testcase.Case6()
 
 
 
@@ -36,16 +36,36 @@ Gruppenkonfigurationen = Math.FunktionelleGruppensubstitution()
 
 print("Isomere werden gebildet")
 
-print(Gruppenkonfigurationen)
+print(len(Gruppenkonfigurationen))
+
+for gruppe in Gruppenkonfigurationen:
+    print(gruppe.gruppenkonfiguration)
+
+
 gewinner = []
 for gruppe in Gruppenkonfigurationen:
     print(gruppe.gruppenkonfiguration)
-    gewinner_individum = GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,60,10000,60)
-    print(gewinner_individum.molekularstruktur)
-    gewinner_individum.SMilestransformator()
-    gewinner_individum.DarstellungMolekülinSMI(False,True)
-    print(gewinner_individum.CalcHeuristik())
+    gewinner.append(GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,60,1000,60))
+    print(gewinner[-1].molekularstruktur)
+    gewinner[-1].SMilestransformator()
+    gewinner[-1].DarstellungMolekülinSMI(True,True)
+    print("Gewinnerheurist: "+ str(gewinner[-1].CalcHeuristik()))
     #gruppe.EntwicklungIsomerelist()
+
+
+besteheuristik = gewinner[0].heuristikwert
+position = 0
+for pos,gewinner_Individiuum in enumerate(gewinner):
+    print("Gewinnerheurist: " + str(gewinner_Individiuum.heuristikwert))
+    if gewinner_Individiuum.heuristikwert < besteheuristik:
+        besteheuristik = gewinner_Individiuum.heuristikwert
+        position = pos
+
+
+gewinner[position].SMilestransformator()
+gewinner[position].DarstellungMolekülinSMI(True,True)
+
+
 
 
 for gruppe in Gruppenkonfigurationen:

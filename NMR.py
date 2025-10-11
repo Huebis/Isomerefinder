@@ -13,6 +13,8 @@ def Spektralanalyse_verschwundeD2Opeaks():
     for a in range(len(tempnmr)-1):
         if tempnmr[a][0] - tempnmr[a+1][0] < 25:
             mindestanzahlOH += 1
+    if len(tempnmr) == 1:
+        mindestanzahlOH = 1
 
     Klassen.Molekuelinfo.oxygeniumsubstitution[5] = mindestanzahlOH
     return
