@@ -56,7 +56,7 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
     while anzahlgenerationen != 0:
         anzahlgenerationen -= 1
         if anzahlgenerationen % 16 == 0:
-            print(anzahlgenerationen)
+            print("Noch " + str(anzahlgenerationen) + " Generationen")
 
         #vier Eltern werden aus gewählt und je zwei "kämpfen" gegeneinander
         # Es ist beabsichtigt, dass es auch überschneidungen geben kann

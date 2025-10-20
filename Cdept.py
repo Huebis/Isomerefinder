@@ -151,15 +151,11 @@ def ElementeimBereich(cNMR,anfang,ende):
     return sum
 
 
-def CNMRgruppenkonfigurationsplausibilitätskontrolle_beikeinerCSymetrie(gruppenkonfiguration):
-
-    print("Ich überprüfe die CNMR gruppenkonfigurationsplausibiltät (bei CSymetrie")
-    tempCNMR = Klassen.Molekuelinfo.cNRMdaten
 
 
 
 
-# Noch nicht fertig
+# Noch nicht fertig bzw. noch nicht wirklich angefangen
 
 def CNMRgruppenkonfigurationsplausibilitätskontrolle_beiCSymetrie(gruppenkonfiguration):
     tempCNMR = Klassen.Molekuelinfo.cNRMdaten.copy()

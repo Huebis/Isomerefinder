@@ -8,6 +8,7 @@ import Testcase
 import GenetischerAlgorythmus
 
 
+#Hier kann ein Testcase angegeben werden, dieser wird aus dem File Testcase.py genommen.
 Testcase.Case6()
 
 
@@ -36,8 +37,8 @@ Gruppenkonfigurationen = Math.FunktionelleGruppensubstitution()
 
 print("Isomere werden gebildet")
 
-print(len(Gruppenkonfigurationen))
-
+print("Anzahl Gruppenkonfigurationen: " + str(len(Gruppenkonfigurationen)))
+print("Alle Gruppenkonfigurationen")
 for gruppe in Gruppenkonfigurationen:
     print(gruppe.gruppenkonfiguration)
 
@@ -48,7 +49,7 @@ for gruppe in Gruppenkonfigurationen:
     gewinner.append(GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,60,1000,60))
     print(gewinner[-1].molekularstruktur)
     gewinner[-1].SMilestransformator()
-    gewinner[-1].DarstellungMolekülinSMI(True,True)
+    #gewinner[-1].DarstellungMolekülinSMI(True,True) #Hier kann ausgewählt werden ob jeder Gewinner aus dem Genetischen Algorithmus ausgegeben werden soll (als Bild)
     print("Gewinnerheurist: "+ str(gewinner[-1].CalcHeuristik()))
     #gruppe.EntwicklungIsomerelist()
 

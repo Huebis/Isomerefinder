@@ -156,6 +156,13 @@ class Molekuelinfo():
 
 
 
+
+
+
+
+
+
+
 class individuum():
 
     def Anzahloffeneverbindungen(self,Atom):
@@ -354,13 +361,6 @@ class individuum():
 
         kopplungen = []
 
-
-        """
-        #zuerst muss überprüft werden ob es sich bei der Position um ein Atom in einem Aromat handelt, da der Weg dann ein bisschen spezieller ist
-        if self.Iszyklisch(position):
-            if self.Cyclogrösse(position) == 0: # Bedeutung es ist ein Aromat
-
-        """
         # 0 = C / 1 = CH / 2 = CH2 / 3 = Keton / 4 = Ether / 5 = CH3 / 6 = OH / 7 = Aldehyd / 8 = Carbonsäure
         # self.elementgruppengrenzen = [0,1,2,5]
 
@@ -464,6 +464,7 @@ class individuum():
 
         def NMRspektrumAnalyse():
 
+            #Funktion wurde mal gebraucht, hat sich aber nicht bewährt und wird nicht aufgerufen
             def BewertungMethylgruppen():
                 methylgruppennummer = self.elementgruppengrenzen[3]
                 CH2gruppennummer = self.elementgruppengrenzen[2]
@@ -538,7 +539,7 @@ class individuum():
                             if self.Cyclogrösse(
                                     position) == 0:  # Spezialfall wenn es ein Aromat ist, ansonsten hat es ca den wert 2.3
                                 approximation[position] = [7.3]
-
+                            
                             else:
                                 approximation[position] = [2.3]
 
@@ -582,7 +583,7 @@ class individuum():
                 def nmrwertemitapproximationvergleich(nmrwert, aproximierterwert):
                     unterschied = (nmrwert[0] - aproximierterwert[0]) ** 2
                     unterschied += abs(len(nmrwert) - len(aproximierterwert)) * 2
-                    # Idee ob es ohne besser funktionert
+                    # Idee ob es ohne besser funktionert, Spin-Spin-Kopplungen müssen zuerst noch verbessert werden, bevor sie wieder implementiert werden können
                     """
                     if len(nmrwert) > len(aproximierterwert):
                         unterschied -= len(aproximierterwert) * 4
@@ -830,7 +831,7 @@ class individuum():
             return True
 
 
-
+        #Es gäbe noch weitere Mutationsmöglichkeiten. Bis jetzt hat es beide noch nicht gebraucht, könnten aber gegebenenfalls noch geschrieben werde
         def MutationreduzierungMehrfachbindungzueinemCyclo():
             return False
 
@@ -992,11 +993,7 @@ class individuum():
 
 
 
-                # es ist mit abstand der schwierigste Fall und somit lasse ich ihn für den Moment aus, sollte keine riesigen auswirkungen haben
 
-
-                #if wertigkeitatom == 4:
-                    #return False
 
 
 
@@ -2106,7 +2103,7 @@ class individuum():
 
         if children == []:
             self.molekularstruktur = None
-            print("es gab kein Child")
+            #print("es gab kein Child")
             return False
 
         #print("Es gibt ein Kind")

@@ -1,5 +1,11 @@
 import Klassen
 
+#Wie in der Maturaarbeit beschrieben, ist die Funktion aufgrund komischer MS-Spektren nicht gebrauch
+
+#ganzes File wird momentan nicht gebraucht
+
+
+
 def IsDoucorrekt(C,O,H):
     dou = (2*C - H)
     if dou < 0:
