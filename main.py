@@ -9,7 +9,7 @@ import GenetischerAlgorythmus
 
 
 #Hier kann ein Testcase angegeben werden, dieser wird aus dem File Testcase.py genommen.
-Testcase.Case6()
+Testcase.Case4()
 
 
 
@@ -45,13 +45,17 @@ for gruppe in Gruppenkonfigurationen:
 
 gewinner = []
 for gruppe in Gruppenkonfigurationen:
-    print(gruppe.gruppenkonfiguration)
+    #Erste Parameter gibt an, wie gross die Startpopulation ist
+    #Zweiter Parameter gibt an, wie viele Generationen durchgemacht werden.
+    #Dritter Parameter gibt an, um wie viele Individuen die Population wachsen kann, bis sie wieder zur grösse der Startpopulation dezimiert wird.
     gewinner.append(GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,60,1000,60))
-    print(gewinner[-1].molekularstruktur)
     gewinner[-1].SMilestransformator()
     #gewinner[-1].DarstellungMolekülinSMI(True,True) #Hier kann ausgewählt werden ob jeder Gewinner aus dem Genetischen Algorithmus ausgegeben werden soll (als Bild)
     print("Gewinnerheurist: "+ str(gewinner[-1].CalcHeuristik()))
-    #gruppe.EntwicklungIsomerelist()
+
+
+
+
 
 
 besteheuristik = gewinner[0].heuristikwert
@@ -62,17 +66,21 @@ for pos,gewinner_Individiuum in enumerate(gewinner):
         besteheuristik = gewinner_Individiuum.heuristikwert
         position = pos
 
-
+print("BESTES INDIVDIUM:")
+print("Heuristik: " + str(gewinner[position].heuristikwert))
+print("Molekülstruktur: " + str(gewinner[position].molekularstruktur))
 gewinner[position].SMilestransformator()
-gewinner[position].DarstellungMolekülinSMI(True,True)
+#Erster Parameter gibt an, ob die Wasserstoffatome auch gezeichnet werden sollen.
+#Zweiter Parameter gibt an, ob das Bild ausgegeben werden soll (sollte auf dem Bildschirm erscheinen).
+#Dritter Parameter gibt an, ob der SMILES-String in der Console ausgegeben werden soll.
+gewinner[position].DarstellungMolekülinSMI(True,True,True)
 
 
 
-
+print("Nochmals alle Durchgerechneten Gruppenkonfigurationen")
 for gruppe in Gruppenkonfigurationen:
     print(gruppe.gruppenkonfiguration)
-print(len(Gruppenkonfigurationen))
-print("HAllo")
+print("-FINISH-")
 
 #isomergruppen[0].EntwicklungIsomerelist()
 

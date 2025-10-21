@@ -100,16 +100,16 @@ def Evolution(gruppenkonfiguration,grössePopulation, anzahlgenerationen, anzahl
         #eine gewisse Anzahl an Individuen wird dubliziert und durch Mutationen verändert und der Population hinzugefügt.
         #start = time.time()
 
-        """
+
         sum = 0
-        for a in range(10):
+        for a in range(2):
             pos_ausgewähltes_Individuum = random.randint(0,len(individuen)-1)
             #print(individuen[pos_ausgewähltes_Individuum].molekularstruktur)
             individuen.append(Klassen.individuum(None,2,None,None,copy.deepcopy(individuen[pos_ausgewähltes_Individuum].elemente),copy.deepcopy(individuen[pos_ausgewähltes_Individuum].molekularstruktur)))
             individuen[-1].CalcHeuristik()
             populationszuwachs += 1
         #ende = time.time()
-        """
+
         #print("Zeit zur Mutationen" + str(ende - start))
 
         #start = time.time()
