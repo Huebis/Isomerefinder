@@ -50,7 +50,7 @@ for gruppe in Gruppenkonfigurationen:
     #Erste Parameter gibt an, wie gross die Startpopulation ist
     #Zweiter Parameter gibt an, wie viele Generationen durchgemacht werden.
     #Dritter Parameter gibt an, um wie viele Individuen die Population wachsen kann, bis sie wieder zur grösse der Startpopulation dezimiert wird.
-    gewinner.append(GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,60,1000,60))
+    gewinner.append(GenetischerAlgorythmus.Evolution(gruppe.gruppenkonfiguration,60,10000,60))
     gewinner[-1].SMilestransformator()
     #gewinner[-1].DarstellungMolekülinSMI(True,True) #Hier kann ausgewählt werden ob jeder Gewinner aus dem Genetischen Algorithmus ausgegeben werden soll (als Bild)
     print("Gewinnerheurist: "+ str(gewinner[-1].CalcHeuristik()))
