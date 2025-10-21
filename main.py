@@ -9,6 +9,8 @@ import GenetischerAlgorythmus
 
 
 #Hier kann ein Testcase angegeben werden, dieser wird aus dem File Testcase.py genommen.
+#Testcase.Case1() weist noch manchmal einen Fehler auf, bis jetzt habe ich noch nicht herausgefunden warum. Bei allen anderen Cases sind mir keine Bugs bekannt
+#Falls ein Bug bzw. eine Fehlermeldung bei einem Testcase auftaucht, kann man mir gerne Schreiben (oder Issue aufmachen).
 Testcase.Case4()
 
 
